@@ -117,7 +117,7 @@
   padding-block: clamp(120px, 16vh, 160px) clamp(80px, 10vh, 160px);
 
   /* 左右縮一點，內容自然就更寬 */
-  padding-inline: clamp(8px, 2vw, 24px);
+  padding-inline: clamp(1px, 2vw, 12px);
 
   box-sizing:border-box;
   text-align:left;
