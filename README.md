@@ -79,7 +79,7 @@
   font-family:"Microsoft JhengHei", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   text-align:center;
   overflow-y:auto;
-  overflow-x:hidden;   /* 現在 .wrap 不會超出，這行只是在防小數點誤差 */
+  overflow-x:hidden;   /* 現在 .wrap 不會超出，這行只防 1px 誤差 */
   -webkit-overflow-scrolling:touch;
   background:
     radial-gradient(1200px 600px at 15% 0%, #5ecbff1a, transparent 60%),
@@ -108,19 +108,23 @@
       }
 
      .wrap{
-  position:relative;
-  z-index:2;
+  position: relative;
+  z-index: 2;
 
-  /* 關鍵：寬度 = 螢幕 96%，上限 2000px */
-  width: min(96vw, 2000px);
-  margin-inline:auto;
+  /* 版面寬度規則：
+     - 小螢幕：跟螢幕一樣寬（100%）
+     - 大螢幕：最多 1800px，不會超過螢幕 */
+  width: 100%;
+  max-width: 1800px;     /* 想再更寬可以改 1900 / 2000 */
 
-  /* 上 / 左右 / 下 padding */
+  margin: 0 auto;        /* 水平置中 */
+
+  /* 上 / 左右 / 下 的留白 */
   padding-block: clamp(120px, 16vh, 160px) clamp(80px, 10vh, 160px);
-  padding-inline: 8px;   /* 左右只留 8px 邊界，幾乎吃滿螢幕 */
+  padding-inline: 16px;  /* 左右各 16px，幾乎貼到邊 */
 
-  box-sizing:border-box;
-  text-align:left;
+  box-sizing: border-box;/* padding 算在 100% 裡，不會撐出螢幕 */
+  text-align: left;
 }
       h1{
         margin:0 0 8px;
@@ -242,12 +246,12 @@
       }
 
      .grid{
-  display:grid;
-  gap:16px;
-  padding:0;  /* 原本如果有 0 6px 之類的，通通改成 0 */
+  display: grid;
+  gap: 16px;
+  padding: 0;  /* 把原本 0 6px 之類的 padding 拿掉 */
 
-  /* 每張卡片至少 260px，會自動平均分配一整列的寬度 */
-  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+  /* 每張卡片至少 260px 寬，會自動平均分一整列 */
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
       .card{
