@@ -41,7 +41,7 @@
         top:14px;
         left:14px;
         z-index:6;
-        max-width:clamp(220px, 26vw, 420px);
+        max-width:clamp(220px, 26vw, 2560px);
         padding:12px 16px;
         border-radius:16px;
         color:#0f1530;
