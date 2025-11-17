@@ -114,7 +114,7 @@
 
   /* 關鍵兩行：不超過螢幕、但上限拉寬一點 */
   width:100%;
-  max-width:1700px;   /* 想更寬可以 1800px，看你喜歡 */
+  max-width:2600px;   /* 想更寬可以 1800px，看你喜歡 */
 
   margin-inline:auto;
   padding-block: clamp(120px, 16vh, 160px) clamp(80px, 10vh, 160px);
