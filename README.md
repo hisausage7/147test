@@ -65,7 +65,7 @@
       }
       @media (max-width:640px){
         .quote-box{
-          max-width:min(88vw,420px);
+          max-width:min(88vw,2560px);
           left:10px;
           right:10px;
           opacity:.95;
