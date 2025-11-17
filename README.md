@@ -35,7 +35,7 @@
       /* 星野（省電版） */
       canvas#space{position:fixed; inset:0; z-index:0; pointer-events:none; opacity:var(--stars-o);}      
 
-      .wrap{ position:relative; z-index:2; width:clamp(320px, 94vw, 2200px); padding-block: clamp(16px, 4vh, 48px) clamp(80px, 10vh, 160px); margin-inline:auto; }
+      .wrap{ position:relative; z-index:2; width:clamp(320px, 94vw, 4320px); padding-block: clamp(16px, 4vh, 48px) clamp(80px, 10vh, 160px); margin-inline:auto; }
       h1{ margin:0 0 8px; font-size:clamp(28px,4vw,44px); letter-spacing:.5px; background:linear-gradient(120deg,#eaf4ff,#b3c6ff 40%,#d7fcef 70%,#e9dcff 100%); -webkit-background-clip:text; color:transparent; text-shadow:0 6px 26px rgba(130,177,255,.28); }
       .subtitle{margin:0 0 6px;font-size:clamp(14px,2.1vw,18px);color:var(--muted);opacity:.95;}
 
