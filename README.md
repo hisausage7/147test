@@ -112,7 +112,7 @@
       .wrap{
         position:relative;
         z-index:2;
-        max-width:1400px;              /* 最大寬度 */
+        max-width:2560px;              /* 最大寬度 */
         width:100%;                    /* 跟螢幕一樣寬，不會超出 */
         margin-inline:auto;
         padding-block: clamp(120px, 16vh, 160px) clamp(80px, 10vh, 160px);
