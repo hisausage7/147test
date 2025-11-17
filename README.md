@@ -108,18 +108,18 @@
         opacity:var(--stars-o);
       }
 
-      /* 主要容器：不會超出螢幕寬度 */
-      .wrap{
+     .wrap{
   position:relative;
   z-index:2;
 
-  /* 關鍵：寬度介於 320px ~ 1800px，中間用 96vw 自適應 */
-  width:clamp(320px, 96vw, 1800px);
+  /* 關鍵兩行：不超過螢幕、但上限拉寬一點 */
+  width:100%;
+  max-width:1700px;   /* 想更寬可以 1800px，看你喜歡 */
 
   margin-inline:auto;
   padding-block: clamp(120px, 16vh, 160px) clamp(80px, 10vh, 160px);
   padding-inline: clamp(10px, 4vw, 32px);
-  box-sizing:border-box;   /* 寬度會把 padding 算進去，不會爆出去 */
+  box-sizing:border-box;
   text-align:left;
 }
 
