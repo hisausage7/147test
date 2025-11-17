@@ -73,13 +73,13 @@
       }
 
       html, body{ min-height:100%; }
-     body{
+    body{
   margin:0;
   color:var(--txt);
   font-family:"Microsoft JhengHei", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   text-align:center;
   overflow-y:auto;
-  overflow-x:hidden;   /* 這裡再開回 hidden，因為 .wrap 已經不會超出了 */
+  overflow-x:hidden;   /* 現在 .wrap 不會超出，這行只是在防小數點誤差 */
   -webkit-overflow-scrolling:touch;
   background:
     radial-gradient(1200px 600px at 15% 0%, #5ecbff1a, transparent 60%),
@@ -107,17 +107,17 @@
         opacity:var(--stars-o);
       }
 
-     ..wrap{
+     .wrap{
   position:relative;
   z-index:2;
-  width:100%;              /* 跟視窗一樣寬 */
-  max-width:100vw;         /* 保證不會超出螢幕 */
 
+  /* 關鍵：寬度 = 螢幕 96%，上限 2000px */
+  width: min(96vw, 2000px);
   margin-inline:auto;
-  padding-block: clamp(120px, 16vh, 160px) clamp(80px, 10vh, 160px);
 
-  /* 左右只留一點點邊界，讓星空還看得到 */
-  padding-inline: clamp(8px, 2vw, 24px);
+  /* 上 / 左右 / 下 padding */
+  padding-block: clamp(120px, 16vh, 160px) clamp(80px, 10vh, 160px);
+  padding-inline: 8px;   /* 左右只留 8px 邊界，幾乎吃滿螢幕 */
 
   box-sizing:border-box;
   text-align:left;
@@ -244,9 +244,9 @@
      .grid{
   display:grid;
   gap:16px;
-  padding:0;                               /* 原本是 0 6px，這裡直接拿掉 */
+  padding:0;  /* 原本如果有 0 6px 之類的，通通改成 0 */
 
-  /* 每張卡片至少 260px，比之前稍微大一點 */
+  /* 每張卡片至少 260px，會自動平均分配一整列的寬度 */
   grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
 }
 
