@@ -73,20 +73,19 @@
       }
 
       html, body{ min-height:100%; }
-      body{
-        margin:0;
-        color:var(--txt);
-        font-family:"Microsoft JhengHei", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        text-align:center;
-        overflow-y:auto;        /* 允許上下捲動 */
-        overflow-x:auto;        /* 若真的溢出，還是可以橫向捲動 */
-        -webkit-overflow-scrolling:touch;
-        background:
-          radial-gradient(1200px 600px at 15% 0%, #5ecbff1a, transparent 60%),
-          radial-gradient(900px 700px at 110% 20%, #b79dff1e, transparent 60%),
-          linear-gradient(140deg, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-1) 100%);
-      }
-
+     body{
+  margin:0;
+  color:var(--txt);
+  font-family:"Microsoft JhengHei", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-align:center;
+  overflow-y:auto;
+  overflow-x:hidden;   /* 這裡再開回 hidden，因為 .wrap 已經不會超出了 */
+  -webkit-overflow-scrolling:touch;
+  background:
+    radial-gradient(1200px 600px at 15% 0%, #5ecbff1a, transparent 60%),
+    radial-gradient(900px 700px at 110% 20%, #b79dff1e, transparent 60%),
+    linear-gradient(140deg, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-1) 100%);
+}
       .aurora{
         position:fixed;
         inset:-20%;
@@ -108,16 +107,17 @@
         opacity:var(--stars-o);
       }
 
-     .wrap{
+     ..wrap{
   position:relative;
   z-index:2;
-  max-width:2560px;          /* 或 1900，看你喜歡 */
-  width:100%;
+  width:100%;              /* 跟視窗一樣寬 */
+  max-width:100vw;         /* 保證不會超出螢幕 */
+
   margin-inline:auto;
   padding-block: clamp(120px, 16vh, 160px) clamp(80px, 10vh, 160px);
 
-  /* 左右縮一點，內容自然就更寬 */
-  padding-inline: clamp(1px, 2vw, 1px);
+  /* 左右只留一點點邊界，讓星空還看得到 */
+  padding-inline: clamp(8px, 2vw, 24px);
 
   box-sizing:border-box;
   text-align:left;
@@ -241,12 +241,14 @@
         letter-spacing:.6px;
       }
 
-      .grid{
-        display:grid;
-        gap:16px;
-        padding:0 6px;
-        grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
-      }
+     .grid{
+  display:grid;
+  gap:16px;
+  padding:0;                               /* 原本是 0 6px，這裡直接拿掉 */
+
+  /* 每張卡片至少 260px，比之前稍微大一點 */
+  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+}
 
       .card{
         position:relative;
