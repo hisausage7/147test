@@ -111,18 +111,17 @@
      .wrap{
   position:relative;
   z-index:2;
-
-  /* 關鍵兩行：不超過螢幕、但上限拉寬一點 */
+  max-width:2560px;          /* 或 1900，看你喜歡 */
   width:100%;
-  max-width:2600px;   /* 想更寬可以 1800px，看你喜歡 */
-
   margin-inline:auto;
   padding-block: clamp(120px, 16vh, 160px) clamp(80px, 10vh, 160px);
-  padding-inline: clamp(10px, 4vw, 32px);
+
+  /* 左右縮一點，內容自然就更寬 */
+  padding-inline: clamp(8px, 2vw, 24px);
+
   box-sizing:border-box;
   text-align:left;
 }
-
       h1{
         margin:0 0 8px;
         font-size:clamp(28px,4vw,44px);
