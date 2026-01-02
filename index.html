@@ -3,26 +3,38 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>147自測網站入口</title>
-  <link rel="icon" type="image/jpeg" href="OIP.jpg" />
+ <link rel="icon" type="image/png" href="favicon-OIP.jpg?v=3">
+<link rel="apple-touch-icon" href="favicon-OIP.jpg?v=3">
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     :root{
-      --bg:#070b1a;                 /* ✅ 純色背景（移除漸層） */
-      --txt:#eaf1ff;
-      --muted:#cfe0ffcc;
-      --muted2:#cfe0ff88;
+      /* ✅ 中性深色：不藍、不霓虹 */
+      --bg:#0b0c10;
+      --panel:#11131a;
+      --panel2:#0f1117;
+      --line: rgba(255,255,255,.10);
+      --line2: rgba(255,255,255,.14);
 
-      --panel: rgba(255,255,255,.06);
-      --stroke: rgba(255,255,255,.14);
-      --stroke2: rgba(255,255,255,.18);
+      --txt:#eef0ff;
+      --muted: rgba(220,226,255,.72);
 
-      --radius:18px;
-      --gap:14px;
-      --shadow: 0 14px 34px rgba(0,0,0,.38);
-      --shadow2: 0 10px 24px rgba(0,0,0,.30);
+      /* 小點綴色：只用在選取/焦點，不會整頁變紫藍 */
+      --accent: rgba(167,139,250,.95); /* violet */
+      --accentBg: rgba(167,139,250,.12);
+
+      --r:14px;
+      --r2:12px;
+      --gap:8px;
+
+      /* 動畫 */
+      --ease:cubic-bezier(.2,.8,.2,1);
+      --t120:120ms var(--ease);
+      --t180:180ms var(--ease);
+      --t260:260ms var(--ease);
     }
 
     *{ box-sizing:border-box; }
@@ -35,171 +47,264 @@
       overflow-x:hidden;
     }
 
-    /* 星星 */
-    canvas#space{
-      position:fixed;
-      inset:0;
-      z-index:0;
-      pointer-events:none;
-      opacity:.9;
+    /* 很淡的質感點點（你也可以改成 display:none） */
+    .noise{
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      opacity:.06;
+      background-image: radial-gradient(rgba(255,255,255,.10) 1px, transparent 1px);
+      background-size: 22px 22px;
+      mix-blend-mode: overlay;
     }
 
-    /* ✅ 真正滿版：不再 max-width 置中造成左右大片空白 */
     .app{
       position:relative;
-      z-index:2;
-      width:100%;
-      max-width:none;
-      margin:0;
-      padding:16px;
-
-      display:grid;
-      grid-template-columns: 320px minmax(0, 1fr);
-      gap: var(--gap);
+      z-index:1;
       min-height:100vh;
+      display:flex;
+      flex-direction:column;
     }
 
-    .panel{
-      background: var(--panel);     /* ✅ 移除漸層 */
-      border: 1px solid var(--stroke);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow2);
-      overflow:hidden;
+    /* ===== Topbar (系統化 App Bar) ===== */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background: rgba(11,12,16,.92);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 28px rgba(0,0,0,.28);
     }
-
-    /* Sidebar */
-    .side{
-      position: sticky;
-      top: 16px;
-      align-self:start;
-      padding: 14px;
+    .topbarInner{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 9px 10px; /* ✅ 更省空間 */
+      flex-wrap:wrap;
     }
 
     .brand{
       display:flex;
-      gap:10px;
       align-items:center;
-      padding: 10px 10px 12px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
+      gap:10px;
+      min-width: 210px;
+      flex: 0 0 auto;
     }
     .logo{
-      width:42px;height:42px;
-      border-radius:14px;
-      background: rgba(255,255,255,.10); /* ✅ 純色 */
-      border: 1px solid rgba(255,255,255,.18);
-      box-shadow: 0 10px 22px rgba(0,0,0,.25);
-      flex:0 0 auto;
+      width:36px;height:36px;
+      border-radius: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
     }
-    .brand h1{
+    .brandTxt{ line-height:1.15; }
+    .brandTxt .t{
       margin:0;
-      font-size:16px;
-      letter-spacing:.6px;
       font-family:"Noto Serif TC","Microsoft JhengHei",serif;
+      font-weight:700;
+      font-size:15px;
+      letter-spacing:.6px;
       color:#fff;
     }
-    .brand .sub{
-      margin-top:2px;
+    .brandTxt .s{
+      margin-top:4px;
       font-size:12px;
       color:var(--muted);
-      opacity:.95;
-      font-weight:800;
+      font-weight:850;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 240px;
     }
 
-    .metaRow{
+    .search{
+      flex: 1 1 360px;
       display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin: 12px 0 10px;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: var(--r);
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      min-width: 220px;
+      transition: border-color var(--t180), box-shadow var(--t180);
     }
-    .pill{
+    .search .ic{ opacity:.85; font-size:14px; }
+    .search input{
+      width:100%;
+      border:0;
+      outline:none;
+      background: transparent;
+      color: var(--txt);
+      font-size:13.5px;
+      font-weight:850;
+    }
+    .search input::placeholder{ color: rgba(220,226,255,.55); }
+    .search:focus-within{
+      border-color: rgba(167,139,250,.40);
+      box-shadow: 0 0 0 3px rgba(167,139,250,.12);
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .ctl{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding: 10px 12px;
+      padding: 7px 10px;
       border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 8px 18px rgba(0,0,0,.28);
-      font-weight:900;
+      background: var(--panel2);
+      border: 1px solid var(--line);
       font-size:12px;
+      font-weight:950;
       color: var(--txt);
-      max-width:100%;
-      line-height:1;
       white-space:nowrap;
     }
-    .pill .mut{ color:var(--muted); font-weight:800; }
+    .ctl .mut{ color: var(--muted); font-weight:850; }
 
-    .searchBox{
-      margin: 10px 0 12px;
-      padding: 10px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-    }
-    .searchBox label{
-      display:block;
+    select.sel{
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      color: var(--txt);
+      padding: 7px 10px;
+      border-radius: 12px;
+      font-weight:950;
       font-size:12px;
-      color:var(--muted);
-      margin: 0 0 8px;
-      font-weight:900;
-      letter-spacing:.4px;
-    }
-    .searchBox input{
-      width:100%;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(10,16,40,.35);
-      color:#fff;
       outline:none;
-      font-size:14px;
     }
-    .searchBox input::placeholder{ color: rgba(233,238,251,.75); }
 
-    .filters{ display:grid; gap:10px; margin-top: 10px; }
-    .filterTitle{
-      font-size:12px;
-      color:var(--muted);
-      font-weight:900;
-      letter-spacing:.4px;
-      padding: 0 4px;
-    }
-    .chips{ display:flex; flex-wrap:wrap; gap:8px; }
-
-    .chip{
+    .btn{
       cursor:pointer;
       user-select:none;
-      border: 1px solid rgba(255,255,255,.16);
-      padding: 9px 12px;
-      border-radius: 999px;
-      font-weight:900;
-      font-size:12.5px;
-      background: rgba(255,255,255,.10);
-      color:#fff;
-      box-shadow: 0 10px 20px rgba(0,0,0,.20);
-      opacity:.95;
-      transition: transform .12s ease, opacity .12s ease;
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      color: var(--txt);
+      padding: 7px 10px;
+      border-radius: 12px;
+      font-weight:950;
+      font-size:12px;
+      white-space:nowrap;
+      transition: transform var(--t120), background var(--t180), border-color var(--t180), opacity var(--t180);
     }
-    .chip:hover{ transform: translateY(-1px); opacity:1; }
-    .chip.active{ outline: 2px solid rgba(207,227,255,.35); opacity:1; }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
+    .btn:active{ transform: translateY(0); opacity:.92; }
+    .btn.on{
+      border-color: rgba(167,139,250,.45);
+      background: rgba(167,139,250,.10);
+    }
 
-    .sideNote{
-      margin-top: 12px;
-      padding: 12px 12px;
-      border-radius: 16px;
+    /* ===== Body grid ===== */
+    .body{
+      display:grid;
+      grid-template-columns: 220px minmax(0,1fr); /* ✅ 更窄 */
+      gap: var(--gap);
+      padding: 10px;
+    }
+
+    /* ===== Sidebar (導覽) ===== */
+    .side{
+      align-self:start;
+      position:sticky;
+      top: 62px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      overflow:hidden;
+      box-shadow: 0 10px 28px rgba(0,0,0,.28);
+    }
+    .sideHead{
+      padding: 10px 10px 8px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .sideHead .h{
+      margin:0;
+      font-size:12px;
+      letter-spacing:.6px;
+      color: rgba(220,226,255,.78);
+      font-weight:1000;
+    }
+
+    .nav{
+      padding: 8px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .navBtn{
+      width:100%;
+      cursor:pointer;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--txt);
+      border-radius: 12px;
+      padding: 8px 9px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-weight:950;
+      text-align:left;
+      transition: transform var(--t120), background var(--t180), border-color var(--t180), opacity var(--t180);
+    }
+    .navBtn:hover{
+      transform: translateY(-1px);
       background: rgba(255,255,255,.05);
-      border: 1px dashed rgba(255,255,255,.16);
-      color: var(--muted);
-      font-size: 12.5px;
+      border-color: rgba(255,255,255,.06);
+    }
+    .navBtn:active{ transform: translateY(0); opacity:.92; }
+    .navBtn.active{
+      background: var(--accentBg);
+      border-color: rgba(167,139,250,.28);
+    }
+    .navLeft{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .dot{
+      width:9px;height:9px;border-radius:999px;
+      background: rgba(255,255,255,.22);
+      flex:0 0 auto;
+    }
+    .navBtn.active .dot{ background: rgba(167,139,250,.90); }
+
+    .navLabel{
+      min-width:0;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+      font-size:13px;
+    }
+    .badge{
+      flex:0 0 auto;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      color: rgba(220,226,255,.85);
+      font-size: 11.5px;
+      font-weight:1000;
+    }
+
+    .sideFoot{
+      padding: 10px 10px 12px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      color: rgba(220,226,255,.65);
+      font-size: 12px;
       line-height: 1.55;
     }
     .kbd{
       display:inline-block;
       padding: 1px 7px;
       border-radius: 8px;
-      border: 1px solid rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
       color: var(--txt);
       font-weight:900;
@@ -207,298 +312,402 @@
       margin: 0 2px;
     }
 
-    /* Main */
-    .main{ padding: 14px; min-width:0; } /* ✅ 避免被擠出水平捲動 */
-
-    .topBar{
+    /* ===== Main ===== */
+    .main{
+      min-width:0;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      overflow:hidden;
+      box-shadow: 0 10px 28px rgba(0,0,0,.28);
+    }
+    .mainHead{
+      padding: 10px 10px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
       display:flex;
       align-items:flex-end;
       justify-content:space-between;
-      gap:12px;
+      gap: 10px;
       flex-wrap:wrap;
-      padding: 8px 8px 10px;
     }
-
-    .titleWrap h2{
+    .mainHead .ttl{
       margin:0;
-      font-size: 22px;
-      letter-spacing:.6px;
       font-family:"Noto Serif TC","Microsoft JhengHei",serif;
+      font-size:18px;
+      letter-spacing:.6px;
       color:#fff;
-      text-shadow: 0 10px 28px rgba(0,0,0,.35);
     }
-    .titleWrap p{
+    .mainHead .sub{
       margin:6px 0 0;
       color: var(--muted);
-      font-size: 13px;
-      font-weight:800;
+      font-size:12.8px;
+      font-weight:850;
     }
-
-    .statRow{
+    .stats{
       display:flex;
-      gap:10px;
+      gap:8px;
       flex-wrap:wrap;
       justify-content:flex-end;
       align-items:center;
     }
     .stat{
-      padding: 9px 12px;
+      padding: 7px 10px;
       border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 10px 22px rgba(0,0,0,.26);
-      font-weight:900;
+      background: var(--panel2);
+      border: 1px solid var(--line);
       font-size:12px;
-      color: var(--txt);
+      font-weight:950;
       white-space:nowrap;
     }
     .stat b{ color:#fff; }
-    .stat .mini{ color: var(--muted); font-weight:800; margin-left:6px; }
+    .stat .m{ color: var(--muted); font-weight:850; margin-left:6px; }
 
-    .sections{ display:grid; gap: 14px; padding: 6px; min-width:0; }
-
-    .section{
-      border-radius: var(--radius);
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.12);
-      overflow:hidden;
-      box-shadow: var(--shadow2);
+    /* ===== Content ===== */
+    .content{
+      padding: 10px;
+      display:grid;
+      gap:10px;
       min-width:0;
     }
 
+    .section{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(15,17,23,.40);
+      border-radius: var(--r);
+      overflow:hidden;
+      min-width:0;
+
+      /* 進場：預設先藏 */
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
     .sectionHead{
+      padding: 9px 10px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      padding: 12px 14px;
-      background: rgba(255,255,255,.05);
-      border-bottom: 1px solid rgba(255,255,255,.10);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
     }
     .sectionHead .name{
       font-weight:1000;
-      letter-spacing:.6px;
-      color:#fff;
       font-size: 13px;
-      opacity:.95;
+      letter-spacing:.4px;
     }
     .sectionHead .count{
-      font-weight:1000;
       color: var(--muted);
+      font-weight:950;
       font-size: 12px;
     }
 
-    .grid{
-      display:grid;
-      gap: 12px;
-      padding: 12px;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      min-width:0;
-    }
-
-    .item{
-      position:relative;
-      border-radius: 16px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 12px 26px rgba(0,0,0,.28);
-      overflow:hidden;
-      transition: transform .14s ease, border-color .14s ease, box-shadow .14s ease;
-      min-width:0;
-    }
-    .item:hover{
-      transform: translateY(-2px);
-      border-color: rgba(207,227,255,.28);
-      box-shadow: 0 16px 34px rgba(0,0,0,.38);
-    }
-
-    .itemInner{
-      padding: 14px 14px 12px;
-      display:flex;
-      gap:12px;
-      align-items:flex-start;
-      justify-content:space-between;
-      min-width:0;
-    }
-
-    .leftCol{ min-width:0; }
-    .itemTitle{
-      margin:0;
-      font-size: 16px;
-      letter-spacing:.2px;
-      font-weight:1000;
-      line-height:1.25;
-      color:#fff;
-      word-break:break-word;
-    }
-
-    .itemMeta{
-      margin-top: 7px;
-      font-size: 12px;
-      color: var(--muted);
-      font-weight:900;
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      opacity:.95;
-    }
-
-    /* ✅ 小分類只留一個（修掉「出現兩次」） */
-    .tag{
-      display:inline-flex;
-      gap:6px;
-      align-items:center;
-      padding: 4px 9px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      color: var(--muted);
-      font-weight:900;
-      font-size: 11px;
-    }
-
-    .actions{
+    .table{
       display:flex;
       flex-direction:column;
-      gap:8px;
-      align-items:flex-end;
-      flex:0 0 auto;
-      margin-left: 10px;
     }
 
-    .go{
+    .thead{
+      display:grid;
+      grid-template-columns: 1fr 140px 170px;
+      gap:10px;
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: rgba(220,226,255,.70);
+      font-size: 12px;
+      font-weight:1000;
+    }
+
+    .tr{
+      display:grid;
+      grid-template-columns: 1fr 140px 170px;
+      gap:10px;
+      padding: 9px 10px;  /* ✅ 密度更高 */
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      align-items:center;
+      min-width:0;
+
+      /* 進場：預設先藏 */
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    .tr:last-child{ border-bottom:0; }
+    .tr:hover{ background: rgba(255,255,255,.035); }
+
+    .tTitle{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .tTitle .name{
+      font-weight:1000;
+      font-size: 14.5px;
+      line-height: 1.25;
+      word-break:break-word;
+    }
+    .tTitle .kw{
+      font-size: 12px;
+      color: rgba(220,226,255,.58);
+      font-weight:850;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .tag{
       display:inline-flex;
       align-items:center;
-      gap:8px;
-      text-decoration:none;
-      color:#fff;
-      font-weight:1000;
-      font-size: 12.5px;
-      padding: 9px 12px;
-      border-radius: 12px;
-      background: rgba(141,215,255,.14);
-      border: 1px solid rgba(141,215,255,.28);
-      box-shadow: 0 10px 22px rgba(0,0,0,.22);
-      transition: transform .12s ease;
+      justify-content:flex-start;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      color: rgba(220,226,255,.80);
+      font-weight:950;
+      font-size: 11.5px;
+      width: fit-content;
+      max-width: 100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
       white-space:nowrap;
     }
-    .go:hover{ transform: translateY(-1px); }
 
-    .fav{
+    .tActs{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .go, .fav{
       cursor:pointer;
-      user-select:none;
-      border:1px solid rgba(255,255,255,.14);
-      padding: 7px 10px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.06);
+      text-decoration:none;
       color: var(--txt);
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      padding: 8px 10px;
+      border-radius: 12px;
       font-weight:1000;
       font-size: 12px;
       white-space:nowrap;
+      transition: transform var(--t120), background var(--t180), border-color var(--t180), opacity var(--t180);
     }
+    .go:hover, .fav:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.20); }
+    .go:active, .fav:active{ transform: translateY(0); opacity:.92; }
+
     .fav.on{
-      border-color: rgba(141,215,255,.38);
-      box-shadow: 0 10px 22px rgba(141,215,255,.10);
+      border-color: rgba(167,139,250,.45);
+      background: rgba(167,139,250,.10);
     }
 
     .empty{
-      padding: 18px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.05);
+      padding: 14px 12px;
+      border-radius: var(--r);
       border: 1px dashed rgba(255,255,255,.16);
-      color: var(--muted);
-      font-weight:900;
+      background: rgba(15,17,23,.35);
+      color: rgba(220,226,255,.70);
       text-align:center;
+      font-weight:950;
       margin: 10px;
     }
 
     footer{
-      grid-column: 1 / -1;
       text-align:center;
-      color: rgba(231,238,255,.78);
+      color: rgba(231,238,255,.60);
       font-size: 12.5px;
-      padding: 14px 8px 22px;
-      text-shadow: 0 10px 26px rgba(0,0,0,.45);
+      padding: 14px 10px 22px;
     }
 
-    @media (max-width: 960px){
-      .app{ grid-template-columns: 1fr; padding: 12px; }
+    /* ===== Density mode ===== */
+    .dense .topbarInner{ padding: 8px 9px; }
+    .dense .body{ padding: 8px; gap: 8px; }
+    .dense .mainHead{ padding: 9px 9px; }
+    .dense .content{ padding: 8px; gap: 8px; }
+    .dense .tr{ padding: 8px 10px; }
+    .dense .thead{ padding: 7px 10px; }
+    .dense .navBtn{ padding: 7px 8px; }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 980px){
+      .body{ grid-template-columns: 1fr; }
       .side{ position:relative; top:auto; }
+      .brand{ min-width:0; }
+      .actions{ justify-content:flex-start; width:100%; }
     }
 
+    @media (max-width: 760px){
+      .thead{ display:none; }
+      .tr{
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .tActs{ justify-content:flex-start; }
+    }
+
+    /* ===== 動畫與特效 ===== */
+
+    /* render 後套 class */
+    .section.in, .tr.in{
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity var(--t260), transform var(--t260);
+    }
+
+    /* pill loading shimmer */
+    .ctl.loading{
+      position:relative;
+      overflow:hidden;
+    }
+    .ctl.loading:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      transform: translateX(-120%);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+      animation: shimmer 1.1s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes shimmer{
+      to{ transform: translateX(120%); }
+    }
+
+    /* Ripple */
+    .ripple{ position:relative; overflow:hidden; }
+    .ripple .rip{
+      position:absolute;
+      border-radius:999px;
+      transform: scale(0);
+      opacity:.35;
+      background: rgba(255,255,255,.55);
+      animation: rip 520ms var(--ease);
+      pointer-events:none;
+    }
+    @keyframes rip{
+      to{ transform: scale(3.2); opacity:0; }
+    }
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(12px);
+      background: rgba(15,17,23,.92);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--txt);
+      padding: 10px 12px;
+      border-radius: 999px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.40);
+      font-weight: 950;
+      font-size: 12.5px;
+      opacity:0;
+      transition: opacity var(--t180), transform var(--t180);
+      z-index: 999;
+      pointer-events:none;
+      white-space:nowrap;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* 減少動作：自動關動畫 */
     @media (prefers-reduced-motion: reduce){
-      .item, .chip, .go{ transition:none; }
-      canvas#space{ display:none; }
+      .navBtn, .btn, .go, .fav, .search{ transition:none; }
+      .section, .tr{ opacity:1; transform:none; }
+      .ctl.loading:after{ display:none; }
+      .ripple .rip{ display:none; }
     }
   </style>
 </head>
 
 <body>
-  <canvas id="space" aria-hidden="true"></canvas>
+  <div class="noise" aria-hidden="true"></div>
 
-  <div class="app">
-    <!-- Sidebar -->
-    <aside class="panel side" aria-label="側欄">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <h1>147自測網站入口</h1>
-          <div class="sub">分流站｜保留原網址與名稱</div>
+  <div class="app" id="app">
+
+    <!-- Topbar -->
+    <header class="topbar" aria-label="上方列">
+      <div class="topbarInner">
+        <div class="brand">
+          <div class="logo" style="background-image:url('OIP.jpg'); background-size:cover; background-position:center; border:none;"></div>
+
+          <div class="brandTxt">
+            <div class="t">147自測網站入口</div>
+            <div class="s">目前版本-2.1
+            </div>
+          </div>
+        </div>
+
+        <div class="search" aria-label="搜尋">
+          <span class="ic" aria-hidden="true">🔎</span>
+          <input id="q" type="search" placeholder="搜尋:" autocomplete="off" />
+        </div>
+
+        <div class="actions" aria-label="控制">
+          <span class="ctl" id="clockPill">🕒 <span class="mut">載入中…</span></span>
+          <span class="ctl" id="weatherPill">⏳ <span class="mut">天氣讀取中…</span></span>
+
+          <select class="sel" id="sortSel" title="排序">
+            <option value="smart">排序：智慧</option>
+            <option value="title">排序：標題 A→Z</option>
+            <option value="group">排序：分類</option>
+            <option value="recent">排序：最近開啟</option>
+            <option value="fav">排序：收藏優先</option>
+          </select>
+
+          <button class="btn" id="btnGroup" type="button" title="群組/扁平">群組：開</button>
+          <button class="btn" id="btnDense" type="button" title="密度">密度：一般</button>
         </div>
       </div>
+    </header>
 
-      <div class="metaRow" aria-label="資訊">
-        <div class="pill" id="clockPill">🕒 <span class="mut">載入中…</span></div>
-        <div class="pill" id="weatherPill">⏳ <span class="mut">天氣讀取中…</span></div>
-      </div>
+    <!-- Body -->
+    <div class="body">
 
-      <div class="searchBox">
-        <label for="q">搜尋（按 <span class="kbd">/</span> 直接輸入）</label>
-        <input id="q" type="search" placeholder="搜尋：M1 / M9 / 147 / CAA / 技藝…" autocomplete="off" />
-      </div>
-
-      <div class="filters">
-        <div class="filterTitle">分類篩選</div>
-        <div class="chips" id="chips"></div>
-      </div>
-
-      <div class="sideNote">
-        <div style="font-weight:1000; color:#fff; margin-bottom:6px;">快捷鍵</div>
-        <div>• <span class="kbd">/</span> 聚焦搜尋　• <span class="kbd">Esc</span> 清空搜尋</div>
-        <div style="margin-top:8px; color:var(--muted2);">
-          提示：可用「收藏」固定常用測驗；最近開啟會自動記錄。
+      <!-- Sidebar -->
+      <aside class="side" aria-label="導覽">
+        <div class="sideHead">
+          <p class="h">分類</p>
         </div>
-        <div style="margin-top:10px; color:var(--muted2);">
-          |版權及源代碼所屬航機系008沈崑宸 | 建議使用電腦版網頁
+        <div class="nav" id="nav"></div>
+        <div class="sideFoot">
+          快捷鍵：<span class="kbd">/</span> 聚焦搜尋、<span class="kbd">Esc</span> 清空<br/>
+          提示：收藏固定常用；最近開啟會記錄。<br/>
+          |版權及源代碼所屬航機系008沈崑宸| |建議使用電腦版網頁|
         </div>
-      </div>
-    </aside>
+      </aside>
 
-    <!-- Main -->
-    <main class="panel main" aria-label="內容">
-      <div class="topBar">
-        <div class="titleWrap">
-          <h2>147自測網站</h2>
-          <p>147自主測驗平台 ✈️｜請在左側搜尋或點分類。</p>
+      <!-- Main -->
+      <main class="main" aria-label="內容">
+        <div class="mainHead">
+          <div>
+            <div class="ttl" id="viewTitle">全部</div>
+            <div class="sub" id="viewSub">系統化清單介面｜可排序/群組/密度</div>
+          </div>
+          <div class="stats">
+            <div class="stat" id="statTotal">總數 <b>0</b><span class="m">項</span></div>
+            <div class="stat" id="statShown">顯示 <b>0</b><span class="m">項</span></div>
+            <div class="stat" id="statFav">收藏 <b>0</b><span class="m">項</span></div>
+          </div>
         </div>
-        <div class="statRow" aria-label="統計">
-          <div class="stat" id="statTotal">總數 <b>0</b><span class="mini">項</span></div>
-          <div class="stat" id="statShown">顯示 <b>0</b><span class="mini">項</span></div>
-          <div class="stat" id="statFav">收藏 <b>0</b><span class="mini">項</span></div>
+
+        <div class="content" id="content"></div>
+
+        <div class="empty" id="empty" style="display:none;">
+          找不到符合的項目（試試看縮短關鍵字或切回「全部」）
         </div>
-      </div>
+      </main>
 
-      <div class="sections" id="sections"></div>
-
-      <div class="empty" id="empty" style="display:none;">
-        找不到符合的項目（試試看縮短關鍵字或切回「全部」）
-      </div>
-    </main>
+    </div>
 
     <footer>
       © 2025 航機系 008 沈崑宸 | Powered by GitHub Pages | 如果你覺得這網頁很棒可以請我喝飲料真的 | ig:kun.chen.0826
     </footer>
   </div>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
 
   <script>
     /* =========================
@@ -512,16 +721,16 @@
       {section:'147', group:'147入學考', title:'📘 M10-入學考', url:'https://hisausage7.github.io/147in/', keywords:'147 入學考 入學 M10'},
 
       // 147校內考
-      {section:'internal', group:'147校內考', title:'⚙️ M1-校內考', url:'https://hisausage7.github.io/147M1/', keywords:'M1 校內考 147M1'},
-      {section:'internal', group:'147校內考', title:'⚙️ M3-校內考(建置中)', url:'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1', keywords:'M3 校內考 147M3 建置中'},
-      {section:'internal', group:'147校內考', title:'⚙️ M6-校內考(無6.3及6.11)', url:'https://hisausage7.github.io/147M6/', keywords:'M6 校內考 147M6 無6.3 無6.11'},
-      {section:'internal', group:'147校內考', title:'⚙️ M9-校內考', url:'https://hisausage7.github.io/147M9/', keywords:'M9 校內考 147M9'},
-      {section:'internal', group:'147校內考', title:'⚙️ M10-校內考(建置中)', url:'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1', keywords:'M10 校內考 147M10 建置中'},
-      {section:'internal', group:'147校內考', title:'⚙️ M15-校內考', url:'https://hisausage7.github.io/147M15/', keywords:'M15 校內考 147M15'},
+      {section:'int', group:'147校內考', title:'⚙️ M1-校內考', url:'https://hisausage7.github.io/147M1/', keywords:'M1 校內考 147M1'},
+      {section:'int', group:'147校內考', title:'⚙️ M3-校內考(建置中)', url:'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1', keywords:'M3 校內考 147M3 建置中'},
+      {section:'int', group:'147校內考', title:'⚙️ M6-校內考(無6.3及6.11)', url:'https://hisausage7.github.io/147M6/', keywords:'M6 校內考 147M6 無6.3 無6.11'},
+      {section:'int', group:'147校內考', title:'⚙️ M9-校內考', url:'https://hisausage7.github.io/147M9/', keywords:'M9 校內考 147M9'},
+      {section:'int', group:'147校內考', title:'⚙️ M10-校內考(建置中)', url:'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1', keywords:'M10 校內考 147M10 建置中'},
+      {section:'int', group:'147校內考', title:'⚙️ M15-校內考', url:'https://hisausage7.github.io/147M15/', keywords:'M15 校內考 147M15'},
 
       // 147期中/末考
-      {section:'internal', group:'147期中/末考', title:'⚙️ M6-期末考', url:'https://hisausage7.github.io/147-M6mid/', keywords:'M6 期中考 147M6mid'},
-      {section:'internal', group:'147期中/末考', title:'⚙️ M15-期末考', url:'https://hisausage7.github.io/M15-mid/', keywords:'M15 期末考 M15-mid'},
+      {section:'test', group:'147期中/末考', title:'⚙️ M6-期末考', url:'https://hisausage7.github.io/147-M6mid/', keywords:'M6 期中考 147M6mid'},
+      {section:'test', group:'147期中/末考', title:'⚙️ M15-期末考', url:'https://hisausage7.github.io/M15-mid/', keywords:'M15 期末考 M15-mid'},
 
       // 147CAA
       {section:'caa', group:'147CAA', title:'🛩️ M1-CAA', url:'https://hisausage7.github.io/147CAA-M1/', keywords:'CAA 民航 147CAA M1'},
@@ -551,7 +760,8 @@
     var FILTERS = [
       {id:'all', label:'全部'},
       {id:'147', label:'147入學考'},
-      {id:'internal', label:'147校內相關'},
+      {id:'int', label:'147校內考'},
+      {id:'test', label:'147期中/末考'},
       {id:'caa', label:'147CAA'},
       {id:'skill', label:'技藝競賽'},
       {id:'fav', label:'收藏'}
@@ -559,6 +769,7 @@
 
     var LS_FAV = 'portal_favs_v1';
     var LS_REC = 'portal_recent_v1';
+    var LS_UI  = 'portal_ui_v1';
 
     function loadJSON(key, fallback){
       try{
@@ -573,50 +784,32 @@
     }
 
     var favs = loadJSON(LS_FAV, {});
-    var recent = loadJSON(LS_REC, []);
+    var recent = loadJSON(LS_REC, []); /* [{url,title,ts}] */
+    var ui = loadJSON(LS_UI, { grouped:true, dense:false, sort:'smart' });
+
     var state = { activeFilter:'all', query:'' };
 
-    var $chips = document.getElementById('chips');
-    var $sections = document.getElementById('sections');
+    var $app = document.getElementById('app');
+    var $nav = document.getElementById('nav');
     var $q = document.getElementById('q');
+    var $content = document.getElementById('content');
     var $empty = document.getElementById('empty');
+
     var $statTotal = document.getElementById('statTotal');
     var $statShown = document.getElementById('statShown');
     var $statFav = document.getElementById('statFav');
+
+    var $viewTitle = document.getElementById('viewTitle');
+    var $viewSub = document.getElementById('viewSub');
+
+    var $sortSel = document.getElementById('sortSel');
+    var $btnGroup = document.getElementById('btnGroup');
+    var $btnDense = document.getElementById('btnDense');
 
     function el(tag, cls){
       var n = document.createElement(tag);
       if(cls) n.className = cls;
       return n;
-    }
-
-    function buildChips(){
-      $chips.innerHTML = '';
-      for(var i=0;i<FILTERS.length;i++){
-        (function(f){
-          var b = el('button','chip');
-          b.type = 'button';
-          b.setAttribute('data-id', f.id);
-          b.textContent = f.label;
-          if(f.id === state.activeFilter) b.classList.add('active');
-          b.addEventListener('click', function(){
-            state.activeFilter = f.id;
-            buildChips();
-            render();
-          });
-          $chips.appendChild(b);
-        })(FILTERS[i]);
-      }
-    }
-
-    function groupBy(arr, keyFn){
-      var map = {};
-      for(var i=0;i<arr.length;i++){
-        var k = keyFn(arr[i]);
-        if(!map[k]) map[k]=[];
-        map[k].push(arr[i]);
-      }
-      return map;
     }
 
     function isFav(item){ return !!favs[item.url]; }
@@ -629,7 +822,7 @@
           if(recent[i] && recent[i].url !== item.url) next.push(recent[i]);
         }
         next.unshift({url:item.url, title:item.title, ts: now});
-        if(next.length > 8) next = next.slice(0,8);
+        if(next.length > 10) next = next.slice(0,10);
         recent = next;
         saveJSON(LS_REC, recent);
       }catch(e){}
@@ -647,64 +840,113 @@
       return hay.indexOf(q) > -1;
     }
 
-    function renderItem(item){
-      var box = el('div','item');
-      var inner = el('div','itemInner');
-
-      var left = el('div','leftCol');
-      var h = el('h3','itemTitle');
-      h.textContent = item.title;
-
-      var meta = el('div','itemMeta');
-
-      /* ✅ 小分類只做一次：只顯示「群組」(例如 147入學考/147CAA/技藝競賽...) */
-      var t1 = el('span','tag');
-      t1.textContent = item.group;
-      meta.appendChild(t1);
-
-      left.appendChild(h);
-      left.appendChild(meta);
-
-      var acts = el('div','actions');
-
-      var a = el('a','go');
-      a.href = item.url;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.textContent = '進入測驗 ↗';
-      a.addEventListener('click', function(){ addRecent(item); });
-
-      var f = el('button','fav');
-      f.type = 'button';
-      function syncFavBtn(){
-        var on = isFav(item);
-        if(on){
-          f.classList.add('on');
-          f.textContent = '★ 已收藏';
-        }else{
-          f.classList.remove('on');
-          f.textContent = '☆ 收藏';
-        }
+    function groupBy(arr, keyFn){
+      var map = {};
+      for(var i=0;i<arr.length;i++){
+        var k = keyFn(arr[i]);
+        if(!map[k]) map[k]=[];
+        map[k].push(arr[i]);
       }
-      syncFavBtn();
-      f.addEventListener('click', function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        if(isFav(item)) delete favs[item.url];
-        else favs[item.url] = true;
-        saveJSON(LS_FAV, favs);
-        syncFavBtn();
-        renderStats();
-        if(state.activeFilter === 'fav') render();
+      return map;
+    }
+
+    function getRecTs(url){
+      for(var i=0;i<recent.length;i++){
+        if(recent[i] && recent[i].url === url) return recent[i].ts || 0;
+      }
+      return 0;
+    }
+
+    function sortItems(arr){
+      var mode = ui.sort || 'smart';
+      var a = arr.slice(0);
+
+      function cmpText(x,y){
+        x = (x||'').toLowerCase();
+        y = (y||'').toLowerCase();
+        if(x<y) return -1;
+        if(x>y) return 1;
+        return 0;
+      }
+
+      a.sort(function(p,q){
+        if(mode === 'title'){
+          return cmpText(p.title, q.title);
+        }
+        if(mode === 'group'){
+          var g1 = cmpText(p.group, q.group);
+          if(g1!==0) return g1;
+          return cmpText(p.title, q.title);
+        }
+        if(mode === 'recent'){
+          return (getRecTs(q.url) - getRecTs(p.url)) || cmpText(p.title, q.title);
+        }
+        if(mode === 'fav'){
+          var f1 = (isFav(q)?1:0) - (isFav(p)?1:0);
+          if(f1!==0) return f1;
+          return cmpText(p.title, q.title);
+        }
+        /* smart：收藏 > 最近 > 標題 */
+        var sf = (isFav(q)?1:0) - (isFav(p)?1:0);
+        if(sf!==0) return sf;
+        var sr = (getRecTs(q.url) - getRecTs(p.url));
+        if(sr!==0) return sr;
+        return cmpText(p.title, q.title);
       });
 
-      acts.appendChild(a);
-      acts.appendChild(f);
+      return a;
+    }
 
-      inner.appendChild(left);
-      inner.appendChild(acts);
-      box.appendChild(inner);
-      return box;
+    function countByFilter(id){
+      if(id === 'all') return DATA.length;
+      if(id === 'fav'){
+        var c=0;
+        for(var i=0;i<DATA.length;i++) if(isFav(DATA[i])) c++;
+        return c;
+      }
+      var n=0;
+      for(var j=0;j<DATA.length;j++) if(DATA[j].section === id) n++;
+      return n;
+    }
+
+    function getFilterLabel(id){
+      for(var i=0;i<FILTERS.length;i++){
+        if(FILTERS[i].id === id) return FILTERS[i].label;
+      }
+      return '全部';
+    }
+
+    function buildNav(){
+      $nav.innerHTML = '';
+      for(var i=0;i<FILTERS.length;i++){
+        (function(f){
+          var b = el('button','navBtn');
+          b.type = 'button';
+          if(f.id === state.activeFilter) b.classList.add('active');
+
+          var left = el('div','navLeft');
+          var dot = el('span','dot');
+          var lab = el('span','navLabel');
+          lab.textContent = f.label;
+
+          left.appendChild(dot);
+          left.appendChild(lab);
+
+          var badge = el('span','badge');
+          badge.textContent = String(countByFilter(f.id));
+
+          b.appendChild(left);
+          b.appendChild(badge);
+
+          b.addEventListener('click', function(){
+            state.activeFilter = f.id;
+            buildNav();
+            render();
+          });
+
+          $nav.appendChild(b);
+        })(FILTERS[i]);
+      }
     }
 
     function renderStats(){
@@ -715,47 +957,199 @@
       var shown = 0;
       for(var i=0;i<DATA.length;i++){ if(matchItem(DATA[i])) shown++; }
 
-      $statTotal.innerHTML = '總數 <b>'+ total +'</b><span class="mini">項</span>';
-      $statShown.innerHTML = '顯示 <b>'+ shown +'</b><span class="mini">項</span>';
-      $statFav.innerHTML = '收藏 <b>'+ favCount +'</b><span class="mini">項</span>';
+      $statTotal.innerHTML = '總數 <b>'+ total +'</b><span class="m">項</span>';
+      $statShown.innerHTML = '顯示 <b>'+ shown +'</b><span class="m">項</span>';
+      $statFav.innerHTML = '收藏 <b>'+ favCount +'</b><span class="m">項</span>';
+    }
+
+    function toast(msg){
+      var t = document.getElementById('toast');
+      if(!t) return;
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._tm);
+      t._tm = setTimeout(function(){
+        t.classList.remove('show');
+      }, 1200);
+    }
+
+    function renderRow(item){
+      var tr = el('div','tr');
+
+      var td1 = el('div','tTitle');
+      var nm = el('div','name');
+      nm.textContent = item.title;
+
+      var kw = el('div','kw');
+      kw.textContent = item.keywords || '';
+
+      td1.appendChild(nm);
+      td1.appendChild(kw);
+
+      var td2 = el('div','tGroup');
+      var tag = el('span','tag');
+      tag.textContent = item.group;
+      td2.appendChild(tag);
+
+      var td3 = el('div','tActs');
+
+      var go = el('a','go');
+      go.href = item.url;
+      go.target = '_blank';
+      go.rel = 'noopener';
+      go.textContent = '進入 ↗';
+      go.addEventListener('click', function(){ addRecent(item); });
+
+      var fav = el('button','fav');
+      fav.type = 'button';
+      function syncFav(){
+        if(isFav(item)){
+          fav.classList.add('on');
+          fav.textContent = '★ 收藏';
+        }else{
+          fav.classList.remove('on');
+          fav.textContent = '☆ 收藏';
+        }
+      }
+      syncFav();
+
+      fav.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        if(isFav(item)) delete favs[item.url];
+        else favs[item.url] = true;
+
+        saveJSON(LS_FAV, favs);
+        syncFav();
+        renderStats();
+        buildNav();
+        toast(isFav(item) ? '已加入收藏 ★' : '已取消收藏');
+
+        if(state.activeFilter === 'fav') render();
+      });
+
+      td3.appendChild(go);
+      td3.appendChild(fav);
+
+      tr.appendChild(td1);
+      tr.appendChild(td2);
+      tr.appendChild(td3);
+      return tr;
     }
 
     function renderSection(title, items){
-      var wrap = el('section','section');
+      var sec = el('section','section');
+
       var head = el('div','sectionHead');
       var nm = el('div','name'); nm.textContent = title;
       var ct = el('div','count'); ct.textContent = items.length + ' 項';
       head.appendChild(nm);
       head.appendChild(ct);
 
-      var grid = el('div','grid');
+      var table = el('div','table');
+
+      var thead = el('div','thead');
+      var c1 = el('div'); c1.textContent = '標題';
+      var c2 = el('div'); c2.textContent = '分類';
+      var c3 = el('div'); c3.textContent = '操作';
+      thead.appendChild(c1); thead.appendChild(c2); thead.appendChild(c3);
+
+      table.appendChild(thead);
+
       for(var i=0;i<items.length;i++){
-        grid.appendChild(renderItem(items[i]));
+        table.appendChild(renderRow(items[i]));
       }
-      wrap.appendChild(head);
-      wrap.appendChild(grid);
-      return wrap;
+
+      sec.appendChild(head);
+      sec.appendChild(table);
+      return sec;
+    }
+
+    function renderFlat(list){
+      $content.appendChild(renderSection('清單', list));
+    }
+
+    function renderGrouped(list){
+      var grouped = groupBy(list, function(it){ return it.group; });
+      var order = ['147入學考','147校內考','147期中/末考','147CAA','技藝競賽'];
+
+      for(var i=0;i<order.length;i++){
+        var g = order[i];
+        if(grouped[g] && grouped[g].length){
+          $content.appendChild(renderSection(g, grouped[g]));
+        }
+      }
+      for(var k in grouped){
+        if(!grouped.hasOwnProperty(k)) continue;
+        var inOrder = false;
+        for(var j=0;j<order.length;j++){ if(order[j]===k){ inOrder=true; break; } }
+        if(inOrder) continue;
+        $content.appendChild(renderSection(k, grouped[k]));
+      }
+    }
+
+    function applyUI(){
+      if(ui.dense) $app.classList.add('dense');
+      else $app.classList.remove('dense');
+
+      $btnGroup.textContent = ui.grouped ? '群組：開' : '群組：關';
+      if(ui.grouped) $btnGroup.classList.add('on'); else $btnGroup.classList.remove('on');
+
+      $btnDense.textContent = ui.dense ? '密度：高' : '密度：一般';
+      if(ui.dense) $btnDense.classList.add('on'); else $btnDense.classList.remove('on');
+
+      $sortSel.value = ui.sort || 'smart';
+    }
+
+    function animateIn(){
+      var prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(prefersReduce) return;
+
+      var secs = document.querySelectorAll('.section');
+      for(var i=0;i<secs.length;i++){
+        (function(node, idx){
+          node.classList.remove('in');
+          node.style.transitionDelay = (idx*28) + 'ms';
+          setTimeout(function(){ node.classList.add('in'); }, 10);
+        })(secs[i], i);
+      }
+
+      var rows = document.querySelectorAll('.tr');
+      for(var j=0;j<rows.length;j++){
+        (function(node, idx){
+          node.classList.remove('in');
+          node.style.transitionDelay = (Math.min(idx,20)*16) + 'ms';
+          setTimeout(function(){ node.classList.add('in'); }, 10);
+        })(rows[j], j);
+      }
     }
 
     function render(){
-      $sections.innerHTML = '';
+      $content.innerHTML = '';
       $empty.style.display = 'none';
+
+      var label = getFilterLabel(state.activeFilter);
+      $viewTitle.textContent = label;
+
+      var q = (state.query||'').trim();
+      $viewSub.textContent = q ? ('搜尋：「'+ q +'」｜可排序/群組/密度') : 'ALL';
 
       var list = [];
       for(var i=0;i<DATA.length;i++){
         if(matchItem(DATA[i])) list.push(DATA[i]);
       }
 
+      list = sortItems(list);
       renderStats();
 
-      /* all + 無搜尋才顯示收藏/最近 */
-      if(state.activeFilter === 'all' && (state.query||'').trim()===''){
+      /* all + 無搜尋：把收藏/最近當「系統區」放最上 */
+      if(state.activeFilter === 'all' && q === ''){
         var favItems = [];
-        for(var i=0;i<DATA.length;i++){
-          if(isFav(DATA[i])) favItems.push(DATA[i]);
-        }
+        for(var a=0;a<DATA.length;a++) if(isFav(DATA[a])) favItems.push(DATA[a]);
+        favItems = sortItems(favItems);
         if(favItems.length){
-          $sections.appendChild(renderSection('★ 收藏', favItems));
+          $content.appendChild(renderSection('★ 收藏', favItems));
         }
 
         var recItems = [];
@@ -769,44 +1163,50 @@
             }
           }
         }
+        recItems = sortItems(recItems);
         if(recItems.length){
-          $sections.appendChild(renderSection('⏱️ 最近開啟', recItems));
+          $content.appendChild(renderSection('⏱️ 最近開啟', recItems));
         }
       }
 
-      var grouped = groupBy(list, function(it){ return it.group; });
-      var order = ['147入學考','147校內考','147期中/末考','147CAA','技藝競賽'];
-
-      var appended = 0;
-      for(var o=0;o<order.length;o++){
-        var name = order[o];
-        if(grouped[name] && grouped[name].length){
-          $sections.appendChild(renderSection(name, grouped[name]));
-          appended += grouped[name].length;
-        }
-      }
-      for(var g in grouped){
-        if(!grouped.hasOwnProperty(g)) continue;
-        var found = false;
-        for(var o2=0;o2<order.length;o2++){ if(order[o2]===g){ found=true; break; } }
-        if(found) continue;
-        if(grouped[g] && grouped[g].length){
-          $sections.appendChild(renderSection(g, grouped[g]));
-          appended += grouped[g].length;
-        }
-      }
-
-      if(appended === 0){
+      if(list.length === 0){
         $empty.style.display = 'block';
+        return;
       }
+
+      if(ui.grouped) renderGrouped(list);
+      else renderFlat(list);
+
+      setTimeout(animateIn, 0);
     }
 
-    buildChips();
+    /* ===== UI controls ===== */
+    $btnGroup.addEventListener('click', function(){
+      ui.grouped = !ui.grouped;
+      saveJSON(LS_UI, ui);
+      applyUI();
+      render();
+    });
+
+    $btnDense.addEventListener('click', function(){
+      ui.dense = !ui.dense;
+      saveJSON(LS_UI, ui);
+      applyUI();
+    });
+
+    $sortSel.addEventListener('change', function(){
+      ui.sort = $sortSel.value || 'smart';
+      saveJSON(LS_UI, ui);
+      render();
+    });
+
+    /* 搜尋 */
     $q.addEventListener('input', function(){
       state.query = $q.value || '';
       render();
     });
 
+    /* 快捷鍵 */
     document.addEventListener('keydown', function(e){
       if(e.key === '/' && document.activeElement !== $q){
         e.preventDefault();
@@ -822,6 +1222,43 @@
         if(document.activeElement === $q) $q.blur();
       }
     });
+
+    /* Ripple：事件委派（btn/nav/go/fav 都有水波） */
+    function makeRipple(elm){
+      if(!elm || !elm.classList) return;
+      if(!elm.classList.contains('ripple')) elm.classList.add('ripple');
+    }
+    function fireRipple(elm, clientX, clientY){
+      if(!elm) return;
+      makeRipple(elm);
+
+      var r = elm.getBoundingClientRect();
+      var size = Math.max(r.width, r.height);
+      var x = clientX - r.left - size/2;
+      var y = clientY - r.top - size/2;
+
+      var s = document.createElement('span');
+      s.className = 'rip';
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = x + 'px';
+      s.style.top = y + 'px';
+
+      elm.appendChild(s);
+      setTimeout(function(){
+        try{ elm.removeChild(s); }catch(e){}
+      }, 560);
+    }
+    document.addEventListener('click', function(e){
+      var t = e.target;
+      while(t && t !== document.body){
+        if(t.classList && (t.classList.contains('btn') || t.classList.contains('navBtn') || t.classList.contains('go') || t.classList.contains('fav'))){
+          fireRipple(t, e.clientX, e.clientY);
+          break;
+        }
+        t = t.parentNode;
+      }
+    }, true);
 
     /* 時鐘 */
     (function(){
@@ -842,6 +1279,8 @@
     /* 天氣（臺中） */
     (function(){
       var pill = document.getElementById('weatherPill');
+      try{ pill.classList.add('loading'); }catch(e){}
+
       function wxMap(code,isNight){
         var map={
           0:{e:'☀️',t:'晴朗'},1:{e:'🌤️',t:'多雲時晴'},2:{e:'⛅',t:'陰晴不定'},3:{e:'☁️',t:'多雲'},
@@ -856,6 +1295,7 @@
         if(isNight && (code===0 || code===1)) item.e='🌙';
         return item;
       }
+
       function fetchTaichung(){
         var lat = 24.067337599276396;
         var lon = 120.71470802813444;
@@ -870,81 +1310,18 @@
           var isNight = (cur.is_day===0);
           var m = wxMap(code, isNight);
           pill.innerHTML = m.e + ' <span class="mut">臺中｜'+ m.t +'・'+ temp +'°C</span>';
+          try{ pill.classList.remove('loading'); }catch(e){}
         }).catch(function(){
           pill.innerHTML = '⚠️ <span class="mut">天氣取得失敗</span>';
+          try{ pill.classList.remove('loading'); }catch(e){}
         });
       }
       fetchTaichung();
     })();
 
-    /* 星星（12fps 省電） */
-    (function(){
-      var canvas = document.getElementById('space');
-      var ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
-      if(!canvas || !ctx) return;
-
-      var w=0,h=0,stars=[], timer=null;
-
-      function resize(){
-        w = canvas.width = window.innerWidth || 800;
-        h = canvas.height = window.innerHeight || 600;
-        initStars();
-        draw();
-      }
-      function starCount(){
-        var area = (w*h)/1e5;
-        var n = Math.floor(area * 3.2);
-        if(n < 180) n = 180;
-        if(n > 1200) n = 1200;
-        return n;
-      }
-      function initStars(){
-        stars.length = 0;
-        var n = starCount();
-        for(var i=0;i<n;i++){
-          stars.push({
-            x: Math.random()*w,
-            y: Math.random()*h,
-            r: Math.random()*1.4 + 0.2,
-            a: 0.25 + Math.random()*0.7,
-            tw: (Math.random()*0.015 + 0.004)
-          });
-        }
-      }
-      function draw(){
-        ctx.clearRect(0,0,w,h);
-        for(var i=0;i<stars.length;i++){
-          var s = stars[i];
-          s.a += (Math.random()-0.5)*s.tw;
-          if(s.a < 0.18) s.a = 0.18;
-          if(s.a > 0.95) s.a = 0.95;
-          ctx.globalAlpha = s.a;
-          ctx.fillStyle = '#fff';
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-          ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-      }
-      function start(){
-        if(timer) return;
-        timer = setInterval(draw, 1000/12);
-      }
-      function stop(){
-        if(timer){ clearInterval(timer); timer=null; }
-      }
-
-      window.addEventListener('resize', resize, {passive:true});
-      document.addEventListener('visibilitychange', function(){
-        if(document.hidden) stop();
-        else start();
-      });
-
-      var prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      resize();
-      if(!prefersReduce) start();
-    })();
-
+    /* init */
+    applyUI();
+    buildNav();
     render();
   </script>
 </body>
