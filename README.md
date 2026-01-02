@@ -423,7 +423,7 @@
             <a href="https://hisausage7.github.io/147-M6mid/" class="btn" target="_blank" rel="noopener">進入測驗</a>
           </div>
           <div class="card" data-group="internal" data-keywords="M6 期中考 147M6mid">
-            <h3>⚙️ M15-期中考</h3>
+            <h3>⚙️ M15-期末考</h3>
             <a href="https://hisausage7.github.io/M15-mid/" class="btn" target="_blank" rel="noopener">進入測驗</a>
           </div>
         </div>
