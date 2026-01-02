@@ -1,866 +1,1056 @@
-
+<!DOCTYPE html>
 <html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>147自測網站入口</title>
-    <link rel="icon" type="image/jpeg" href="OIP.jpg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root{
-        --txt:#ffffff; --muted:#e9eefb;
-        --card-bg: rgba(255,255,255,.10);
-        --card-stroke: rgba(255,255,255,.24);
-        --glass: none; /* 省電：移除強背濾 */
-        --radius: 16px; --shadow: 0 8px 24px rgba(0,0,0,.36);
-        --btn1:#e8f3ff; --btn2:#e8fff7;
-        --aurora-o:.6; --stars-o:.85;
-        --bg-1:#070b1a; --bg-2:#0b1230;
-      }
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>147自測網站入口</title>
+  <link rel="icon" type="image/jpeg" href="OIP.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet" />
 
-      .sr-only{
-        position:absolute;
-        width:1px;
-        height:1px;
-        padding:0;
-        margin:-1px;
-        overflow:hidden;
-        clip:rect(0,0,0,0);
-        white-space:nowrap;
-        border:0;
-      }
+  <style>
+    :root{
+      --bg0:#060915;
+      --bg1:#0a1330;
+      --bg2:#081027;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.14);
+      --txt:#eaf1ff;
+      --muted:#cfe0ffcc;
+      --muted2:#cfe0ff88;
+      --accent:#8dd7ff;
+      --accent2:#b6b2ff;
+      --ok:#a7ffd9;
+      --warn:#ffd49a;
 
-      /* ===== 左上語錄 ===== */
-      .quote-box{
-        position:fixed;
-        top:14px;
-        left:14px;
-        z-index:6;
-        max-width:clamp(220px, 26vw, 2560px);
-        padding:12px 16px;
-        border-radius:16px;
-        color:#0f1530;
-        background:linear-gradient(135deg,#ffffff,#f2f6ff);
-        border:1px solid rgba(255,255,255,.6);
-        box-shadow:0 12px 26px rgba(0,0,0,.2);
-        font-family:"Noto Serif TC","Microsoft JhengHei", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        font-weight:600;
-        line-height:1.45;
-        letter-spacing:.2px;
-      }
-      .quote-text{ font-size:clamp(13px,1.2vw,16px); }
-      .quote-author{
-        display:block;
-        margin-top:6px;
-        font-size:clamp(11px,.95vw,13px);
-        color:#2a3555;
-        opacity:.75;
-        text-align:right;
-        font-weight:700;
-      }
-      @media (max-width:640px){
-        .quote-box{
-          max-width:min(88vw,2560px);
-          left:10px;
-          right:10px;
-          opacity:.95;
-        }
-      }
+      --radius:18px;
+      --shadow: 0 14px 34px rgba(0,0,0,.38);
+      --shadow2: 0 10px 24px rgba(0,0,0,.30);
 
-      html, body{ min-height:100%; }
+      --sidebarW: 280px;
+      --gap: 14px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
-  margin:0;
-  color:var(--txt);
-  font-family:"Microsoft JhengHei", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  text-align:center;
-  overflow-y:auto;
-  overflow-x:hidden;   /* 現在 .wrap 不會超出，這行只防 1px 誤差 */
-  -webkit-overflow-scrolling:touch;
-  background:
-    radial-gradient(1200px 600px at 15% 0%, #5ecbff1a, transparent 60%),
-    radial-gradient(900px 700px at 110% 20%, #b79dff1e, transparent 60%),
-    linear-gradient(140deg, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-1) 100%);
-}
-      .aurora{
-        position:fixed;
-        inset:-20%;
-        background:
-          radial-gradient(50% 120% at 20% 20%, #7cf3d022 0%, transparent 60%),
-          radial-gradient(60% 100% at 80% 0%, #82b1ff22 0%, transparent 60%),
-          radial-gradient(60% 120% at 50% 120%, #c6a4ff1e 0%, transparent 60%);
-        filter: blur(36px);
-        pointer-events:none;
-        z-index:0;
-        opacity:var(--aurora-o);
+      margin:0;
+      color:var(--txt);
+      font-family:"Microsoft JhengHei", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 700px at 18% 0%, rgba(141,215,255,.12), transparent 60%),
+        radial-gradient(1000px 700px at 110% 18%, rgba(182,178,255,.14), transparent 60%),
+        linear-gradient(145deg, var(--bg0) 0%, var(--bg1) 55%, var(--bg2) 100%);
+      overflow-x:hidden;
+    }
+
+    /* 星星 */
+    canvas#space{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    /* 版面容器 */
+    .app{
+      position:relative;
+      z-index:2;
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 18px;
+      display:grid;
+      grid-template-columns: var(--sidebarW) 1fr;
+      gap: var(--gap);
+      min-height:100vh;
+    }
+
+    /* 玻璃卡感（不做 heavy blur，省電） */
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+    }
+
+    /* Sidebar */
+    .side{
+      position: sticky;
+      top: 18px;
+      align-self:start;
+      padding: 14px;
+    }
+    .brand{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .logo{
+      width:42px;height:42px;
+      border-radius:14px;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(255,255,255,.35), transparent 65%),
+        linear-gradient(135deg, rgba(141,215,255,.45), rgba(182,178,255,.38));
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+      flex:0 0 auto;
+    }
+    .brand h1{
+      margin:0;
+      font-size:16px;
+      letter-spacing:.6px;
+      font-family:"Noto Serif TC","Microsoft JhengHei",serif;
+    }
+    .brand .sub{
+      margin-top:2px;
+      font-size:12px;
+      color:var(--muted);
+      opacity:.95;
+    }
+
+    .metaRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin: 12px 0 10px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 8px 18px rgba(0,0,0,.28);
+      font-weight:800;
+      font-size:12px;
+      color: var(--txt);
+      max-width:100%;
+      line-height:1;
+    }
+    .pill .mut{ color:var(--muted); font-weight:700; }
+
+    .searchBox{
+      margin: 10px 0 12px;
+      padding: 10px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .searchBox label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin: 0 0 8px;
+      font-weight:800;
+      letter-spacing:.4px;
+    }
+    .searchBox input{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(10,16,40,.35);
+      color:#fff;
+      outline:none;
+      font-size:14px;
+    }
+    .searchBox input::placeholder{ color: rgba(233,238,251,.75); }
+
+    .filters{
+      display:grid;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .filterTitle{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:900;
+      letter-spacing:.4px;
+      padding: 0 4px;
+    }
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .chip{
+      cursor:pointer;
+      user-select:none;
+      border:none;
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-weight:900;
+      font-size:12.5px;
+      color:#0b112a;
+      background: linear-gradient(135deg, rgba(232,243,255,1), rgba(232,255,247,1));
+      box-shadow: 0 10px 20px rgba(121,180,255,.20);
+      opacity:.92;
+      transition: transform .12s ease, opacity .12s ease;
+    }
+    .chip:hover{ transform: translateY(-1px); opacity:1; }
+    .chip.active{
+      outline: 2px solid rgba(207,227,255,.55);
+      opacity:1;
+    }
+
+    .sideNote{
+      margin-top: 12px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.05);
+      border: 1px dashed rgba(255,255,255,.16);
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+    .kbd{
+      display:inline-block;
+      padding: 1px 7px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: var(--txt);
+      font-weight:900;
+      font-size: 11px;
+      margin: 0 2px;
+    }
+
+    /* Main */
+    .main{
+      padding: 14px;
+    }
+
+    .topBar{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      padding: 8px 8px 10px;
+    }
+    .titleWrap h2{
+      margin:0;
+      font-size: 22px;
+      letter-spacing:.6px;
+      font-family:"Noto Serif TC","Microsoft JhengHei",serif;
+      background: linear-gradient(120deg, #eaf4ff, #b3c6ff 40%, #d7fcef 70%, #e9dcff 100%);
+      -webkit-background-clip:text;
+      color:transparent;
+      text-shadow: 0 10px 28px rgba(130,177,255,.22);
+    }
+    .titleWrap p{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight:700;
+    }
+
+    .statRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .stat{
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 10px 22px rgba(0,0,0,.26);
+      font-weight:900;
+      font-size:12px;
+      color: var(--txt);
+    }
+    .stat b{ color:#fff; }
+    .stat .mini{ color: var(--muted); font-weight:800; margin-left:6px; }
+
+    .sections{
+      display:grid;
+      gap: 14px;
+      padding: 6px;
+    }
+
+    .section{
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      box-shadow: var(--shadow2);
+    }
+    .sectionHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 12px 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .sectionHead .name{
+      font-weight:1000;
+      letter-spacing:.6px;
+      color:#fff;
+      font-size: 13px;
+      opacity:.95;
+    }
+    .sectionHead .count{
+      font-weight:1000;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .grid{
+      display:grid;
+      gap: 12px;
+      padding: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .item{
+      position:relative;
+      border-radius: 16px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 12px 26px rgba(0,0,0,.28);
+      overflow:hidden;
+      transition: transform .14s ease, border-color .14s ease, box-shadow .14s ease;
+      min-height: 86px;
+    }
+    .item:hover{
+      transform: translateY(-2px);
+      border-color: rgba(207,227,255,.35);
+      box-shadow: 0 16px 34px rgba(0,0,0,.38);
+    }
+
+    .itemInner{
+      padding: 14px 14px 12px;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+
+    .itemTitle{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:.2px;
+      font-weight:900;
+      line-height:1.25;
+    }
+    .itemMeta{
+      margin-top: 7px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight:800;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      opacity:.95;
+    }
+    .tag{
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-weight:900;
+      font-size: 11px;
+    }
+
+    .actions{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      align-items:flex-end;
+      flex:0 0 auto;
+      margin-left: 10px;
+    }
+    .go{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      color:#0b112a;
+      font-weight:1000;
+      font-size: 12.5px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(232,243,255,1), rgba(232,255,247,1));
+      box-shadow: 0 10px 22px rgba(121,180,255,.22);
+      transition: transform .12s ease;
+      white-space:nowrap;
+    }
+    .go:hover{ transform: translateY(-1px); }
+    .fav{
+      cursor:pointer;
+      user-select:none;
+      border:none;
+      padding: 7px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--txt);
+      font-weight:1000;
+      font-size: 12px;
+    }
+    .fav.on{
+      border-color: rgba(141,215,255,.45);
+      box-shadow: 0 10px 22px rgba(141,215,255,.12);
+    }
+
+    .empty{
+      padding: 18px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.05);
+      border: 1px dashed rgba(255,255,255,.16);
+      color: var(--muted);
+      font-weight:800;
+      text-align:center;
+      margin: 10px;
+    }
+
+    footer{
+      grid-column: 1 / -1;
+      text-align:center;
+      color: rgba(231,238,255,.78);
+      font-size: 12.5px;
+      padding: 14px 8px 22px;
+      text-shadow: 0 10px 26px rgba(0,0,0,.45);
+    }
+
+    /* 手機：sidebar 變成上方區塊 */
+    @media (max-width: 960px){
+      .app{
+        grid-template-columns: 1fr;
       }
-
-      canvas#space{
-        position:fixed;
-        inset:0;
-        z-index:0;
-        pointer-events:none;
-        opacity:var(--stars-o);
-      }
-
-     .wrap{
-  position: relative;
-  z-index: 2;
-
-  /* 版面寬度規則：
-     - 小螢幕：跟螢幕一樣寬（100%）
-     - 大螢幕：最多 1800px，不會超過螢幕 */
-  width: 100%;
-  max-width: 1800px;     /* 想再更寬可以改 1900 / 2000 */
-
-  margin: 0 auto;        /* 水平置中 */
-
-  /* 上 / 左右 / 下 的留白 */
-  padding-block: clamp(120px, 16vh, 160px) clamp(80px, 10vh, 160px);
-  padding-inline: 16px;  /* 左右各 16px，幾乎貼到邊 */
-
-  box-sizing: border-box;/* padding 算在 100% 裡，不會撐出螢幕 */
-  text-align: left;
-}
-      h1{
-        margin:0 0 8px;
-        font-size:clamp(28px,4vw,44px);
-        letter-spacing:.5px;
-        background:linear-gradient(120deg,#eaf4ff,#b3c6ff 40%,#d7fcef 70%,#e9dcff 100%);
-        -webkit-background-clip:text;
-        color:transparent;
-        text-shadow:0 6px 26px rgba(130,177,255,.28);
-        text-align:center;
-      }
-      .subtitle{
-        margin:0 0 6px;
-        font-size:clamp(14px,2.1vw,18px);
-        color:var(--muted);
-        opacity:.95;
-        text-align:center;
-      }
-
-      .header-row{
-        display:flex;
-        gap:10px;
-        justify-content:center;
-        align-items:center;
-        flex-wrap:wrap;
-        margin-top:6px;
-      }
-      #clock,#weather{
-        display:inline-flex;
-        align-items:center;
-        gap:8px;
-        padding:10px 18px;
-        border-radius:999px;
-        font-weight:800;
-        color:#0f1530;
-        background:linear-gradient(135deg,#ffffff,#f2f6ff);
-        box-shadow:0 8px 18px rgba(0,0,0,.25);
-        margin:10px 0 8px;
+      .side{
         position:relative;
-        overflow:hidden;
-        line-height:1;
-        max-width:100%;
-        font-size:13px;
+        top:auto;
       }
+    }
 
-      .modebar{
-        display:flex;
-        gap:10px;
-        justify-content:center;
-        align-items:center;
-        flex-wrap:wrap;
-        margin:8px 0 12px;
-      }
-      .chip{
-        cursor:pointer;
-        border:none;
-        padding:8px 14px;
-        border-radius:999px;
-        font-weight:800;
-        color:#0b112a;
-        background:linear-gradient(135deg,var(--btn1),var(--btn2));
-        box-shadow:0 8px 18px rgba(121,180,255,.28);
-      }
-      .chip.active{outline:2px solid #cfe3ff88}
+    /* 減少動態 */
+    @media (prefers-reduced-motion: reduce){
+      .item, .chip, .go{ transition:none; }
+      canvas#space{ display:none; }
+    }
+  </style>
+</head>
 
-      .hint{
-        margin:6px 0 14px;
-        color:#e9eefb;
-        opacity:.85;
-        font-size:13px;
-        text-align:center;
-      }
+<body>
+  <canvas id="space" aria-hidden="true"></canvas>
 
-      .toolbar{
-        display:flex;
-        gap:12px;
-        justify-content:space-between;
-        align-items:center;
-        padding:6px 6px 12px;
-        flex-wrap:wrap;
-        margin-top:6px;
-      }
-      .tabs{
-        display:flex;
-        gap:8px;
-        flex-wrap:wrap;
-      }
-      .tab{
-        cursor:pointer;
-        border:none;
-        padding:9px 14px;
-        border-radius:999px;
-        font-weight:800;
-        color:#0b112a;
-        background:linear-gradient(135deg,var(--btn1),var(--btn2));
-        box-shadow:0 8px 18px rgba(121,180,255,.28);
-        opacity:.95;
-      }
-      .tab.active{outline:2px solid #cfe3ff88;opacity:1}
-      .search{
-        min-width:220px;
-        padding:10px 14px;
-        border-radius:12px;
-        border:1px solid rgba(255,255,255,.35);
-        background:rgba(255,255,255,.12);
-        color:#fff;
-      }
-      .search::placeholder{color:#e9eefbcc}
-
-      .section-block{
-        margin-top:18px;
-      }
-      .section-title{
-        margin:0 6px 10px;
-        color:#eaf2ff;
-        opacity:.9;
-        font-size:14px;
-        letter-spacing:.6px;
-      }
-
-     .grid{
-  display: grid;
-  gap: 16px;
-  padding: 0;  /* 把原本 0 6px 之類的 padding 拿掉 */
-
-  /* 每張卡片至少 260px 寬，會自動平均分一整列 */
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}
-
-      .card{
-        position:relative;
-        overflow:hidden;
-        border-radius:16px;
-        padding:18px 16px 16px;
-        background:rgba(255,255,255,.08);
-        box-shadow:var(--shadow);
-        outline:1px solid var(--card-stroke);
-        transition:transform .15s,box-shadow .15s,outline-color .15s;
-      }
-      .card:hover{
-        transform:translateY(-3px);
-        outline-color:#cfe3ff88;
-        box-shadow:0 12px 28px rgba(0,0,0,.42);
-      }
-      .card h3{
-        margin:0 0 10px;
-        font-size:clamp(18px,2.2vw,22px);
-      }
-
-      .btn{
-        display:inline-block;
-        text-decoration:none;
-        color:#0b112a;
-        font-weight:800;
-        padding:10px 18px;
-        border-radius:12px;
-        background:linear-gradient(135deg,#e8f3ff,#e8fff7);
-        box-shadow:0 8px 20px rgba(121,180,255,.32);
-        transition:transform .12s ease;
-      }
-      .btn:hover{transform:translateY(-1px);}
-
-      footer{
-        position:static;
-        margin:24px auto 14px;
-        font-size:12.5px;
-        color:#e7eeffcc;
-        text-shadow:0 6px 22px rgba(0,0,0,.5);
-        z-index:3;
-        text-align:center;
-        padding-inline:12px;
-        box-sizing:border-box;
-      }
-
-      .hidden{display:none!important}
-      .theme-day  { --bg-1:#142b40; --bg-2:#3a5e7c; --aurora-o:.18; }
-      .theme-dusk { --bg-1:#1b0e2a; --bg-2:#ff9f7a; --aurora-o:.35; }
-      .theme-night{ --bg-1:#070b1a; --bg-2:#0b1230; --aurora-o:.55; }
-
-      @media (min-width: 1024px){
-        .wrap{
-          padding-top: 140px; /* 避免被語錄卡到 */
-        }
-      }
-      @media (min-width: 1440px){
-        .wrap{
-          padding-top: 160px;
-        }
-        .quote-box{
-          max-width: 420px;
-          top: 20px;
-          left: 24px;
-        }
-      }
-    </style>
-  </head>
-  <body class="theme-night" id="bodyRoot">
-    <div id="quoteBox" class="quote-box" aria-live="polite">
-      <span class="quote-text">載入語錄中…</span>
-      <span class="quote-author"></span>
-    </div>
-
-    <div class="aurora" aria-hidden="true"></div>
-    <canvas id="space" aria-hidden="true"></canvas>
-
-    <div class="wrap">
-      <h1>147自測網站</h1>
-      <p class="subtitle">147自主測驗平台 ✈️｜請選擇要測驗的章節：</p>
-
-      <div class="header-row">
-        <div id="clock" role="timer" aria-live="polite" aria-label="現在時間"></div>
-        <div id="weather" aria-live="polite">
-          <span class="wx-emoji">⏳</span><span class="wx-t">讀取中…</span>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="panel side" aria-label="側欄">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>147自測網站入口</h1>
+          <div class="sub">分流站｜保留原網址與名稱</div>
         </div>
       </div>
 
-      <div class="modebar" role="group" aria-label="主題">
-        <button class="chip chip-theme" data-theme="theme-day" aria-pressed="false" aria-label="切換為白天">☀️ 白天</button>
-        <button class="chip chip-theme" data-theme="theme-dusk" aria-pressed="false" aria-label="切換為黃昏">🌇 黃昏</button>
-        <button class="chip chip-theme active" data-theme="theme-night" aria-pressed="true" aria-label="切換為夜晚">🌙 夜晚</button>
+      <div class="metaRow" aria-label="資訊">
+        <div class="pill" id="clockPill">🕒 <span class="mut">載入中…</span></div>
+        <div class="pill" id="weatherPill">⏳ <span class="mut">天氣讀取中…</span></div>
       </div>
 
-      <p class="hint">|版權及源代碼所屬航機系008沈崑宸 | 建議使用電腦版網頁</p>
-
-      <div class="toolbar">
-        <div class="tabs" id="tabs" role="tablist" aria-label="篩選分類">
-          <button class="tab active" data-filter="all" role="tab" aria-selected="true">全部</button>
-          <button class="tab" data-filter="147" role="tab" aria-selected="false">147入學考</button>
-          <button class="tab" data-filter="internal" role="tab" aria-selected="false">147校內考</button>
-          <button class="tab" data-filter="caa" role="tab" aria-selected="false">147CAA</button>
-          <button class="tab" data-filter="skill" role="tab" aria-selected="false">技藝競賽</button>
-        </div>
-        <label for="search" class="sr-only">搜尋</label>
-        <input id="search" class="search" type="search" placeholder="搜尋：M1 / M9 / 147…" />
+      <div class="searchBox">
+        <label for="q">搜尋（按 <span class="kbd">/</span> 直接輸入）</label>
+        <input id="q" type="search" placeholder="搜尋：M1 / M9 / 147 / CAA / 技藝…" autocomplete="off" />
       </div>
 
-      <!-- ===== 區塊：標題 + GRID 一起包起來，方便整塊隱藏 ===== -->
-
-      <div class="section-block" data-section="147">
-        <div class="section-title">147入學考</div>
-        <div class="grid">
-          <div class="card" data-group="147" data-keywords="147 入學考 入學 ALL">
-            <h3>📘 ALL-入學考</h3>
-            <a href="https://hisausage7.github.io/147/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="147" data-keywords="147 入學考 入學 M6">
-            <h3>📘 M6-入學考</h3>
-            <a href="https://hisausage7.github.io/147in-M6/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="147" data-keywords="147 入學考 入學 M7">
-            <h3>📘 M7-入學考</h3>
-            <a href="https://hisausage7.github.io/147in-M7/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="147" data-keywords="147 入學考 入學 M10">
-            <h3>📘 M10-入學考</h3>
-            <a href="https://hisausage7.github.io/147in/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
+      <div class="filters">
+        <div class="filterTitle">分類篩選</div>
+        <div class="chips" id="chips">
+          <!-- JS 注入 -->
         </div>
       </div>
 
-      <div class="section-block" data-section="internal">
-        <div class="section-title">147校內考</div>
-        <div class="grid">
-          <div class="card" data-group="internal" data-keywords="M1 校內考 147M1">
-            <h3>⚙️ M1-校內考</h3>
-            <a href="https://hisausage7.github.io/147M1/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="internal" data-keywords="M3 校內考 147M3 建置中">
-            <h3>⚙️ M3-校內考(建置中)</h3>
-            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="internal" data-keywords="M6 校內考 147M6 無6.3 無6.11">
-            <h3>⚙️ M6-校內考(無6.3及6.11)</h3>
-            <a href="https://hisausage7.github.io/147M6/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="internal" data-keywords="M9 校內考 147M9">
-            <h3>⚙️ M9-校內考</h3>
-            <a href="https://hisausage7.github.io/147M9/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="internal" data-keywords="M10 校內考 147M10 建置中">
-            <h3>⚙️ M10-校內考(建置中)</h3>
-            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="internal" data-keywords="M15 校內考 147M15">
-            <h3>⚙️ M15-校內考</h3>
-            <a href="https://hisausage7.github.io/147M15/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
+      <div class="sideNote">
+        <div style="font-weight:1000; color:#fff; margin-bottom:6px;">快捷鍵</div>
+        <div>• <span class="kbd">/</span> 聚焦搜尋　• <span class="kbd">Esc</span> 清空搜尋</div>
+        <div style="margin-top:8px; color:var(--muted2);">
+          提示：可用「收藏」固定常用測驗；最近開啟會自動記錄。
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="panel main" aria-label="內容">
+      <div class="topBar">
+        <div class="titleWrap">
+          <h2>147自測網站</h2>
+          <p>147自主測驗平台 ✈️｜請在左側搜尋或點分類。</p>
+        </div>
+        <div class="statRow" aria-label="統計">
+          <div class="stat" id="statTotal">總數 <b>0</b><span class="mini">項</span></div>
+          <div class="stat" id="statShown">顯示 <b>0</b><span class="mini">項</span></div>
+          <div class="stat" id="statFav">收藏 <b>0</b><span class="mini">項</span></div>
         </div>
       </div>
 
-      <div class="section-block" data-section="internal">
-        <div class="section-title">147期中/末考</div>
-        <div class="grid">
-          <div class="card" data-group="internal" data-keywords="M6 期中考 147M6mid">
-            <h3>⚙️ M6-期末考</h3>
-            <a href="https://hisausage7.github.io/147-M6mid/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="internal" data-keywords="M6 期中考 147M6mid">
-            <h3>⚙️ M15-期末考</h3>
-            <a href="https://hisausage7.github.io/M15-mid/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-        </div>
+      <div class="sections" id="sections">
+        <!-- JS 注入 -->
       </div>
 
-      <div class="section-block" data-section="caa">
-        <div class="section-title">147CAA</div>
-        <div class="grid">
-        <div class="card" data-group="caa" data-keywords="CAA 民航 147CAA M1">
-            <h3>🛩️ M1-CAA</h3>
-            <a href="https://hisausage7.github.io/147CAA-M1/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="caa" data-keywords="CAA 民航 147CAA M9">
-            <h3>🛩️ M9-CAA</h3>
-            <a href="https://hisausage7.github.io/147CAA-M9/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          
-        </div>
+      <div class="empty" id="empty" style="display:none;">
+        找不到符合的項目（試試看縮短關鍵字或切回「全部」）
       </div>
-
-      <div class="section-block" data-section="skill">
-        <div class="section-title">技藝競賽</div>
-        <div class="grid">
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M1 1">
-            <h3>🛠️ M1 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M1/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M2 2">
-            <h3>🛠️ M2 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M2/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M3 3">
-            <h3>🛠️ M3 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M3/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M4 4">
-            <h3>🛠️ M4 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M4/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M5 5">
-            <h3>🛠️ M5 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M5/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M6 6">
-            <h3>🛠️ M6 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M6/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M7 7">
-            <h3>🛠️ M7 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M7/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M8 8">
-            <h3>🛠️ M8 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M8/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M9 9">
-            <h3>🛠️ M9 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M9/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M10 10">
-            <h3>🛠️ M10 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M10/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M11A 11A">
-            <h3>🛠️ M11A 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M11A/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M11B 11B">
-            <h3>🛠️ M11B 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M11B/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M12 12">
-            <h3>🛠️ M12 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M12/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M13 13">
-            <h3>🛠️ M13 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M13/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M14 14">
-            <h3>🛠️ M14 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M14/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M15 15">
-            <h3>🛠️ M15 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M15/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M16 16">
-            <h3>🛠️ M16 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M16/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-          <div class="card" data-group="skill" data-keywords="技能 檢定 skill M17 17">
-            <h3>🛠️ M17 技藝競賽</h3>
-            <a href="https://hisausage7.github.io/skill-M17/" class="btn" target="_blank" rel="noopener">進入測驗</a>
-          </div>
-        </div>
-      </div>
-    </div>
+    </main>
 
     <footer>
       © 2025 航機系 008 沈崑宸 | Powered by GitHub Pages | 如果你覺得這網頁很棒可以請我喝飲料真的 | ig:kun.chen.0826
     </footer>
+  </div>
 
-    <script>
-      // ===== 時鐘 =====
-      (function(){
-        function updateClock(){
-          try{
-            var el=document.getElementById('clock');
-            if(!el) return;
-            var now=new Date();
-            var days=['日','一','二','三','四','五','六'];
-            var d=now.getFullYear()+'/'+('0'+(now.getMonth()+1)).slice(-2)+'/'+('0'+now.getDate()).slice(-2)+' (週'+days[now.getDay()]+')';
-            var t=now.toLocaleTimeString('zh-TW',{hour12:false});
-            el.textContent='📅 '+d+'　🕒 '+t;
-          }catch(e){}
-        }
-        updateClock();
-        setInterval(updateClock,1000);
-      })();
+  <script>
+    /* =========================
+       1) 你的「名稱 + 網址」完全保留
+       ========================= */
+    var DATA = [
+      // 147入學考
+      {section:'147', group:'147入學考', title:'📘 ALL-入學考', url:'https://hisausage7.github.io/147/', keywords:'147 入學考 入學 ALL'},
+      {section:'147', group:'147入學考', title:'📘 M6-入學考', url:'https://hisausage7.github.io/147in-M6/', keywords:'147 入學考 入學 M6'},
+      {section:'147', group:'147入學考', title:'📘 M7-入學考', url:'https://hisausage7.github.io/147in-M7/', keywords:'147 入學考 入學 M7'},
+      {section:'147', group:'147入學考', title:'📘 M10-入學考', url:'https://hisausage7.github.io/147in/', keywords:'147 入學考 入學 M10'},
 
-      // ===== 主題切換 =====
-      (function(){
-        var themeButtons=document.querySelectorAll('.chip-theme');
-        function setTheme(name){
-          document.body.classList.remove('theme-day','theme-dusk','theme-night');
-          document.body.classList.add(name);
-          for(var i=0;i<themeButtons.length;i++){
-            var b=themeButtons[i];
-            var active=(b.getAttribute('data-theme')===name);
-            if(active){
-              b.classList.add('active');
-              b.setAttribute('aria-pressed','true');
-            } else{
-              b.classList.remove('active');
-              b.setAttribute('aria-pressed','false');
-            }
-          }
-        }
-        for(var i=0;i<themeButtons.length;i++){
-          (function(btn){
-            btn.addEventListener('click', function(){
-              setTheme(btn.getAttribute('data-theme'));
-            });
-          })(themeButtons[i]);
-        }
-        setTheme('theme-night');
+      // 147校內考
+      {section:'internal', group:'147校內考', title:'⚙️ M1-校內考', url:'https://hisausage7.github.io/147M1/', keywords:'M1 校內考 147M1'},
+      {section:'internal', group:'147校內考', title:'⚙️ M3-校內考(建置中)', url:'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1', keywords:'M3 校內考 147M3 建置中'},
+      {section:'internal', group:'147校內考', title:'⚙️ M6-校內考(無6.3及6.11)', url:'https://hisausage7.github.io/147M6/', keywords:'M6 校內考 147M6 無6.3 無6.11'},
+      {section:'internal', group:'147校內考', title:'⚙️ M9-校內考', url:'https://hisausage7.github.io/147M9/', keywords:'M9 校內考 147M9'},
+      {section:'internal', group:'147校內考', title:'⚙️ M10-校內考(建置中)', url:'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1', keywords:'M10 校內考 147M10 建置中'},
+      {section:'internal', group:'147校內考', title:'⚙️ M15-校內考', url:'https://hisausage7.github.io/147M15/', keywords:'M15 校內考 147M15'},
 
-        var autoLite = (window.matchMedia && (window.matchMedia('(max-width: 768px)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches));
-        if(autoLite){ document.body.classList.add('lite'); }
-      })();
+      // 147期中/末考（你原本 data-section 也是 internal，我照樣分一群）
+      {section:'internal', group:'147期中/末考', title:'⚙️ M6-期末考', url:'https://hisausage7.github.io/147-M6mid/', keywords:'M6 期中考 147M6mid'},
+      {section:'internal', group:'147期中/末考', title:'⚙️ M15-期末考', url:'https://hisausage7.github.io/M15-mid/', keywords:'M15 期末考 M15-mid'},
 
-      // ===== 天氣（臺中） =====
-      (function(){
-        var weatherEl=document.getElementById('weather'); if(!weatherEl) return;
-        var wxEmojiEl = weatherEl.querySelector('.wx-emoji');
-        var wxTextEl  = weatherEl.querySelector('.wx-t');
-        function wxMap(code,isNight){
-          var map={
-            0:{e:'☀️',t:'晴朗'},
-            1:{e:'🌤️',t:'多雲時晴'},
-            2:{e:'⛅',t:'陰晴不定'},
-            3:{e:'☁️',t:'多雲'},
-            45:{e:'🌫️',t:'霧'},
-            48:{e:'🌫️',t:'霧'},
-            51:{e:'🌦️',t:'細雨'},
-            53:{e:'🌦️',t:'毛毛雨'},
-            55:{e:'🌧️',t:'小雨'},
-            56:{e:'🌧️',t:'凍雨'},
-            57:{e:'🌧️',t:'凍雨'},
-            61:{e:'🌧️',t:'小雨'},
-            63:{e:'🌧️',t:'中雨'},
-            65:{e:'🌧️',t:'大雨'},
-            66:{e:'🌧️',t:'凍雨'},
-            67:{e:'🌧️',t:'凍雨'},
-            71:{e:'🌨️',t:'小雪'},
-            73:{e:'🌨️',t:'中雪'},
-            75:{e:'❄️',t:'大雪'},
-            77:{e:'🌨️',t:'霙/雪粒'},
-            80:{e:'🌦️',t:'陣雨'},
-            81:{e:'🌧️',t:'陣雨'},
-            82:{e:'🌧️',t:'豪雨'},
-            85:{e:'🌨️',t:'陣雪'},
-            86:{e:'❄️',t:'大陣雪'},
-            95:{e:'⛈️',t:'雷雨'},
-            96:{e:'⛈️',t:'雷雨冰雹'},
-            99:{e:'⛈️',t:'強雷雹'}
-          };
-          var item=map[code]||{e:isNight?'🌙':'☀️',t:'天氣'};
-          if(isNight&&(code===0||code===1)) item.e='🌙';
-          return item;
-        }
-        function fetchTaichung(){
-          var lat=24.067337599276396, lon=120.71470802813444;
-          var url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day';
-          fetch(url).then(function(res){
-            if(!res.ok) throw new Error('network');
-            return res.json();
-          }).then(function(data){
-            var cur=data.current||{};
-            var code=(cur.weather_code!=null?cur.weather_code:0);
-            var temp=Math.round(cur.temperature_2m!=null?cur.temperature_2m:0);
-            var isNight=(cur.is_day===0);
-            var m=wxMap(code,isNight);
-            wxEmojiEl.textContent=m.e;
-            wxTextEl.innerText='臺中｜'+m.t+'・'+temp+'°C';
-          }).catch(function(){
-            wxEmojiEl.textContent='⚠️';
-            wxTextEl.innerText='天氣取得失敗';
+      // 147CAA
+      {section:'caa', group:'147CAA', title:'🛩️ M1-CAA', url:'https://hisausage7.github.io/147CAA-M1/', keywords:'CAA 民航 147CAA M1'},
+      {section:'caa', group:'147CAA', title:'🛩️ M9-CAA', url:'https://hisausage7.github.io/147CAA-M9/', keywords:'CAA 民航 147CAA M9'},
+
+      // 技藝競賽
+      {section:'skill', group:'技藝競賽', title:'🛠️ M1 技藝競賽', url:'https://hisausage7.github.io/skill-M1/', keywords:'技能 檢定 skill M1 1'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M2 技藝競賽', url:'https://hisausage7.github.io/skill-M2/', keywords:'技能 檢定 skill M2 2'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M3 技藝競賽', url:'https://hisausage7.github.io/skill-M3/', keywords:'技能 檢定 skill M3 3'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M4 技藝競賽', url:'https://hisausage7.github.io/skill-M4/', keywords:'技能 檢定 skill M4 4'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M5 技藝競賽', url:'https://hisausage7.github.io/skill-M5/', keywords:'技能 檢定 skill M5 5'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M6 技藝競賽', url:'https://hisausage7.github.io/skill-M6/', keywords:'技能 檢定 skill M6 6'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M7 技藝競賽', url:'https://hisausage7.github.io/skill-M7/', keywords:'技能 檢定 skill M7 7'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M8 技藝競賽', url:'https://hisausage7.github.io/skill-M8/', keywords:'技能 檢定 skill M8 8'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M9 技藝競賽', url:'https://hisausage7.github.io/skill-M9/', keywords:'技能 檢定 skill M9 9'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M10 技藝競賽', url:'https://hisausage7.github.io/skill-M10/', keywords:'技能 檢定 skill M10 10'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M11A 技藝競賽', url:'https://hisausage7.github.io/skill-M11A/', keywords:'技能 檢定 skill M11A 11A'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M11B 技藝競賽', url:'https://hisausage7.github.io/skill-M11B/', keywords:'技能 檢定 skill M11B 11B'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M12 技藝競賽', url:'https://hisausage7.github.io/skill-M12/', keywords:'技能 檢定 skill M12 12'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M13 技藝競賽', url:'https://hisausage7.github.io/skill-M13/', keywords:'技能 檢定 skill M13 13'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M14 技藝競賽', url:'https://hisausage7.github.io/skill-M14/', keywords:'技能 檢定 skill M14 14'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M15 技藝競賽', url:'https://hisausage7.github.io/skill-M15/', keywords:'技能 檢定 skill M15 15'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M16 技藝競賽', url:'https://hisausage7.github.io/skill-M16/', keywords:'技能 檢定 skill M16 16'},
+      {section:'skill', group:'技藝競賽', title:'🛠️ M17 技藝競賽', url:'https://hisausage7.github.io/skill-M17/', keywords:'技能 檢定 skill M17 17'}
+    ];
+
+    /* =========================
+       2) 狀態：篩選 / 收藏 / 最近
+       ========================= */
+    var FILTERS = [
+      {id:'all',  label:'全部'},
+      {id:'147',  label:'147入學考'},
+      {id:'internal', label:'147校內相關'},
+      {id:'caa',  label:'147CAA'},
+      {id:'skill',label:'技藝競賽'},
+      {id:'fav',  label:'收藏'}
+    ];
+
+    var LS_FAV = 'portal_favs_v1';
+    var LS_REC = 'portal_recent_v1';
+
+    function loadJSON(key, fallback){
+      try{
+        var raw = localStorage.getItem(key);
+        if(!raw) return fallback;
+        var obj = JSON.parse(raw);
+        return obj || fallback;
+      }catch(e){
+        return fallback;
+      }
+    }
+    function saveJSON(key, obj){
+      try{ localStorage.setItem(key, JSON.stringify(obj)); }catch(e){}
+    }
+
+    var favs = loadJSON(LS_FAV, {});   // {url:true}
+    var recent = loadJSON(LS_REC, []); // [{url,title,ts}]
+
+    var state = {
+      activeFilter: 'all',
+      query: ''
+    };
+
+    /* =========================
+       3) UI 建立
+       ========================= */
+    var $chips = document.getElementById('chips');
+    var $sections = document.getElementById('sections');
+    var $q = document.getElementById('q');
+    var $empty = document.getElementById('empty');
+    var $statTotal = document.getElementById('statTotal');
+    var $statShown = document.getElementById('statShown');
+    var $statFav = document.getElementById('statFav');
+
+    function el(tag, cls){
+      var n = document.createElement(tag);
+      if(cls) n.className = cls;
+      return n;
+    }
+
+    function buildChips(){
+      $chips.innerHTML = '';
+      for(var i=0;i<FILTERS.length;i++){
+        (function(f){
+          var b = el('button','chip');
+          b.type = 'button';
+          b.setAttribute('data-id', f.id);
+          b.textContent = f.label;
+          if(f.id === state.activeFilter) b.classList.add('active');
+          b.addEventListener('click', function(){
+            state.activeFilter = f.id;
+            buildChips();
+            render();
           });
+          $chips.appendChild(b);
+        })(FILTERS[i]);
+      }
+    }
+
+    function groupBy(arr, keyFn){
+      var map = {};
+      for(var i=0;i<arr.length;i++){
+        var k = keyFn(arr[i]);
+        if(!map[k]) map[k]=[];
+        map[k].push(arr[i]);
+      }
+      return map;
+    }
+
+    function isFav(item){
+      return !!favs[item.url];
+    }
+
+    function addRecent(item){
+      try{
+        var now = Date.now();
+        // 先移除同 url
+        var next = [];
+        for(var i=0;i<recent.length;i++){
+          if(recent[i] && recent[i].url !== item.url) next.push(recent[i]);
         }
-        fetchTaichung();
-      })();
+        next.unshift({url:item.url, title:item.title, ts: now});
+        // 保留前 8
+        if(next.length > 8) next = next.slice(0,8);
+        recent = next;
+        saveJSON(LS_REC, recent);
+      }catch(e){}
+    }
 
-      // ===== 篩選 + 搜尋 =====
-      (function(){
-        var tabs=document.getElementById('tabs');
-        var sectionBlocks=(function(n){ return n?Array.prototype.slice.call(n):[]; })(document.querySelectorAll('.section-block'));
-        var cards=(function(n){ return n?Array.prototype.slice.call(n):[]; })(document.querySelectorAll('.card'));
-        var search=document.getElementById('search');
+    function matchItem(item){
+      // filter
+      if(state.activeFilter === 'fav'){
+        if(!isFav(item)) return false;
+      }else if(state.activeFilter !== 'all'){
+        if(item.section !== state.activeFilter) return false;
+      }
+      // search
+      var q = (state.query||'').toLowerCase().trim();
+      if(!q) return true;
+      var hay = (item.title + ' ' + item.keywords + ' ' + item.group).toLowerCase();
+      return hay.indexOf(q) > -1;
+    }
 
-        function applyFilter(){
-          if(!tabs) return;
-          var activeEl=tabs.querySelector('.tab.active');
-          var activeTab=activeEl?activeEl.getAttribute('data-filter'):'all';
-          var q=(search && search.value ? search.value : '').trim().toLowerCase();
+    function renderItem(item){
+      var box = el('div','item');
+      var inner = el('div','itemInner');
 
-          for(var i=0;i<cards.length;i++){
-            var c=cards[i];
-            var group=c.getAttribute('data-group');
-            var kw=(c.getAttribute('data-keywords')||'').toLowerCase();
-            var byTab=(activeTab==='all')||(group===activeTab);
-            var bySearch=(q==='') || kw.indexOf(q)>-1 || c.textContent.toLowerCase().indexOf(q)>-1;
-            if(byTab && bySearch){
-              c.classList.remove('hidden');
-            } else{
-              c.classList.add('hidden');
-            }
-          }
+      var left = el('div');
+      var h = el('h3','itemTitle');
+      h.textContent = item.title;
 
-          for(var j=0;j<sectionBlocks.length;j++){
-            var block=sectionBlocks[j];
-            var cs=block.querySelectorAll('.card');
-            var visible=false;
-            for(var k=0;k<cs.length;k++){
-              if(!cs[k].classList.contains('hidden')){
-                visible=true;
-                break;
-              }
-            }
-            if(visible){
-              block.classList.remove('hidden');
-            } else{
-              block.classList.add('hidden');
-            }
-          }
-        }
+      var meta = el('div','itemMeta');
+      // 顯示兩個 tag：群組 / section
+      var t1 = el('span','tag'); t1.textContent = item.group;
+      var t2 = el('span','tag');
+      t2.textContent = (item.section==='147'?'147入學考': item.section==='internal'?'校內/期中末': item.section==='caa'?'CAA':'技藝競賽');
+      meta.appendChild(t1);
+      meta.appendChild(t2);
 
-        if(tabs){
-          tabs.addEventListener('click', function(e){
-            var t=e.target;
-            if(!t.classList.contains('tab')) return;
-            var all=tabs.querySelectorAll('.tab');
-            for(var i=0;i<all.length;i++){
-              all[i].classList.remove('active');
-              all[i].setAttribute('aria-selected','false');
-            }
-            t.classList.add('active');
-            t.setAttribute('aria-selected','true');
-            applyFilter();
-          });
-        }
-        if(search){ search.addEventListener('input', applyFilter); }
-        applyFilter();
-      })();
+      left.appendChild(h);
+      left.appendChild(meta);
 
-      // ===== 左上語錄 =====
-      (function(){
+      var acts = el('div','actions');
+
+      var a = el('a','go');
+      a.href = item.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = '進入測驗 ↗';
+      a.addEventListener('click', function(){
+        addRecent(item);
+        // 小 ripple 點綴（超輕量）
         try{
-          var box=document.getElementById('quoteBox'); if(!box) return;
-          var QUOTES=[
-            {t:'把難的事情分解，把簡單的事情做到極致。',a:'工科小訣竅'},
-            {t:'今天的每一步，都是明天的底氣。',a:'日常自勉'},
-            {t:'先求正確，再求快速。',a:'系統工程'},
-            {t:'你所浪費的今天，是別人無比渴望的明天。',a:'箴言'},
-            {t:'資料先乾淨，結果才可信。',a:'實驗室守則'},
-            {t:'遇到BUG先別急，觀察、重現、再下手。',a:'除錯心法'},
-            {t:'把複雜留給自己，把簡單留給使用者。',a:'產品思維'},
-            {t:'不怕走得慢，只怕停下來。',a:'行動力'},
-            {t:'一分耕耘，一分收穫；多一分復盤，多兩分進步。',a:'學習論'},
-            {t:'清楚的目標，比盲目的努力更重要。',a:'聚焦'},
-            {t:'先完成，再完美；先可用，再好用。',a:'工程實務'},
-            {t:'求知若渴，虛心若愚。',a:'致敬'}
-          ];
-          var last=parseInt(localStorage.getItem('lastQuote')||'-1',10);
-          var idx=Math.floor(Math.random()*QUOTES.length);
-          if(QUOTES.length>1 && idx===last){
-            idx=(idx+1)%QUOTES.length;
-          }
-          localStorage.setItem('lastQuote', String(idx));
-          var q=QUOTES[idx];
-          var qt=box.querySelector('.quote-text');
-          var qa=box.querySelector('.quote-author');
-          if(qt) qt.textContent='“'+q.t+'”';
-          if(qa) qa.textContent='— '+q.a;
+          var r = el('div');
+          r.style.cssText =
+            'position:absolute;inset:auto;left:12px;bottom:10px;width:8px;height:8px;border-radius:50%;' +
+            'background:rgba(255,255,255,.9);filter:blur(1px);opacity:.9;pointer-events:none;transition:transform .55s ease, opacity .55s ease;';
+          box.appendChild(r);
+          setTimeout(function(){ r.style.transform='translateX(18px) scale(1.6)'; r.style.opacity='0'; }, 10);
+          setTimeout(function(){ if(r && r.parentNode) r.parentNode.removeChild(r); }, 600);
         }catch(e){}
-      })();
-    </script>
+        // 讓新分頁開啟，不阻擋
+      });
 
-    <!-- 星星 + Ripple -->
-    <script>
-      (function(){
-        var canvas=document.getElementById('space');
-        var ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
-        var w=0,h=0, stars=[]; var running=false; var timer=null;
+      var f = el('button','fav');
+      f.type = 'button';
+      function syncFavBtn(){
+        var on = isFav(item);
+        if(on){
+          f.classList.add('on');
+          f.textContent = '★ 已收藏';
+        }else{
+          f.classList.remove('on');
+          f.textContent = '☆ 收藏';
+        }
+      }
+      syncFavBtn();
+      f.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(isFav(item)) delete favs[item.url];
+        else favs[item.url] = true;
+        saveJSON(LS_FAV, favs);
+        syncFavBtn();
+        renderStats(); // 更新統計
+        // 若目前在「收藏」濾鏡，按下後要即時刷新
+        if(state.activeFilter === 'fav') render();
+      });
 
-        function density(){
-          var lite = document.body.classList.contains('lite');
-          var area = (w*h)/1e5;
-          var base = lite ? 2.2 : 4.5;
-          return Math.max(120, Math.min(1600, (area*base)|0));
+      acts.appendChild(a);
+      acts.appendChild(f);
+
+      inner.appendChild(left);
+      inner.appendChild(acts);
+      box.appendChild(inner);
+      return box;
+    }
+
+    function renderStats(){
+      var total = DATA.length;
+      var favCount = 0;
+      for(var k in favs){ if(favs.hasOwnProperty(k) && favs[k]) favCount++; }
+      var shown = 0;
+      for(var i=0;i<DATA.length;i++){ if(matchItem(DATA[i])) shown++; }
+
+      $statTotal.innerHTML = '總數 <b>'+ total +'</b><span class="mini">項</span>';
+      $statShown.innerHTML = '顯示 <b>'+ shown +'</b><span class="mini">項</span>';
+      $statFav.innerHTML = '收藏 <b>'+ favCount +'</b><span class="mini">項</span>';
+    }
+
+    function render(){
+      $sections.innerHTML = '';
+      $empty.style.display = 'none';
+
+      // 先做兩個特殊區：收藏 / 最近
+      var list = [];
+      for(var i=0;i<DATA.length;i++){
+        if(matchItem(DATA[i])) list.push(DATA[i]);
+      }
+
+      renderStats();
+
+      // 如果有搜尋/篩選，仍然可以顯示「最近」但只在 all/fav? 這邊：all 時才顯示
+      if(state.activeFilter === 'all' && (state.query||'').trim()===''){
+        // 收藏區（有才顯示）
+        var favItems = [];
+        for(var i=0;i<DATA.length;i++){
+          if(isFav(DATA[i])) favItems.push(DATA[i]);
         }
-        function resize(){
-          if(!canvas||!ctx) return;
-          w=canvas.width=window.innerWidth||800;
-          h=canvas.height=window.innerHeight||600;
-          init();
-        }
-        function init(){
-          stars.length=0;
-          var n=density();
-          for(var i=0;i<n;i++){
-            stars.push({
-              x:Math.random()*w,
-              y:Math.random()*h,
-              r:Math.random()*1.5+0.2,
-              a:0.35+Math.random()*0.5,
-              v:(Math.random()*0.02+0.005)
-            });
-          }
-          draw();
-        }
-        function draw(){
-          if(!ctx) return;
-          ctx.clearRect(0,0,w,h);
-          for(var i=0;i<stars.length;i++){
-            var s=stars[i];
-            s.a += (Math.random()-0.5)*s.v;
-            if(s.a<0.2) s.a=0.2;
-            if(s.a>0.95) s.a=0.95;
-            ctx.globalAlpha=s.a;
-            ctx.fillStyle='#fff';
-            ctx.beginPath();
-            ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-            ctx.fill();
-          }
-          ctx.globalAlpha=1;
-        }
-        function start(){
-          if(timer) return;
-          running=true;
-          timer = setInterval(function(){
-            if(!running) return;
-            draw();
-          }, 1000/24);
-        }
-        function stop(){
-          running=false;
-          if(timer){
-            clearInterval(timer);
-            timer=null;
-          }
+        if(favItems.length){
+          $sections.appendChild(renderSection('★ 收藏', favItems));
         }
 
-        window.addEventListener('resize', resize, {passive:true});
-        document.addEventListener('visibilitychange', function(){
-          if(document.hidden) stop();
-          else{
-            draw();
-            start();
+        // 最近區
+        var recItems = [];
+        for(var r=0;r<recent.length;r++){
+          var ru = recent[r] && recent[r].url;
+          if(!ru) continue;
+          for(var j=0;j<DATA.length;j++){
+            if(DATA[j].url === ru){
+              recItems.push(DATA[j]);
+              break;
+            }
           }
+        }
+        if(recItems.length){
+          $sections.appendChild(renderSection('⏱️ 最近開啟', recItems));
+        }
+      }
+
+      // 依 group 分段
+      var grouped = groupBy(list, function(it){ return it.group; });
+      var order = ['147入學考','147校內考','147期中/末考','147CAA','技藝競賽'];
+
+      var appended = 0;
+      for(var o=0;o<order.length;o++){
+        var name = order[o];
+        if(grouped[name] && grouped[name].length){
+          $sections.appendChild(renderSection(name, grouped[name]));
+          appended += grouped[name].length;
+        }
+      }
+
+      // 其他未列入 order 的 group
+      for(var g in grouped){
+        if(!grouped.hasOwnProperty(g)) continue;
+        var found = false;
+        for(var o2=0;o2<order.length;o2++){ if(order[o2]===g){ found=true; break; } }
+        if(found) continue;
+        if(grouped[g] && grouped[g].length){
+          $sections.appendChild(renderSection(g, grouped[g]));
+          appended += grouped[g].length;
+        }
+      }
+
+      if(appended === 0){
+        $empty.style.display = 'block';
+      }
+    }
+
+    function renderSection(title, items){
+      var wrap = el('section','section');
+
+      var head = el('div','sectionHead');
+      var nm = el('div','name'); nm.textContent = title;
+      var ct = el('div','count'); ct.textContent = items.length + ' 項';
+      head.appendChild(nm);
+      head.appendChild(ct);
+
+      var grid = el('div','grid');
+      for(var i=0;i<items.length;i++){
+        grid.appendChild(renderItem(items[i]));
+      }
+
+      wrap.appendChild(head);
+      wrap.appendChild(grid);
+      return wrap;
+    }
+
+    /* =========================
+       4) 事件綁定
+       ========================= */
+    buildChips();
+
+    $q.addEventListener('input', function(){
+      state.query = $q.value || '';
+      render();
+    });
+
+    document.addEventListener('keydown', function(e){
+      // '/' 聚焦搜尋（避免在 input 裡再觸發）
+      if(e.key === '/' && document.activeElement !== $q){
+        e.preventDefault();
+        $q.focus();
+        return;
+      }
+      // ESC 清空
+      if(e.key === 'Escape'){
+        if(document.activeElement === $q){
+          $q.value = '';
+          state.query = '';
+          $q.blur();
+          render();
+        }else{
+          // 不是在 input，也清空一次搜尋
+          if(($q.value||'')!==''){
+            $q.value='';
+            state.query='';
+            render();
+          }
+        }
+      }
+    });
+
+    /* =========================
+       5) 時鐘 / 天氣（臺中）
+       ========================= */
+    (function(){
+      var el = document.getElementById('clockPill');
+      function pad(n){ return (n<10?'0':'')+n; }
+      function tick(){
+        try{
+          var d = new Date();
+          var days = ['日','一','二','三','四','五','六'];
+          var s = d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' (週'+days[d.getDay()]+') '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+          el.innerHTML = '🕒 <span class="mut">'+ s +'</span>';
+        }catch(e){}
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+
+    (function(){
+      var pill = document.getElementById('weatherPill');
+      function wxMap(code,isNight){
+        var map={
+          0:{e:'☀️',t:'晴朗'},
+          1:{e:'🌤️',t:'多雲時晴'},
+          2:{e:'⛅',t:'陰晴不定'},
+          3:{e:'☁️',t:'多雲'},
+          45:{e:'🌫️',t:'霧'},
+          48:{e:'🌫️',t:'霧'},
+          51:{e:'🌦️',t:'細雨'},
+          53:{e:'🌦️',t:'毛毛雨'},
+          55:{e:'🌧️',t:'小雨'},
+          56:{e:'🌧️',t:'凍雨'},
+          57:{e:'🌧️',t:'凍雨'},
+          61:{e:'🌧️',t:'小雨'},
+          63:{e:'🌧️',t:'中雨'},
+          65:{e:'🌧️',t:'大雨'},
+          66:{e:'🌧️',t:'凍雨'},
+          67:{e:'🌧️',t:'凍雨'},
+          71:{e:'🌨️',t:'小雪'},
+          73:{e:'🌨️',t:'中雪'},
+          75:{e:'❄️',t:'大雪'},
+          77:{e:'🌨️',t:'霙/雪粒'},
+          80:{e:'🌦️',t:'陣雨'},
+          81:{e:'🌧️',t:'陣雨'},
+          82:{e:'🌧️',t:'豪雨'},
+          85:{e:'🌨️',t:'陣雪'},
+          86:{e:'❄️',t:'大陣雪'},
+          95:{e:'⛈️',t:'雷雨'},
+          96:{e:'⛈️',t:'雷雨冰雹'},
+          99:{e:'⛈️',t:'強雷雹'}
+        };
+        var item = map[code] || {e:(isNight?'🌙':'☀️'), t:'天氣'};
+        if(isNight && (code===0 || code===1)) item.e='🌙';
+        return item;
+      }
+      function fetchTaichung(){
+        // 台中座標（你原本這組）
+        var lat = 24.067337599276396;
+        var lon = 120.71470802813444;
+        var url = 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day';
+        fetch(url).then(function(res){
+          if(!res.ok) throw new Error('network');
+          return res.json();
+        }).then(function(data){
+          var cur = data.current || {};
+          var code = (cur.weather_code!=null?cur.weather_code:0);
+          var temp = Math.round(cur.temperature_2m!=null?cur.temperature_2m:0);
+          var isNight = (cur.is_day===0);
+          var m = wxMap(code, isNight);
+          pill.innerHTML = m.e + ' <span class="mut">臺中｜'+ m.t +'・'+ temp +'°C</span>';
+        }).catch(function(){
+          pill.innerHTML = '⚠️ <span class="mut">天氣取得失敗</span>';
         });
-        var prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        resize();
-        if(!prefersReduce){ start(); }
-      })();
+      }
+      fetchTaichung();
+    })();
 
-      (function(){
-        function attachRipple(el){
-          if(!el) return;
-          el.addEventListener('click', function(e){
-            var rect=el.getBoundingClientRect();
-            var d=Math.max(rect.width, rect.height);
-            var x=e.clientX-rect.left-d/2;
-            var y=e.clientY-rect.top-d/2;
-            var ink=document.createElement('span');
-            ink.style.cssText='position:absolute;border-radius:50%;transform:scale(0);opacity:.65;background:rgba(255,255,255,.7);pointer-events:none;left:'+x+'px;top:'+y+'px;width:'+d+'px;height:'+d+'px;transition:transform .55s ease, opacity .55s ease';
-            el.style.position='relative';
-            el.style.overflow='hidden';
-            el.appendChild(ink);
-            requestAnimationFrame(function(){
-              ink.style.transform='scale(1)';
-              ink.style.opacity='0';
-            });
-            setTimeout(function(){
-              if(ink.parentNode) ink.parentNode.removeChild(ink);
-            }, 600);
-          }, {passive:true});
+    /* =========================
+       6) 星星（更省電：低頻刷新）
+       ========================= */
+    (function(){
+      var canvas = document.getElementById('space');
+      var ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
+      if(!canvas || !ctx) return;
+
+      var w=0,h=0,stars=[];
+      var timer=null;
+
+      function resize(){
+        w = canvas.width = window.innerWidth || 800;
+        h = canvas.height = window.innerHeight || 600;
+        initStars();
+        draw();
+      }
+
+      function starCount(){
+        var area = (w*h)/1e5;
+        var n = Math.floor(area * 3.3);
+        if(n < 180) n = 180;
+        if(n > 1200) n = 1200;
+        return n;
+      }
+
+      function initStars(){
+        stars.length = 0;
+        var n = starCount();
+        for(var i=0;i<n;i++){
+          stars.push({
+            x: Math.random()*w,
+            y: Math.random()*h,
+            r: Math.random()*1.4 + 0.2,
+            a: 0.25 + Math.random()*0.7,
+            tw: (Math.random()*0.015 + 0.004)
+          });
         }
-        var btns=document.querySelectorAll('.btn, .card');
-        for(var i=0;i<btns.length;i++){ attachRipple(btns[i]); }
+      }
 
-        document.addEventListener('click', function(e){
-          if(e.target.closest('.btn,.card')) return;
-          var n = (document.body.classList.contains('lite')? 6:10);
-          for(var i=0;i<n;i++){
-            var d=document.createElement('div');
-            var size=6+Math.random()*4;
-            d.style.cssText='position:fixed;left:'+e.clientX+'px;top:'+e.clientY+'px;width:'+size+'px;height:'+size+'px;border-radius:50%;background:rgba(255,255,255,.9);filter:blur(1px);pointer-events:none;transition:transform .7s ease, opacity .7s ease;opacity:1;';
-            document.body.appendChild(d);
-            (function(el){
-              var ang=Math.random()*6.283;
-              var dist=30+Math.random()*70;
-              var dx=Math.cos(ang)*dist;
-              var dy=Math.sin(ang)*dist;
-              requestAnimationFrame(function(){
-                el.style.transform='translate('+dx+'px,'+dy+'px) scale(.9)';
-                el.style.opacity='0';
-              });
-              setTimeout(function(){
-                if(el.parentNode) el.parentNode.removeChild(el);
-              }, 720);
-            })(d);
-          }
-        }, {passive:true});
-      })();
-    </script>
-  </body>
+      function draw(){
+        ctx.clearRect(0,0,w,h);
+        for(var i=0;i<stars.length;i++){
+          var s = stars[i];
+          s.a += (Math.random()-0.5)*s.tw;
+          if(s.a < 0.18) s.a = 0.18;
+          if(s.a > 0.95) s.a = 0.95;
+          ctx.globalAlpha = s.a;
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      function start(){
+        if(timer) return;
+        // 12fps：更省電
+        timer = setInterval(draw, 1000/12);
+      }
+      function stop(){
+        if(timer){ clearInterval(timer); timer=null; }
+      }
+
+      window.addEventListener('resize', resize, {passive:true});
+      document.addEventListener('visibilitychange', function(){
+        if(document.hidden) stop();
+        else start();
+      });
+
+      var prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      resize();
+      if(!prefersReduce) start();
+    })();
+
+    /* =========================
+       7) 初次渲染
+       ========================= */
+    render();
+  </script>
+</body>
 </html>
-
