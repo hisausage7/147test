@@ -16,7 +16,6 @@
       --muted2:#cfe0ff88;
 
       --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.08);
       --stroke: rgba(255,255,255,.14);
       --stroke2: rgba(255,255,255,.18);
 
@@ -24,8 +23,6 @@
       --gap:14px;
       --shadow: 0 14px 34px rgba(0,0,0,.38);
       --shadow2: 0 10px 24px rgba(0,0,0,.30);
-
-      --sidebarW: 300px;
     }
 
     *{ box-sizing:border-box; }
@@ -34,7 +31,7 @@
       margin:0;
       color:var(--txt);
       font-family:"Microsoft JhengHei", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);        /* ✅ 純色 */
+      background: var(--bg);
       overflow-x:hidden;
     }
 
@@ -47,23 +44,23 @@
       opacity:.9;
     }
 
-    /* ✅ 不再鎖死 1800px，避免大螢幕左右超大空白 */
+    /* ✅ 真正滿版：不再 max-width 置中造成左右大片空白 */
     .app{
       position:relative;
       z-index:2;
-
-      width: min(2560px, calc(100vw - 32px));
-      margin: 0 auto;
-      padding: 16px;
+      width:100%;
+      max-width:none;
+      margin:0;
+      padding:16px;
 
       display:grid;
-      grid-template-columns: minmax(260px, 340px) 1fr;
+      grid-template-columns: 320px minmax(0, 1fr);
       gap: var(--gap);
       min-height:100vh;
     }
 
     .panel{
-      background: var(--panel);     /* ✅ 移除面板漸層 */
+      background: var(--panel);     /* ✅ 移除漸層 */
       border: 1px solid var(--stroke);
       border-radius: var(--radius);
       box-shadow: var(--shadow2);
@@ -90,7 +87,7 @@
     .logo{
       width:42px;height:42px;
       border-radius:14px;
-      background: rgba(255,255,255,.10); /* ✅ 移除 logo 漸層 */
+      background: rgba(255,255,255,.10); /* ✅ 純色 */
       border: 1px solid rgba(255,255,255,.18);
       box-shadow: 0 10px 22px rgba(0,0,0,.25);
       flex:0 0 auto;
@@ -171,7 +168,6 @@
     }
     .chips{ display:flex; flex-wrap:wrap; gap:8px; }
 
-    /* ✅ 移除 chip 漸層 */
     .chip{
       cursor:pointer;
       user-select:none;
@@ -212,7 +208,7 @@
     }
 
     /* Main */
-    .main{ padding: 14px; }
+    .main{ padding: 14px; min-width:0; } /* ✅ 避免被擠出水平捲動 */
 
     .topBar{
       display:flex;
@@ -223,7 +219,6 @@
       padding: 8px 8px 10px;
     }
 
-    /* ✅ 移除標題漸層字 */
     .titleWrap h2{
       margin:0;
       font-size: 22px;
@@ -260,7 +255,7 @@
     .stat b{ color:#fff; }
     .stat .mini{ color: var(--muted); font-weight:800; margin-left:6px; }
 
-    .sections{ display:grid; gap: 14px; padding: 6px; }
+    .sections{ display:grid; gap: 14px; padding: 6px; min-width:0; }
 
     .section{
       border-radius: var(--radius);
@@ -268,9 +263,9 @@
       border: 1px solid rgba(255,255,255,.12);
       overflow:hidden;
       box-shadow: var(--shadow2);
+      min-width:0;
     }
 
-    /* ✅ 移除 sectionHead 漸層 */
     .sectionHead{
       display:flex;
       align-items:center;
@@ -298,6 +293,7 @@
       gap: 12px;
       padding: 12px;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      min-width:0;
     }
 
     .item{
@@ -308,7 +304,7 @@
       box-shadow: 0 12px 26px rgba(0,0,0,.28);
       overflow:hidden;
       transition: transform .14s ease, border-color .14s ease, box-shadow .14s ease;
-      min-height: 86px;
+      min-width:0;
     }
     .item:hover{
       transform: translateY(-2px);
@@ -322,8 +318,10 @@
       gap:12px;
       align-items:flex-start;
       justify-content:space-between;
+      min-width:0;
     }
 
+    .leftCol{ min-width:0; }
     .itemTitle{
       margin:0;
       font-size: 16px;
@@ -331,6 +329,7 @@
       font-weight:1000;
       line-height:1.25;
       color:#fff;
+      word-break:break-word;
     }
 
     .itemMeta{
@@ -343,6 +342,8 @@
       flex-wrap:wrap;
       opacity:.95;
     }
+
+    /* ✅ 小分類只留一個（修掉「出現兩次」） */
     .tag{
       display:inline-flex;
       gap:6px;
@@ -365,7 +366,6 @@
       margin-left: 10px;
     }
 
-    /* ✅ 移除 go 漸層 */
     .go{
       display:inline-flex;
       align-items:center;
@@ -394,6 +394,7 @@
       color: var(--txt);
       font-weight:1000;
       font-size: 12px;
+      white-space:nowrap;
     }
     .fav.on{
       border-color: rgba(141,215,255,.38);
@@ -420,9 +421,8 @@
       text-shadow: 0 10px 26px rgba(0,0,0,.45);
     }
 
-    /* 手機：sidebar 變上方 */
     @media (max-width: 960px){
-      .app{ grid-template-columns: 1fr; }
+      .app{ grid-template-columns: 1fr; padding: 12px; }
       .side{ position:relative; top:auto; }
     }
 
@@ -468,6 +468,9 @@
         <div style="margin-top:8px; color:var(--muted2);">
           提示：可用「收藏」固定常用測驗；最近開啟會自動記錄。
         </div>
+        <div style="margin-top:10px; color:var(--muted2);">
+          |版權及源代碼所屬航機系008沈崑宸 | 建議使用電腦版網頁
+        </div>
       </div>
     </aside>
 
@@ -499,7 +502,7 @@
 
   <script>
     /* =========================
-       1) 你的「名稱 + 網址」完全保留
+       你的「名稱 + 網址」完全保留
        ========================= */
     var DATA = [
       // 147入學考
@@ -648,16 +651,16 @@
       var box = el('div','item');
       var inner = el('div','itemInner');
 
-      var left = el('div');
+      var left = el('div','leftCol');
       var h = el('h3','itemTitle');
       h.textContent = item.title;
 
       var meta = el('div','itemMeta');
-      var t1 = el('span','tag'); t1.textContent = item.group;
-      var t2 = el('span','tag');
-      t2.textContent = (item.section==='147'?'147入學考': item.section==='internal'?'校內/期中末': item.section==='caa'?'CAA':'技藝競賽');
+
+      /* ✅ 小分類只做一次：只顯示「群組」(例如 147入學考/147CAA/技藝競賽...) */
+      var t1 = el('span','tag');
+      t1.textContent = item.group;
       meta.appendChild(t1);
-      meta.appendChild(t2);
 
       left.appendChild(h);
       left.appendChild(meta);
@@ -708,6 +711,7 @@
       var total = DATA.length;
       var favCount = 0;
       for(var k in favs){ if(favs.hasOwnProperty(k) && favs[k]) favCount++; }
+
       var shown = 0;
       for(var i=0;i<DATA.length;i++){ if(matchItem(DATA[i])) shown++; }
 
@@ -744,7 +748,7 @@
 
       renderStats();
 
-      // all + 無搜尋才顯示收藏/最近
+      /* all + 無搜尋才顯示收藏/最近 */
       if(state.activeFilter === 'all' && (state.query||'').trim()===''){
         var favItems = [];
         for(var i=0;i<DATA.length;i++){
@@ -821,14 +825,14 @@
 
     /* 時鐘 */
     (function(){
-      var el = document.getElementById('clockPill');
+      var elp = document.getElementById('clockPill');
       function pad(n){ return (n<10?'0':'')+n; }
       function tick(){
         try{
           var d = new Date();
           var days = ['日','一','二','三','四','五','六'];
           var s = d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' (週'+days[d.getDay()]+') '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
-          el.innerHTML = '🕒 <span class="mut">'+ s +'</span>';
+          elp.innerHTML = '🕒 <span class="mut">'+ s +'</span>';
         }catch(e){}
       }
       tick();
