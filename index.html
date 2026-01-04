@@ -389,13 +389,14 @@
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
+      background: var(--accentBg); /* 或用 var(--accentBg) */
+  border-bottom: 1px solid rgba(167,139,250,.22);
     }
     .sectionHead .name{
       font-weight:1000;
       font-size: 13px;
       letter-spacing:.4px;
+      
     }
     .sectionHead .count{
       color: var(--muted);
@@ -636,8 +637,7 @@
 
           <div class="brandTxt">
             <div class="t">147自測網站入口</div>
-            <div class="s">目前版本-2.2，已修復深色模式BUG
-            </div>
+            <div class="s">目前版本-2.2，已修復深色模式BUG</div>
           </div>
         </div>
 
@@ -654,7 +654,6 @@
             <option value="smart">排序：智慧</option>
             <option value="title">排序：標題 A→Z</option>
             <option value="group">排序：分類</option>
-            <option value="recent">排序：最近開啟</option>
             <option value="fav">排序：收藏優先</option>
           </select>
 
@@ -675,7 +674,7 @@
         <div class="nav" id="nav"></div>
         <div class="sideFoot">
           快捷鍵：<span class="kbd">/</span> 聚焦搜尋、<span class="kbd">Esc</span> 清空<br/>
-          提示：收藏固定常用；最近開啟會記錄。<br/>
+          提示：收藏固定常用。<br/>
           |版權及源代碼所屬航機系008沈崑宸| |建議使用電腦版網頁|
         </div>
       </aside>
@@ -770,7 +769,6 @@
     ];
 
     var LS_FAV = 'portal_favs_v1';
-    var LS_REC = 'portal_recent_v1';
     var LS_UI  = 'portal_ui_v1';
 
     function loadJSON(key, fallback){
@@ -786,7 +784,6 @@
     }
 
     var favs = loadJSON(LS_FAV, {});
-    var recent = loadJSON(LS_REC, []); /* [{url,title,ts}] */
     var ui = loadJSON(LS_UI, { grouped:true, dense:false, sort:'smart' });
 
     var state = { activeFilter:'all', query:'' };
@@ -816,20 +813,6 @@
 
     function isFav(item){ return !!favs[item.url]; }
 
-    function addRecent(item){
-      try{
-        var now = Date.now();
-        var next = [];
-        for(var i=0;i<recent.length;i++){
-          if(recent[i] && recent[i].url !== item.url) next.push(recent[i]);
-        }
-        next.unshift({url:item.url, title:item.title, ts: now});
-        if(next.length > 10) next = next.slice(0,10);
-        recent = next;
-        saveJSON(LS_REC, recent);
-      }catch(e){}
-    }
-
     function matchItem(item){
       if(state.activeFilter === 'fav'){
         if(!isFav(item)) return false;
@@ -852,14 +835,7 @@
       return map;
     }
 
-    function getRecTs(url){
-      for(var i=0;i<recent.length;i++){
-        if(recent[i] && recent[i].url === url) return recent[i].ts || 0;
-      }
-      return 0;
-    }
-
-    /* ✅ 這段已修正：智慧排序會依照 M 的數字順序 */
+    /* ✅ 修正重點：所有分類在智慧排序下，都會依照 M 的數字順序 */
     function sortItems(arr){
       var mode = ui.sort || 'smart';
       var a = arr.slice(0);
@@ -874,7 +850,7 @@
 
       /* 解析 M 的排序：M1, M2, ... M10 ...；M11A 在 M11B 前 */
       function getMRank(item){
-        var s = ((item.title||'') + ' ' + (item.keywords||'')).toUpperCase();
+        var s = ((item.title||'') + ' ' + (item.keywords||'') + ' ' + (item.group||'')).toUpperCase();
 
         /* ALL 讓它在同組內排最前（想要最後就把 -100 改成 999999） */
         if(s.indexOf('ALL') > -1) return -100;
@@ -906,23 +882,17 @@
         if(mode === 'group'){
           var g1 = cmpText(p.group, q.group);
           if(g1!==0) return g1;
-          return cmpText(p.title, q.title);
-        }
-        if(mode === 'recent'){
-          return (getRecTs(q.url) - getRecTs(p.url)) || cmpText(p.title, q.title);
+          return cmpM(p, q); /* 分類模式下，同組也用 M 排序 */
         }
         if(mode === 'fav'){
           var f1 = (isFav(q)?1:0) - (isFav(p)?1:0);
           if(f1!==0) return f1;
-          return cmpText(p.title, q.title);
+          return cmpM(p, q);
         }
 
-        /* smart：收藏 > 最近 > M順序 > 標題 */
+        /* smart：收藏 > M順序 > 標題 */
         var sf = (isFav(q)?1:0) - (isFav(p)?1:0);
         if(sf!==0) return sf;
-
-        var sr = (getRecTs(q.url) - getRecTs(p.url));
-        if(sr!==0) return sr;
 
         return cmpM(p, q);
       });
@@ -1031,7 +1001,6 @@
       go.target = '_blank';
       go.rel = 'noopener';
       go.textContent = '進入 ↗';
-      go.addEventListener('click', function(){ addRecent(item); });
 
       var fav = el('button','fav');
       fav.type = 'button';
@@ -1176,29 +1145,13 @@
       list = sortItems(list);
       renderStats();
 
-      /* all + 無搜尋：把收藏/最近當「系統區」放最上 */
+      /* all + 無搜尋：把收藏當「系統區」放最上（✅ 已移除最近開啟） */
       if(state.activeFilter === 'all' && q === ''){
         var favItems = [];
         for(var a=0;a<DATA.length;a++) if(isFav(DATA[a])) favItems.push(DATA[a]);
         favItems = sortItems(favItems);
         if(favItems.length){
           $content.appendChild(renderSection('★ 收藏', favItems));
-        }
-
-        var recItems = [];
-        for(var r=0;r<recent.length;r++){
-          var ru = recent[r] && recent[r].url;
-          if(!ru) continue;
-          for(var j=0;j<DATA.length;j++){
-            if(DATA[j].url === ru){
-              recItems.push(DATA[j]);
-              break;
-            }
-          }
-        }
-        recItems = sortItems(recItems);
-        if(recItems.length){
-          $content.appendChild(renderSection('⏱️ 最近開啟', recItems));
         }
       }
 
