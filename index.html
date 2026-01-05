@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>147自測網站入口</title>
+
   <link rel="icon" type="image/png" href="favicon-OIP.jpg?v=3">
   <link rel="apple-touch-icon" href="favicon-OIP.jpg?v=3">
 
@@ -23,8 +24,8 @@
       --txt:#eef0ff;
       --muted: rgba(220,226,255,.72);
 
-      /* 小點綴色：只用在選取/焦點，不會整頁變紫藍 */
-      --accent: rgba(167,139,250,.95); /* violet */
+      /* 小點綴色：只用在選取/焦點 */
+      --accent: rgba(167,139,250,.95);
       --accentBg: rgba(167,139,250,.12);
 
       --r:14px;
@@ -36,6 +37,9 @@
       --t120:120ms var(--ease);
       --t180:180ms var(--ease);
       --t260:260ms var(--ease);
+
+      /* Topbar高度（JS 會動態覆蓋） */
+      --topbarH: 62px;
     }
 
     *{ box-sizing:border-box; }
@@ -48,7 +52,7 @@
       overflow-x:hidden;
     }
 
-    /* 很淡的質感點點（你也可以改成 display:none） */
+    /* 很淡的質感點點 */
     .noise{
       position:fixed; inset:0; pointer-events:none; z-index:0;
       opacity:.06;
@@ -79,7 +83,7 @@
       display:flex;
       align-items:center;
       gap: 10px;
-      padding: 9px 10px; /* ✅ 更省空間 */
+      padding: 9px 10px;
       flex-wrap:wrap;
     }
 
@@ -87,16 +91,17 @@
       display:flex;
       align-items:center;
       gap:10px;
-      min-width: 210px;
       flex: 0 0 auto;
+      min-width: 180px;
     }
     .logo{
       width:36px;height:36px;
       border-radius: 12px;
       background: var(--panel);
       border: 1px solid var(--line);
+      flex:0 0 auto;
     }
-    .brandTxt{ line-height:1.15; }
+    .brandTxt{ line-height:1.15; min-width:0; }
     .brandTxt .t{
       margin:0;
       font-family:"Noto Serif TC","Microsoft JhengHei",serif;
@@ -104,20 +109,57 @@
       font-size:15px;
       letter-spacing:.6px;
       color:#fff;
-    }
-    .brandTxt .s{
-      margin-top:4px;
-      font-size:12px;
-      color:var(--muted);
-      font-weight:850;
       white-space:nowrap;
+    }
+    /* 原本這行版本文字在這裡，現在移到搜尋上面 */
+    .brandTxt .s{
+      display:none; /* ✅ 不佔空間（你要版本在搜尋上） */
+    }
+
+    /* ✅ 新增：中間區塊（版本列 + 搜尋） */
+    .mid{
+      flex: 1 1 420px;     /* ✅ 自動縮放關鍵：可長可短 */
+      min-width: 220px;
+      display:flex;
+      flex-direction:column; /* ✅ 版本在上、搜尋在下 */
+      gap: 6px;
+      min-width:0;
+    }
+
+    /* ✅ 版本介面（顯示在搜尋欄上方） */
+    .verBar{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      color: rgba(220,226,255,.78);
+      font-size:12px;
+      font-weight:950;
+      min-width:0;
       overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 240px;
+    }
+    .verBar .vtag{
+      flex:0 0 auto;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(167,139,250,.12);
+      border: 1px solid rgba(167,139,250,.22);
+      color: rgba(237,232,255,.92);
+      font-weight:1000;
+      font-size: 11.5px;
+    }
+    .verBar .vtxt{
+      min-width:0;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis; /* ✅ 太長自動省略不跑版 */
     }
 
     .search{
-      flex: 1 1 360px;
+      width:100%;
       display:flex;
       align-items:center;
       gap:8px;
@@ -125,10 +167,10 @@
       border-radius: var(--r);
       background: var(--panel2);
       border: 1px solid var(--line);
-      min-width: 220px;
+      min-width: 0;                 /* ✅ 可以縮到很小不爆 */
       transition: border-color var(--t180), box-shadow var(--t180);
     }
-    .search .ic{ opacity:.85; font-size:14px; }
+    .search .ic{ opacity:.85; font-size:14px; flex:0 0 auto; }
     .search input{
       width:100%;
       border:0;
@@ -137,6 +179,7 @@
       color: var(--txt);
       font-size:13.5px;
       font-weight:850;
+      min-width:0; /* ✅ 內容不撐爆 */
     }
     .search input::placeholder{ color: rgba(220,226,255,.55); }
     .search:focus-within{
@@ -150,7 +193,7 @@
       gap:8px;
       flex-wrap:wrap;
       justify-content:flex-end;
-      flex: 1 1 auto;
+      flex: 0 1 auto;
       min-width: 0;
     }
 
@@ -203,16 +246,16 @@
     /* ===== Body grid ===== */
     .body{
       display:grid;
-      grid-template-columns: 220px minmax(0,1fr); /* ✅ 更窄 */
+      grid-template-columns: 220px minmax(0,1fr);
       gap: var(--gap);
       padding: 10px;
     }
 
-    /* ===== Sidebar (導覽) ===== */
+    /* ===== Sidebar ===== */
     .side{
       align-self:start;
       position:sticky;
-      top: 62px;
+      top: calc(var(--topbarH) + 8px); /* ✅ 自動跟 topbar 高度走，不會卡住 */
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--r);
@@ -377,8 +420,6 @@
       border-radius: var(--r);
       overflow:hidden;
       min-width:0;
-
-      /* 進場：預設先藏 */
       opacity: 0;
       transform: translateY(6px);
     }
@@ -389,14 +430,13 @@
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      background: var(--accentBg); /* 或用 var(--accentBg) */
-  border-bottom: 1px solid rgba(167,139,250,.22);
+      background: var(--accentBg);
+      border-bottom: 1px solid rgba(167,139,250,.22);
     }
     .sectionHead .name{
       font-weight:1000;
       font-size: 13px;
       letter-spacing:.4px;
-      
     }
     .sectionHead .count{
       color: var(--muted);
@@ -404,10 +444,7 @@
       font-size: 12px;
     }
 
-    .table{
-      display:flex;
-      flex-direction:column;
-    }
+    .table{ display:flex; flex-direction:column; }
 
     .thead{
       display:grid;
@@ -424,12 +461,10 @@
       display:grid;
       grid-template-columns: 1fr 140px 170px;
       gap:10px;
-      padding: 9px 10px;  /* ✅ 密度更高 */
+      padding: 9px 10px;
       border-bottom: 1px solid rgba(255,255,255,.06);
       align-items:center;
       min-width:0;
-
-      /* 進場：預設先藏 */
       opacity: 0;
       transform: translateY(6px);
     }
@@ -534,8 +569,8 @@
     @media (max-width: 980px){
       .body{ grid-template-columns: 1fr; }
       .side{ position:relative; top:auto; }
-      .brand{ min-width:0; }
       .actions{ justify-content:flex-start; width:100%; }
+      .mid{ flex-basis: 100%; } /* ✅ 版本+搜尋在中間獨立一行更穩 */
     }
 
     @media (max-width: 760px){
@@ -548,15 +583,12 @@
     }
 
     /* ===== 動畫與特效 ===== */
-
-    /* render 後套 class */
     .section.in, .tr.in{
       opacity: 1;
       transform: translateY(0);
       transition: opacity var(--t260), transform var(--t260);
     }
 
-    /* pill loading shimmer */
     .ctl.loading{
       position:relative;
       overflow:hidden;
@@ -570,11 +602,8 @@
       animation: shimmer 1.1s linear infinite;
       pointer-events:none;
     }
-    @keyframes shimmer{
-      to{ transform: translateX(120%); }
-    }
+    @keyframes shimmer{ to{ transform: translateX(120%); } }
 
-    /* Ripple */
     .ripple{ position:relative; overflow:hidden; }
     .ripple .rip{
       position:absolute;
@@ -585,11 +614,8 @@
       animation: rip 520ms var(--ease);
       pointer-events:none;
     }
-    @keyframes rip{
-      to{ transform: scale(3.2); opacity:0; }
-    }
+    @keyframes rip{ to{ transform: scale(3.2); opacity:0; } }
 
-    /* Toast */
     .toast{
       position:fixed;
       left:50%;
@@ -614,7 +640,6 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* 減少動作：自動關動畫 */
     @media (prefers-reduced-motion: reduce){
       .navBtn, .btn, .go, .fav, .search{ transition:none; }
       .section, .tr{ opacity:1; transform:none; }
@@ -630,20 +655,27 @@
   <div class="app" id="app">
 
     <!-- Topbar -->
-    <header class="topbar" aria-label="上方列">
+    <header class="topbar" id="topbar" aria-label="上方列">
       <div class="topbarInner">
         <div class="brand">
           <div class="logo" style="background-image:url('OIP.jpg'); background-size:cover; background-position:center; border:none;"></div>
-
           <div class="brandTxt">
             <div class="t">147自測網站入口</div>
-            <div class="s">目前版本-2.3，已修復計時器被按鈕擋住BUG/加入姓名記憶功能</div>
+            <div class="s"></div>
           </div>
         </div>
 
-        <div class="search" aria-label="搜尋">
-          <span class="ic" aria-hidden="true">🔎</span>
-          <input id="q" type="search" placeholder="搜尋:" autocomplete="off" />
+        <!-- ✅ 版本介面放在搜尋欄上面 -->
+        <div class="mid" aria-label="版本與搜尋">
+          <div class="verBar" id="verBar" title="版本資訊">
+            <span class="vtag">v2.3</span>
+            <span class="vtxt">已修復計時器被按鈕擋住BUG／加入姓名記憶功能</span>
+          </div>
+
+          <div class="search" aria-label="搜尋">
+            <span class="ic" aria-hidden="true">🔎</span>
+            <input id="q" type="search" placeholder="搜尋:" autocomplete="off" />
+          </div>
         </div>
 
         <div class="actions" aria-label="控制">
@@ -710,6 +742,21 @@
   <div class="toast" id="toast" aria-live="polite"></div>
 
   <script>
+    /* ===== 自動抓 topbar 高度，避免 sticky sidebar 卡住 ===== */
+    (function(){
+      function setTopbarH(){
+        try{
+          var tb = document.getElementById('topbar');
+          if(!tb) return;
+          var h = tb.offsetHeight || 62;
+          document.documentElement.style.setProperty('--topbarH', h + 'px');
+        }catch(e){}
+      }
+      setTopbarH();
+      window.addEventListener('resize', function(){ setTopbarH(); }, {passive:true});
+      window.addEventListener('load', function(){ setTopbarH(); }, {passive:true});
+    })();
+
     /* =========================
        你的「名稱 + 網址」完全保留
        ========================= */
@@ -835,7 +882,6 @@
       return map;
     }
 
-    /* ✅ 修正重點：所有分類在智慧排序下，都會依照 M 的數字順序 */
     function sortItems(arr){
       var mode = ui.sort || 'smart';
       var a = arr.slice(0);
@@ -848,11 +894,8 @@
         return 0;
       }
 
-      /* 解析 M 的排序：M1, M2, ... M10 ...；M11A 在 M11B 前 */
       function getMRank(item){
         var s = ((item.title||'') + ' ' + (item.keywords||'') + ' ' + (item.group||'')).toUpperCase();
-
-        /* ALL 讓它在同組內排最前（想要最後就把 -100 改成 999999） */
         if(s.indexOf('ALL') > -1) return -100;
 
         var m = s.match(/M\s*([0-9]{1,2})([A-Z])?/);
@@ -876,24 +919,19 @@
       }
 
       a.sort(function(p,q){
-        if(mode === 'title'){
-          return cmpText(p.title, q.title);
-        }
+        if(mode === 'title') return cmpText(p.title, q.title);
         if(mode === 'group'){
           var g1 = cmpText(p.group, q.group);
           if(g1!==0) return g1;
-          return cmpM(p, q); /* 分類模式下，同組也用 M 排序 */
+          return cmpM(p, q);
         }
         if(mode === 'fav'){
           var f1 = (isFav(q)?1:0) - (isFav(p)?1:0);
           if(f1!==0) return f1;
           return cmpM(p, q);
         }
-
-        /* smart：收藏 > M順序 > 標題 */
         var sf = (isFav(q)?1:0) - (isFav(p)?1:0);
         if(sf!==0) return sf;
-
         return cmpM(p, q);
       });
 
@@ -1004,6 +1042,7 @@
 
       var fav = el('button','fav');
       fav.type = 'button';
+
       function syncFav(){
         if(isFav(item)){
           fav.classList.add('on');
@@ -1145,7 +1184,6 @@
       list = sortItems(list);
       renderStats();
 
-      /* all + 無搜尋：把收藏當「系統區」放最上（✅ 已移除最近開啟） */
       if(state.activeFilter === 'all' && q === ''){
         var favItems = [];
         for(var a=0;a<DATA.length;a++) if(isFav(DATA[a])) favItems.push(DATA[a]);
@@ -1178,6 +1216,7 @@
       ui.dense = !ui.dense;
       saveJSON(LS_UI, ui);
       applyUI();
+      render();
     });
 
     $sortSel.addEventListener('change', function(){
@@ -1209,7 +1248,7 @@
       }
     });
 
-    /* Ripple：事件委派（btn/nav/go/fav 都有水波） */
+    /* Ripple：事件委派 */
     function makeRipple(elm){
       if(!elm || !elm.classList) return;
       if(!elm.classList.contains('ripple')) elm.classList.add('ripple');
