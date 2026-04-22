@@ -3,1353 +3,528 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>147自測網站入口</title>
-
+  <title>147自測網站 V3.1</title>
   <link rel="icon" type="image/png" href="favicon-OIP.jpg?v=3">
   <link rel="apple-touch-icon" href="favicon-OIP.jpg?v=3">
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet" />
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet" />
   <style>
     :root{
-      /* ✅ 中性深色：不藍、不霓虹 */
-      --bg:#0b0c10;
-      --panel:#11131a;
-      --panel2:#0f1117;
-      --line: rgba(255,255,255,.10);
-      --line2: rgba(255,255,255,.14);
-
-      --txt:#eef0ff;
-      --muted: rgba(220,226,255,.72);
-
-      /* 小點綴色：只用在選取/焦點 */
-      --accent: rgba(167,139,250,.95);
-      --accentBg: rgba(167,139,250,.12);
-
-      --r:14px;
-      --r2:12px;
-      --gap:8px;
-
-      /* 動畫 */
-      --ease:cubic-bezier(.2,.8,.2,1);
+      --bg:#060816;
+      --bg2:#0a1024;
+      --panel:rgba(10,16,36,.74);
+      --panel2:rgba(11,18,42,.88);
+      --panel3:rgba(13,21,50,.96);
+      --glass:rgba(255,255,255,.05);
+      --line:rgba(128,173,255,.18);
+      --line2:rgba(100,242,255,.18);
+      --txt:#eef6ff;
+      --muted:rgba(202,220,255,.70);
+      --cyan:#6fe7ff;
+      --blue:#75a7ff;
+      --violet:#a987ff;
+      --lime:#92ffca;
+      --danger:#ff86bb;
+      --shadow:0 22px 64px rgba(0,0,0,.42);
+      --r:24px;
+      --r2:20px;
+      --topbarH:78px;
+      --ease:cubic-bezier(.22,.8,.2,1);
       --t120:120ms var(--ease);
-      --t180:180ms var(--ease);
-      --t260:260ms var(--ease);
-
-      /* Topbar高度（JS 會動態覆蓋） */
-      --topbarH: 62px;
+      --t220:220ms var(--ease);
+      --t380:380ms var(--ease);
     }
-
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
       color:var(--txt);
-      font-family:"Microsoft JhengHei", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
+      font-family:"Inter","Microsoft JhengHei",system-ui,sans-serif;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(111,231,255,.16), transparent 24%),
+        radial-gradient(circle at 82% 14%, rgba(169,135,255,.15), transparent 22%),
+        radial-gradient(circle at 50% 65%, rgba(117,167,255,.10), transparent 30%),
+        linear-gradient(180deg, #050714 0%, #070b19 40%, #060816 100%);
       overflow-x:hidden;
     }
-
-    /* 很淡的質感點點 */
-    .noise{
-      position:fixed; inset:0; pointer-events:none; z-index:0;
-      opacity:.06;
-      background-image: radial-gradient(rgba(255,255,255,.10) 1px, transparent 1px);
-      background-size: 22px 22px;
-      mix-blend-mode: overlay;
+    .bg,.bg:before,.bg:after,.gridFx,.scan,.stars{position:fixed;inset:0;pointer-events:none}
+    .bg{z-index:0;overflow:hidden}
+    .bg:before,.bg:after{content:"";position:absolute;border-radius:50%;filter:blur(95px);opacity:.35}
+    .bg:before{width:42vw;height:42vw;left:-10vw;top:8vh;background:rgba(111,231,255,.18)}
+    .bg:after{width:38vw;height:38vw;right:-6vw;top:18vh;background:rgba(169,135,255,.20)}
+    .gridFx{z-index:0;opacity:.18;background:
+      linear-gradient(rgba(117,167,255,.10) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(117,167,255,.10) 1px, transparent 1px);
+      background-size:34px 34px,34px 34px;
+      mask-image:linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.5) 22%, black 60%, transparent 100%);
+      transform:perspective(800px) rotateX(74deg) scale(1.4);
+      transform-origin:center 72%;
+      top:36vh;
     }
+    .scan{z-index:0;opacity:.10;background:repeating-linear-gradient(180deg, rgba(255,255,255,.15) 0 1px, transparent 1px 4px)}
+    .stars{z-index:0;background-image:radial-gradient(rgba(255,255,255,.65) .6px, transparent .7px);background-size:32px 32px;opacity:.22}
 
-    .app{
-      position:relative;
-      z-index:1;
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-    }
+    .app{position:relative;z-index:1;min-height:100vh;padding:18px}
+    .shell{max-width:1520px;margin:0 auto}
 
-    /* ===== Topbar (系統化 App Bar) ===== */
     .topbar{
-      position:sticky;
-      top:0;
-      z-index:10;
-      background: rgba(11,12,16,.92);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(8px);
-      box-shadow: 0 10px 28px rgba(0,0,0,.28);
+      position:sticky;top:14px;z-index:20;
+      padding:14px 16px;
+      border:1px solid var(--line);
+      border-radius:28px;
+      background:linear-gradient(180deg, rgba(11,18,42,.88), rgba(8,12,30,.78));
+      backdrop-filter:blur(18px) saturate(130%);
+      box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.07);
     }
-    .topbarInner{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      padding: 9px 10px;
-      flex-wrap:wrap;
+    .topbar:before{
+      content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;
+      background:linear-gradient(135deg, rgba(111,231,255,.45), transparent 20%, transparent 80%, rgba(169,135,255,.28));
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor; mask-composite:exclude;pointer-events:none;
     }
+    .topbarRow{display:grid;grid-template-columns:260px minmax(0,1fr) auto;gap:14px;align-items:center}
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex: 0 0 auto;
-      min-width: 180px;
+    .brandBox{
+      display:flex;align-items:center;gap:14px;min-width:0;
+      padding:12px 14px;border-radius:22px;background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
     }
-    .logo{
-      width:36px;height:36px;
-      border-radius: 12px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      flex:0 0 auto;
-    }
-    .brandTxt{ line-height:1.15; min-width:0; }
-    .brandTxt .t{
-      margin:0;
-      font-family:"Noto Serif TC","Microsoft JhengHei",serif;
-      font-weight:700;
-      font-size:15px;
-      letter-spacing:.6px;
-      color:#fff;
-      white-space:nowrap;
-    }
-    /* 原本這行版本文字在這裡，現在移到搜尋上面 */
-    .brandTxt .s{
-      display:none; /* ✅ 不佔空間（你要版本在搜尋上） */
-    }
+    .logo{width:52px;height:52px;border-radius:18px;background:#0b1129 url('OIP.jpg') center/cover no-repeat;box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 0 32px rgba(111,231,255,.16)}
+    .brandMeta{min-width:0}
+    .brandKicker{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);font-weight:800;margin-bottom:5px}
+    .brandTitle{font-family:"Noto Serif TC",serif;font-size:22px;line-height:1.1;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-    /* ✅ 新增：中間區塊（版本列 + 搜尋） */
-    .mid{
-      flex: 1 1 420px;     /* ✅ 自動縮放關鍵：可長可短 */
-      min-width: 220px;
-      display:flex;
-      flex-direction:column; /* ✅ 版本在上、搜尋在下 */
-      gap: 6px;
-      min-width:0;
+    .centerPanel{display:grid;grid-template-rows:auto auto;gap:10px;min-width:0}
+    .banner{
+      display:flex;align-items:center;gap:10px;min-width:0;padding:10px 14px;border-radius:18px;
+      background:linear-gradient(90deg, rgba(111,231,255,.10), rgba(169,135,255,.08));border:1px solid rgba(111,231,255,.16)
     }
+    .banner strong{padding:4px 9px;border-radius:999px;background:rgba(111,231,255,.12);border:1px solid rgba(111,231,255,.18);font-size:11px;letter-spacing:.08em}
+    .banner span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-weight:700;font-size:13px}
+    .searchWrap{
+      display:grid;grid-template-columns:1fr auto auto auto auto;gap:10px;align-items:center;min-width:0
+    }
+    .searchBox,.miniBox,.selectBox,.actionBtn{
+      border-radius:18px;border:1px solid rgba(130,175,255,.14);background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05)
+    }
+    .searchBox{display:flex;align-items:center;gap:10px;padding:0 14px;height:54px;min-width:0}
+    .searchBox i{font-style:normal;color:var(--cyan)}
+    .searchBox input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--txt);font-size:14px;font-weight:800}
+    .searchBox input::placeholder{color:rgba(210,226,255,.46)}
+    .miniBox{height:54px;padding:0 14px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:800;color:var(--muted)}
+    .miniBox b{color:#fff}
+    .selectBox{height:54px;padding:0 12px;display:flex;align-items:center}
+    .selectBox select{border:0;outline:0;background:transparent;color:var(--txt);font-weight:900;font-size:12px}
+    .actionBtn{
+      cursor:pointer;height:54px;padding:0 16px;color:var(--txt);font-weight:900;font-size:12px;
+      transition:transform var(--t120), border-color var(--t220), background var(--t220), box-shadow var(--t220)
+    }
+    .actionBtn:hover{transform:translateY(-2px);border-color:rgba(111,231,255,.30);box-shadow:0 8px 24px rgba(111,231,255,.10)}
+    .actionBtn.on{background:linear-gradient(180deg, rgba(111,231,255,.14), rgba(117,167,255,.08));border-color:rgba(111,231,255,.34)}
 
-    /* ✅ 版本介面（顯示在搜尋欄上方） */
-    .verBar{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      color: rgba(220,226,255,.78);
-      font-size:12px;
-      font-weight:950;
-      min-width:0;
-      overflow:hidden;
-    }
-    .verBar .vtag{
-      flex:0 0 auto;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: rgba(167,139,250,.12);
-      border: 1px solid rgba(167,139,250,.22);
-      color: rgba(237,232,255,.92);
-      font-weight:1000;
-      font-size: 11.5px;
-    }
-    .verBar .vtxt{
-      min-width:0;
-      overflow:hidden;
-      white-space:nowrap;
-      text-overflow:ellipsis; /* ✅ 太長自動省略不跑版 */
-    }
+    .layout{display:grid;grid-template-columns:320px minmax(0,1fr);gap:18px;padding-top:18px}
 
-    .search{
-      width:100%;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border-radius: var(--r);
-      background: var(--panel2);
-      border: 1px solid var(--line);
-      min-width: 0;                 /* ✅ 可以縮到很小不爆 */
-      transition: border-color var(--t180), box-shadow var(--t180);
+    .aside{
+      position:sticky;top:120px;align-self:start;overflow:hidden;
+      border-radius:32px;background:linear-gradient(180deg, rgba(9,14,31,.90), rgba(9,13,28,.76));
+      border:1px solid var(--line);box-shadow:var(--shadow)
     }
-    .search .ic{ opacity:.85; font-size:14px; flex:0 0 auto; }
-    .search input{
-      width:100%;
-      border:0;
-      outline:none;
-      background: transparent;
-      color: var(--txt);
-      font-size:13.5px;
-      font-weight:850;
-      min-width:0; /* ✅ 內容不撐爆 */
+    .aside:before,.main:before{
+      content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;
+      background:linear-gradient(145deg, rgba(111,231,255,.28), transparent 22%, transparent 78%, rgba(169,135,255,.22));
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor; mask-composite:exclude;pointer-events:none;
     }
-    .search input::placeholder{ color: rgba(220,226,255,.55); }
-    .search:focus-within{
-      border-color: rgba(167,139,250,.40);
-      box-shadow: 0 0 0 3px rgba(167,139,250,.12);
+    .contactPanel{padding:18px;border-bottom:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg, rgba(111,231,255,.06), rgba(169,135,255,.04))}
+    .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);font-weight:900}
+    .contactPanel h3{margin:8px 0 10px;font-size:26px;line-height:1.05}
+    .contactPanel p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.7;font-weight:700}
+    .contactBtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .contactBtn{
+      display:flex;align-items:center;justify-content:center;min-height:52px;text-decoration:none;color:#fff;font-weight:900;font-size:13px;
+      border-radius:18px;border:1px solid rgba(255,255,255,.10);background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+      transition:transform var(--t120), background var(--t220), box-shadow var(--t220), border-color var(--t220)
     }
-
-    .actions{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      flex: 0 1 auto;
-      min-width: 0;
-    }
-
-    .ctl{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: var(--panel2);
-      border: 1px solid var(--line);
-      font-size:12px;
-      font-weight:950;
-      color: var(--txt);
-      white-space:nowrap;
-    }
-    .ctl .mut{ color: var(--muted); font-weight:850; }
-
-    select.sel{
-      border: 1px solid var(--line);
-      background: var(--panel2);
-      color: var(--txt);
-      padding: 7px 10px;
-      border-radius: 12px;
-      font-weight:950;
-      font-size:12px;
-      outline:none;
-    }
-
-    .btn{
-      cursor:pointer;
-      user-select:none;
-      border: 1px solid var(--line);
-      background: var(--panel2);
-      color: var(--txt);
-      padding: 7px 10px;
-      border-radius: 12px;
-      font-weight:950;
-      font-size:12px;
-      white-space:nowrap;
-      transition: transform var(--t120), background var(--t180), border-color var(--t180), opacity var(--t180);
-    }
-    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
-    .btn:active{ transform: translateY(0); opacity:.92; }
-    .btn.on{
-      border-color: rgba(167,139,250,.45);
-      background: rgba(167,139,250,.10);
-    }
-
-    /* ===== Body grid ===== */
-    .body{
-      display:grid;
-      grid-template-columns: 220px minmax(0,1fr);
-      gap: var(--gap);
-      padding: 10px;
-    }
-
-    /* ===== Sidebar ===== */
-    .side{
-      align-self:start;
-      position:sticky;
-      top: calc(var(--topbarH) + 8px); /* ✅ 自動跟 topbar 高度走，不會卡住 */
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--r);
-      overflow:hidden;
-      box-shadow: 0 10px 28px rgba(0,0,0,.28);
-    }
-    .sideHead{
-      padding: 10px 10px 8px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-    .sideHead .h{
-      margin:0;
-      font-size:12px;
-      letter-spacing:.6px;
-      color: rgba(220,226,255,.78);
-      font-weight:1000;
-    }
-
-    .nav{
-      padding: 8px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
+    .contactBtn:hover{transform:translateY(-2px);border-color:rgba(111,231,255,.34);background:linear-gradient(180deg, rgba(111,231,255,.16), rgba(169,135,255,.08));box-shadow:0 10px 24px rgba(111,231,255,.08)}
+    .navWrap{padding:16px}
+    .navHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 2px}
+    .navHead h4{margin:0;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+    .navList{display:grid;gap:10px}
     .navBtn{
-      width:100%;
-      cursor:pointer;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--txt);
-      border-radius: 12px;
-      padding: 8px 9px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      font-weight:950;
-      text-align:left;
-      transition: transform var(--t120), background var(--t180), border-color var(--t180), opacity var(--t180);
+      position:relative;cursor:pointer;text-align:left;padding:14px 14px 14px 16px;width:100%;overflow:hidden;
+      border-radius:20px;border:1px solid rgba(255,255,255,.07);background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      color:var(--txt);transition:transform var(--t120), border-color var(--t220), background var(--t220), box-shadow var(--t220)
     }
-    .navBtn:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.05);
-      border-color: rgba(255,255,255,.06);
-    }
-    .navBtn:active{ transform: translateY(0); opacity:.92; }
-    .navBtn.active{
-      background: var(--accentBg);
-      border-color: rgba(167,139,250,.28);
-    }
-    .navLeft{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:0;
-    }
-    .dot{
-      width:9px;height:9px;border-radius:999px;
-      background: rgba(255,255,255,.22);
-      flex:0 0 auto;
-    }
-    .navBtn.active .dot{ background: rgba(167,139,250,.90); }
+    .navBtn:before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:999px;background:linear-gradient(180deg, transparent, rgba(111,231,255,.9), transparent);opacity:.45}
+    .navBtn:hover{transform:translateX(2px);border-color:rgba(111,231,255,.22);background:linear-gradient(180deg, rgba(111,231,255,.08), rgba(255,255,255,.03))}
+    .navBtn.active{border-color:rgba(111,231,255,.30);background:linear-gradient(135deg, rgba(111,231,255,.16), rgba(169,135,255,.08));box-shadow:0 14px 32px rgba(111,231,255,.08)}
+    .navBtn.active:before{opacity:1}
+    .navTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .navName{font-size:14px;font-weight:900}
+    .navBadge{padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-size:11px;font-weight:900;color:#fff}
+    .navMini{margin-top:6px;font-size:12px;color:var(--muted);font-weight:700}
+    .sideFoot{padding:0 18px 18px;color:var(--muted);font-size:12px;line-height:1.7;font-weight:700}
+    .kbd{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 7px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#fff;font-size:11px;font-weight:900}
 
-    .navLabel{
-      min-width:0;
-      overflow:hidden;
-      white-space:nowrap;
-      text-overflow:ellipsis;
-      font-size:13px;
-    }
-    .badge{
-      flex:0 0 auto;
-      padding: 3px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: rgba(220,226,255,.85);
-      font-size: 11.5px;
-      font-weight:1000;
-    }
-
-    .sideFoot{
-      padding: 10px 10px 12px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      color: rgba(220,226,255,.65);
-      font-size: 12px;
-      line-height: 1.55;
-    }
-    .kbd{
-      display:inline-block;
-      padding: 1px 7px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: var(--txt);
-      font-weight:900;
-      font-size: 11px;
-      margin: 0 2px;
-    }
-
-    /* ===== Main ===== */
-    .main{
-      min-width:0;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--r);
-      overflow:hidden;
-      box-shadow: 0 10px 28px rgba(0,0,0,.28);
-    }
-    .mainHead{
-      padding: 10px 10px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap: 10px;
-      flex-wrap:wrap;
-    }
-    .mainHead .ttl{
-      margin:0;
-      font-family:"Noto Serif TC","Microsoft JhengHei",serif;
-      font-size:18px;
-      letter-spacing:.6px;
-      color:#fff;
-    }
-    .mainHead .sub{
-      margin:6px 0 0;
-      color: var(--muted);
-      font-size:12.8px;
-      font-weight:850;
-    }
-    .stats{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      align-items:center;
-    }
+    .main{position:relative;min-width:0;border-radius:34px;background:linear-gradient(180deg, rgba(9,14,31,.92), rgba(8,12,28,.78));border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden}
+    .mainTop{padding:22px 22px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .hero{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end}
+    .heroTitle{margin:0;font-size:40px;line-height:.95;font-weight:900;letter-spacing:-.03em}
+    .heroSub{margin:10px 0 0;color:var(--muted);font-size:14px;font-weight:700}
+    .statBar{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
     .stat{
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: var(--panel2);
-      border: 1px solid var(--line);
-      font-size:12px;
-      font-weight:950;
-      white-space:nowrap;
+      min-width:126px;padding:14px 16px;border-radius:22px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08)
     }
-    .stat b{ color:#fff; }
-    .stat .m{ color: var(--muted); font-weight:850; margin-left:6px; }
+    .statLabel{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:800}
+    .statNum{margin-top:8px;font-size:28px;font-weight:900;line-height:1}
 
-    /* ===== Content ===== */
-    .content{
-      padding: 10px;
-      display:grid;
-      gap:10px;
-      min-width:0;
-    }
+    .content{padding:20px;display:grid;gap:18px}
+    .section{opacity:0;transform:translateY(10px)}
+    .section.in,.card.in{opacity:1;transform:none;transition:opacity var(--t380), transform var(--t380)}
+    .sectionHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding:0 4px}
+    .sectionHead .left{display:flex;align-items:center;gap:12px}
+    .sectionIndex{width:44px;height:44px;border-radius:16px;display:grid;place-items:center;font-weight:900;background:linear-gradient(180deg, rgba(111,231,255,.18), rgba(169,135,255,.10));border:1px solid rgba(111,231,255,.18)}
+    .sectionTitle{font-size:21px;font-weight:900}
+    .sectionCount{padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:var(--muted);font-size:12px;font-weight:800}
 
-    .section{
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(15,17,23,.40);
-      border-radius: var(--r);
-      overflow:hidden;
-      min-width:0;
-      opacity: 0;
-      transform: translateY(6px);
+    .cardGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+    .card{
+      position:relative;min-height:228px;padding:18px;overflow:hidden;
+      border-radius:24px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(130,175,255,.14);
+      box-shadow:0 14px 34px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.05);
+      clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);
+      transition:transform var(--t220), border-color var(--t220), box-shadow var(--t220), background var(--t220)
     }
+    .card:hover{transform:translateY(-6px) scale(1.01);border-color:rgba(111,231,255,.28);box-shadow:0 22px 44px rgba(0,0,0,.34), 0 0 34px rgba(111,231,255,.06)}
+    .card:before{content:"";position:absolute;right:-38px;top:-38px;width:120px;height:120px;border-radius:32px;background:radial-gradient(circle, rgba(111,231,255,.18), transparent 68%);pointer-events:none}
+    .card:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg, rgba(111,231,255,.06), transparent 38%, transparent 62%, rgba(169,135,255,.05));pointer-events:none}
+    .cardTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;position:relative;z-index:1}
+    .modulePill{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);font-size:11px;font-weight:900;max-width:100%}
+    .modulePill span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .fav{
+      flex:0 0 auto;cursor:pointer;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:#fff;
+      width:42px;height:42px;border-radius:16px;font-size:18px;font-weight:900;transition:transform var(--t120), border-color var(--t220), background var(--t220)
+    }
+    .fav:hover{transform:translateY(-2px);border-color:rgba(111,231,255,.28)}
+    .fav.on{background:linear-gradient(180deg, rgba(111,231,255,.18), rgba(169,135,255,.10));border-color:rgba(111,231,255,.32)}
+    .cardTitle{position:relative;z-index:1;font-size:22px;line-height:1.08;font-weight:900;letter-spacing:-.02em;min-height:72px}
+    .cardMeta{position:relative;z-index:1;margin-top:12px;display:grid;gap:8px}
+    .metaChip{display:inline-flex;align-items:center;width:fit-content;max-width:100%;padding:7px 10px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);font-size:12px;color:var(--muted);font-weight:800}
+    .kw{position:relative;z-index:1;margin-top:10px;font-size:12px;line-height:1.55;color:rgba(214,227,255,.62);font-weight:700;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:55px}
+    .cardActions{position:relative;z-index:1;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:16px}
+    .go{
+      min-height:50px;text-decoration:none;color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;
+      border-radius:16px;background:linear-gradient(135deg, rgba(111,231,255,.20), rgba(117,167,255,.14) 55%, rgba(169,135,255,.16));
+      border:1px solid rgba(111,231,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)
+    }
+    .quickNote{font-size:11px;color:var(--muted);font-weight:800;text-align:right}
+    .empty{padding:26px;border-radius:26px;border:1px dashed rgba(255,255,255,.14);background:rgba(255,255,255,.03);color:var(--muted);font-size:14px;font-weight:800;text-align:center}
 
-    .sectionHead{
-      padding: 9px 10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      background: var(--accentBg);
-      border-bottom: 1px solid rgba(167,139,250,.22);
-    }
-    .sectionHead .name{
-      font-weight:1000;
-      font-size: 13px;
-      letter-spacing:.4px;
-    }
-    .sectionHead .count{
-      color: var(--muted);
-      font-weight:950;
-      font-size: 12px;
-    }
+    .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(10px);opacity:0;pointer-events:none;z-index:50;padding:12px 16px;border-radius:999px;background:rgba(10,16,36,.94);border:1px solid rgba(111,231,255,.18);color:#fff;font-size:12px;font-weight:900;transition:opacity var(--t220), transform var(--t220)}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-    .table{ display:flex; flex-direction:column; }
+    .ripple{position:relative;overflow:hidden}
+    .rip{position:absolute;border-radius:999px;transform:scale(0);opacity:.42;background:rgba(255,255,255,.55);animation:rip 560ms var(--ease);pointer-events:none}
+    @keyframes rip{to{transform:scale(3.1);opacity:0}}
 
-    .thead{
-      display:grid;
-      grid-template-columns: 1fr 140px 170px;
-      gap:10px;
-      padding: 8px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      color: rgba(220,226,255,.70);
-      font-size: 12px;
-      font-weight:1000;
+    @media (max-width:1280px){
+      .searchWrap{grid-template-columns:1fr 1fr 1fr auto auto}
+      .miniBox{font-size:11px}
     }
-
-    .tr{
-      display:grid;
-      grid-template-columns: 1fr 140px 170px;
-      gap:10px;
-      padding: 9px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      align-items:center;
-      min-width:0;
-      opacity: 0;
-      transform: translateY(6px);
+    @media (max-width:1120px){
+      .topbarRow{grid-template-columns:1fr}
+      .layout{grid-template-columns:1fr}
+      .aside{position:relative;top:auto}
+      .hero{grid-template-columns:1fr}
+      .statBar{justify-content:flex-start}
     }
-    .tr:last-child{ border-bottom:0; }
-    .tr:hover{ background: rgba(255,255,255,.035); }
-
-    .tTitle{
-      min-width:0;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
+    @media (max-width:860px){
+      .searchWrap{grid-template-columns:1fr 1fr}
+      .selectBox,.actionBtn,.miniBox{height:50px}
+      .heroTitle{font-size:32px}
+      .contactBtns{grid-template-columns:1fr}
     }
-    .tTitle .name{
-      font-weight:1000;
-      font-size: 14.5px;
-      line-height: 1.25;
-      word-break:break-word;
+    @media (max-width:620px){
+      .app{padding:10px}
+      .topbar{top:10px;padding:12px}
+      .brandTitle{font-size:18px}
+      .searchWrap{grid-template-columns:1fr}
+      .cardGrid{grid-template-columns:1fr}
+      .heroTitle{font-size:28px}
+      .mainTop,.content{padding:16px}
+      .aside,.main{border-radius:26px}
     }
-    .tTitle .kw{
-      font-size: 12px;
-      color: rgba(220,226,255,.58);
-      font-weight:850;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      justify-content:flex-start;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: rgba(220,226,255,.80);
-      font-weight:950;
-      font-size: 11.5px;
-      width: fit-content;
-      max-width: 100%;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-    }
-
-    .tActs{
-      display:flex;
-      justify-content:flex-end;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    .go, .fav{
-      cursor:pointer;
-      text-decoration:none;
-      color: var(--txt);
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      padding: 8px 10px;
-      border-radius: 12px;
-      font-weight:1000;
-      font-size: 12px;
-      white-space:nowrap;
-      transition: transform var(--t120), background var(--t180), border-color var(--t180), opacity var(--t180);
-    }
-    .go:hover, .fav:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.20); }
-    .go:active, .fav:active{ transform: translateY(0); opacity:.92; }
-
-    .fav.on{
-      border-color: rgba(167,139,250,.45);
-      background: rgba(167,139,250,.10);
-    }
-
-    .empty{
-      padding: 14px 12px;
-      border-radius: var(--r);
-      border: 1px dashed rgba(255,255,255,.16);
-      background: rgba(15,17,23,.35);
-      color: rgba(220,226,255,.70);
-      text-align:center;
-      font-weight:950;
-      margin: 10px;
-    }
-
-    footer{
-      text-align:center;
-      color: rgba(231,238,255,.60);
-      font-size: 12.5px;
-      padding: 14px 10px 22px;
-    }
-
-    /* ===== Density mode ===== */
-    .dense .topbarInner{ padding: 8px 9px; }
-    .dense .body{ padding: 8px; gap: 8px; }
-    .dense .mainHead{ padding: 9px 9px; }
-    .dense .content{ padding: 8px; gap: 8px; }
-    .dense .tr{ padding: 8px 10px; }
-    .dense .thead{ padding: 7px 10px; }
-    .dense .navBtn{ padding: 7px 8px; }
-
-    /* ===== Responsive ===== */
-    @media (max-width: 980px){
-      .body{ grid-template-columns: 1fr; }
-      .side{ position:relative; top:auto; }
-      .actions{ justify-content:flex-start; width:100%; }
-      .mid{ flex-basis: 100%; } /* ✅ 版本+搜尋在中間獨立一行更穩 */
-    }
-
-    @media (max-width: 760px){
-      .thead{ display:none; }
-      .tr{
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
-      .tActs{ justify-content:flex-start; }
-    }
-
-    /* ===== 動畫與特效 ===== */
-    .section.in, .tr.in{
-      opacity: 1;
-      transform: translateY(0);
-      transition: opacity var(--t260), transform var(--t260);
-    }
-
-    .ctl.loading{
-      position:relative;
-      overflow:hidden;
-    }
-    .ctl.loading:after{
-      content:"";
-      position:absolute;
-      inset:0;
-      transform: translateX(-120%);
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
-      animation: shimmer 1.1s linear infinite;
-      pointer-events:none;
-    }
-    @keyframes shimmer{ to{ transform: translateX(120%); } }
-
-    .ripple{ position:relative; overflow:hidden; }
-    .ripple .rip{
-      position:absolute;
-      border-radius:999px;
-      transform: scale(0);
-      opacity:.35;
-      background: rgba(255,255,255,.55);
-      animation: rip 520ms var(--ease);
-      pointer-events:none;
-    }
-    @keyframes rip{ to{ transform: scale(3.2); opacity:0; } }
-
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom: 18px;
-      transform: translateX(-50%) translateY(12px);
-      background: rgba(15,17,23,.92);
-      border: 1px solid rgba(255,255,255,.10);
-      color: var(--txt);
-      padding: 10px 12px;
-      border-radius: 999px;
-      box-shadow: 0 14px 30px rgba(0,0,0,.40);
-      font-weight: 950;
-      font-size: 12.5px;
-      opacity:0;
-      transition: opacity var(--t180), transform var(--t180);
-      z-index: 999;
-      pointer-events:none;
-      white-space:nowrap;
-    }
-    .toast.show{
-      opacity:1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      .navBtn, .btn, .go, .fav, .search{ transition:none; }
-      .section, .tr{ opacity:1; transform:none; }
-      .ctl.loading:after{ display:none; }
-      .ripple .rip{ display:none; }
-    }
+    @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
   </style>
 </head>
-
 <body>
-  <div class="noise" aria-hidden="true"></div>
+<div class="bg" aria-hidden="true"></div>
+<div class="gridFx" aria-hidden="true"></div>
+<div class="scan" aria-hidden="true"></div>
+<div class="stars" aria-hidden="true"></div>
 
-  <div class="app" id="app">
-
-    <!-- Topbar -->
-    <header class="topbar" id="topbar" aria-label="上方列">
-      <div class="topbarInner">
-        <div class="brand">
-          <div class="logo" style="background-image:url('OIP.jpg'); background-size:cover; background-position:center; border:none;"></div>
-          <div class="brandTxt">
-            <div class="t">147自測網站入口</div>
-            <div class="s"></div>
+<div class="app" id="app">
+  <div class="shell">
+    <header class="topbar" id="topbar">
+      <div class="topbarRow">
+        <div class="brandBox">
+          <div class="logo"></div>
+          <div class="brandMeta">
+            <div class="brandTitle">147自測網站</div>
+            <div class="brandKicker">BY Sausage System</div>
           </div>
         </div>
 
-        <!-- ✅ 版本介面放在搜尋欄上面 -->
-        <div class="mid" aria-label="版本與搜尋">
-          <div class="verBar" id="verBar" title="版本資訊">
-            <span class="vtag">v2.8</span>
-            <span class="vtxt">不斷電維護進行中，請隨時重新整理頁面</span>
+        <div class="centerPanel">
+          <div class="banner"><strong>v3.1</strong><span>不斷電維護進行中，請隨時重新整理</span></div>
+          <div class="searchWrap">
+            <label class="searchBox" aria-label="搜尋"><i>⌕</i><input id="q" type="search" placeholder="搜尋模組、分類、關鍵字" autocomplete="off"></label>
+            <div class="miniBox" id="clockPill">🕒 <span>載入中…</span></div>
+            <div class="miniBox" id="weatherPill">⏳ <span>天氣讀取中…</span></div>
+            <div class="selectBox"><select id="sortSel"><option value="smart">排序：智慧</option><option value="title">排序：標題 A→Z</option><option value="group">排序：分類</option><option value="fav">排序：收藏優先</option></select></div>
+            <button class="actionBtn" id="btnGroup" type="button">群組：開</button>
           </div>
-
-          <div class="search" aria-label="搜尋">
-            <span class="ic" aria-hidden="true">🔎</span>
-            <input id="q" type="search" placeholder="搜尋:" autocomplete="off" />
-          </div>
-        </div>
-
-        <div class="actions" aria-label="控制">
-          <span class="ctl" id="clockPill">🕒 <span class="mut">載入中…</span></span>
-          <span class="ctl" id="weatherPill">⏳ <span class="mut">天氣讀取中…</span></span>
-
-          <select class="sel" id="sortSel" title="排序">
-            <option value="smart">排序：智慧</option>
-            <option value="title">排序：標題 A→Z</option>
-            <option value="group">排序：分類</option>
-            <option value="fav">排序：收藏優先</option>
-          </select>
-
-          <button class="btn" id="btnGroup" type="button" title="群組/扁平">群組：開</button>
-          <button class="btn" id="btnDense" type="button" title="密度">密度：一般</button>
         </div>
       </div>
     </header>
 
-    <!-- Body -->
-    <div class="body">
-
-      <!-- Sidebar -->
-      <aside class="side" aria-label="導覽">
-        <div class="sideHead">
-          <p class="h">分類</p>
+    <div class="layout">
+      <aside class="aside">
+        <div class="contactPanel">
+          <div class="eyebrow">Support</div>
+          <h3>聯絡我</h3>
+          <p>有網站錯誤、題庫修正、功能建議，都可以直接找我。</p>
+          <div class="contactBtns">
+            <a class="contactBtn" href="https://www.instagram.com/kun.chen.0826" target="_blank" rel="noopener">Instagram</a>
+            <a class="contactBtn" href="https://hisausage7.github.io/" target="_blank" rel="noopener">我的網站</a>
+          </div>
         </div>
-        <div class="nav" id="nav"></div>
+        <div class="navWrap">
+          <div class="navHead"><h4>分類導覽</h4></div>
+          <div class="navList" id="nav"></div>
+        </div>
         <div class="sideFoot">
-          快捷鍵：<span class="kbd">/</span> 聚焦搜尋、<span class="kbd">Esc</span> 清空<br/>
-          提示：收藏固定常用。<br/>
+          快捷鍵：<span class="kbd">/</span> 聚焦搜尋、<span class="kbd">Esc</span> 清空<br>
+          提示：收藏固定常用。<br>
           |版權及源代碼所屬航機系008沈崑宸| |建議使用電腦版網頁|
         </div>
       </aside>
 
-      <!-- Main -->
-      <main class="main" aria-label="內容">
-        <div class="mainHead">
-          <div>
-            <div class="ttl" id="viewTitle">全部</div>
-            <div class="sub" id="viewSub">系統化清單介面｜可排序/群組/密度</div>
-          </div>
-          <div class="stats">
-            <div class="stat" id="statTotal">總數 <b>0</b><span class="m">項</span></div>
-            <div class="stat" id="statShown">顯示 <b>0</b><span class="m">項</span></div>
-            <div class="stat" id="statFav">收藏 <b>0</b><span class="m">項</span></div>
+      <main class="main">
+        <div class="mainTop">
+          <div class="hero">
+            <div>
+              <h1 class="heroTitle" id="viewTitle">全部</h1>
+            </div>
+            <div class="statBar">
+              <div class="stat"><div class="statLabel">Total</div><div class="statNum" id="statTotal">0</div></div>
+              <div class="stat"><div class="statLabel">Shown</div><div class="statNum" id="statShown">0</div></div>
+              <div class="stat"><div class="statLabel">Fav</div><div class="statNum" id="statFav">0</div></div>
+            </div>
           </div>
         </div>
-
         <div class="content" id="content"></div>
-
-        <div class="empty" id="empty" style="display:none;">
-          找不到符合的項目（試試看縮短關鍵字或切回「全部」）
-        </div>
+        <div class="content"><div class="empty" id="empty" style="display:none">找不到符合的項目（試試看縮短關鍵字或切回全部）</div></div>
       </main>
-
     </div>
-
-    <footer>
-      © 2025 航機系 008 沈崑宸 | Powered by GitHub Pages | 如果你覺得這網頁很棒可以請我喝飲料真的 | ig:kun.chen.0826
-    </footer>
   </div>
+</div>
+<div class="toast" id="toast"></div>
 
-  <div class="toast" id="toast" aria-live="polite"></div>
+<script>
+(function(){
+  var DATA = [
+    {section:'147', group:'147入學考', title:'📘 ALL-入學考', url:'https://hisausage7.github.io/147/', keywords:'147 入學考 入學 ALL'},
+    {section:'147', group:'147入學考', title:'📘 M6-入學考', url:'https://hisausage7.github.io/147in-M6/', keywords:'147 入學考 入學 M6'},
+    {section:'147', group:'147入學考', title:'📘 M7-入學考', url:'https://hisausage7.github.io/147in-M7/', keywords:'147 入學考 入學 M7'},
+    {section:'147', group:'147入學考', title:'📘 M10-入學考', url:'https://hisausage7.github.io/147in/', keywords:'147 入學考 入學 M10'},
+    {section:'int', group:'147校內考', title:'⚙️ M1-校內考', url:'https://hisausage7.github.io/147M1/', keywords:'M1 校內考 147M1'},
+    {section:'int', group:'147校內考', title:'⚙️ M3-校內考', url:'https://hisausage7.github.io/M3-147/', keywords:'M3 校內考 147M3'},
+    {section:'int', group:'147校內考', title:'⚙️ M6-校內考', url:'https://hisausage7.github.io/147M6/', keywords:'M6 校內考 147M6'},
+    {section:'int', group:'147校內考', title:'⚙️ M9-校內考', url:'https://hisausage7.github.io/147M9/', keywords:'M9 校內考 147M9'},
+    {section:'int', group:'147校內考', title:'⚙️ M10-校內考', url:'https://hisausage7.github.io/147M10/', keywords:'M10 校內考 147M10'},
+    {section:'int', group:'147校內考', title:'⚙️ M15-校內考', url:'https://hisausage7.github.io/147M15/', keywords:'M15 校內考 147M15'},
+    {section:'test', group:'147期中/末考', title:'⚙️ M2-期末考', url:'https://hisausage7.github.io/M2-mid/', keywords:'M2 期中考 147M2mid'},
+    {section:'test', group:'147期中/末考', title:'⚙️ M6-期末考', url:'https://hisausage7.github.io/147-M6mid/', keywords:'M6 期中考 147M6mid'},
+    {section:'test', group:'147期中/末考', title:'⚙️ M15-期末考', url:'https://hisausage7.github.io/M15-mid/', keywords:'M15 期末考 M15-mid'},
+    {section:'caa', group:'147CAA', title:'🛩️ M1-CAA', url:'https://hisausage7.github.io/147CAA-M1/', keywords:'CAA 民航 147CAA M1'},
+    {section:'caa', group:'147CAA', title:'🛩️ M9-CAA', url:'https://hisausage7.github.io/147CAA-M9/', keywords:'CAA 民航 147CAA M9'},
+    {section:'caa', group:'147CAA', title:'🛩️ M10-CAA', url:'https://hisausage7.github.io/147CAA-M10/', keywords:'CAA 民航 147CAA M10'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M1 技藝競賽', url:'https://hisausage7.github.io/skill-M1/', keywords:'技能 檢定 skill M1 1'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M2 技藝競賽', url:'https://hisausage7.github.io/skill-M2/', keywords:'技能 檢定 skill M2 2'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M3 技藝競賽', url:'https://hisausage7.github.io/skill-M3/', keywords:'技能 檢定 skill M3 3'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M4 技藝競賽', url:'https://hisausage7.github.io/skill-M4/', keywords:'技能 檢定 skill M4 4'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M5 技藝競賽', url:'https://hisausage7.github.io/skill-M5/', keywords:'技能 檢定 skill M5 5'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M6 技藝競賽', url:'https://hisausage7.github.io/skill-M6/', keywords:'技能 檢定 skill M6 6'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M7 技藝競賽', url:'https://hisausage7.github.io/skill-M7/', keywords:'技能 檢定 skill M7 7'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M8 技藝競賽', url:'https://hisausage7.github.io/skill-M8/', keywords:'技能 檢定 skill M8 8'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M9 技藝競賽', url:'https://hisausage7.github.io/skill-M9/', keywords:'技能 檢定 skill M9 9'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M10 技藝競賽', url:'https://hisausage7.github.io/skill-M10/', keywords:'技能 檢定 skill M10 10'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M11A 技藝競賽', url:'https://hisausage7.github.io/skill-M11A/', keywords:'技能 檢定 skill M11A 11A'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M11B 技藝競賽', url:'https://hisausage7.github.io/skill-M11B/', keywords:'技能 檢定 skill M11B 11B'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M12 技藝競賽', url:'https://hisausage7.github.io/skill-M12/', keywords:'技能 檢定 skill M12 12'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M13 技藝競賽', url:'https://hisausage7.github.io/skill-M13/', keywords:'技能 檢定 skill M13 13'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M14 技藝競賽', url:'https://hisausage7.github.io/skill-M14/', keywords:'技能 檢定 skill M14 14'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M15 技藝競賽', url:'https://hisausage7.github.io/skill-M15/', keywords:'技能 檢定 skill M15 15'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M16 技藝競賽', url:'https://hisausage7.github.io/skill-M16/', keywords:'技能 檢定 skill M16 16'},
+    {section:'skill', group:'技藝競賽', title:'🛠️ M17 技藝競賽', url:'https://hisausage7.github.io/skill-M17/', keywords:'技能 檢定 skill M17 17'}
+  ];
+  var FILTERS = [
+    {id:'all', label:'全部'}, {id:'147', label:'147入學考'}, {id:'int', label:'147校內考'}, {id:'test', label:'147期中/末考'}, {id:'caa', label:'147CAA'}, {id:'skill', label:'技藝競賽'}, {id:'fav', label:'收藏'}
+  ];
+  var LS_FAV='portal_favs_v1', LS_UI='portal_ui_v1';
+  function loadJSON(key,fallback){try{var raw=localStorage.getItem(key); if(!raw)return fallback; var obj=JSON.parse(raw); return obj||fallback;}catch(e){return fallback;}}
+  function saveJSON(key,obj){try{localStorage.setItem(key, JSON.stringify(obj));}catch(e){}}
+  var favs = loadJSON(LS_FAV, {});
+  var ui = loadJSON(LS_UI, {grouped:true,dense:false,sort:'smart'});
+  var state = {activeFilter:'all', query:''};
+  var $ = function(id){return document.getElementById(id)};
+  var $nav=$('nav'), $q=$('q'), $content=$('content'), $empty=$('empty'), $viewTitle=$('viewTitle'), $sortSel=$('sortSel'), $btnGroup=$('btnGroup');
 
-  <script>
-    /* ===== 自動抓 topbar 高度，避免 sticky sidebar 卡住 ===== */
-    (function(){
-      function setTopbarH(){
-        try{
-          var tb = document.getElementById('topbar');
-          if(!tb) return;
-          var h = tb.offsetHeight || 62;
-          document.documentElement.style.setProperty('--topbarH', h + 'px');
-        }catch(e){}
-      }
-      setTopbarH();
-      window.addEventListener('resize', function(){ setTopbarH(); }, {passive:true});
-      window.addEventListener('load', function(){ setTopbarH(); }, {passive:true});
-    })();
+  function el(tag,cls){var n=document.createElement(tag); if(cls)n.className=cls; return n;}
+  function isFav(item){return !!favs[item.url];}
+  function matchItem(item){
+    if(state.activeFilter==='fav'){ if(!isFav(item)) return false; }
+    else if(state.activeFilter!=='all' && item.section!==state.activeFilter) return false;
+    var q=(state.query||'').toLowerCase().trim(); if(!q) return true;
+    var hay=(item.title+' '+item.keywords+' '+item.group).toLowerCase();
+    return hay.indexOf(q)>-1;
+  }
+  function groupBy(arr,keyFn){var map={}; for(var i=0;i<arr.length;i++){var k=keyFn(arr[i]); if(!map[k]) map[k]=[]; map[k].push(arr[i]);} return map;}
+  function cmpText(x,y){x=(x||'').toLowerCase(); y=(y||'').toLowerCase(); if(x<y)return -1; if(x>y)return 1; return 0;}
+  function getMRank(item){var s=((item.title||'')+' '+(item.keywords||'')+' '+(item.group||'')).toUpperCase(); if(s.indexOf('ALL')>-1)return -100; var m=s.match(/M\s*([0-9]{1,2})([A-Z])?/); if(!m)return 999999; var num=parseInt(m[1],10), suf=m[2]||'', sw=0; if(suf==='A')sw=1; else if(suf==='B')sw=2; else if(suf==='C')sw=3; return num*100+sw;}
+  function cmpM(p,q){var rp=getMRank(p), rq=getMRank(q); if(rp!==rq)return rp-rq; return cmpText(p.title,q.title);}
+  function sortItems(arr){var mode=ui.sort||'smart'; var a=arr.slice(0); a.sort(function(p,q){ if(mode==='title') return cmpText(p.title,q.title); if(mode==='group'){var g1=cmpText(p.group,q.group); return g1!==0?g1:cmpM(p,q);} if(mode==='fav'){var f1=(isFav(q)?1:0)-(isFav(p)?1:0); return f1!==0?f1:cmpM(p,q);} var sf=(isFav(q)?1:0)-(isFav(p)?1:0); return sf!==0?sf:cmpM(p,q); }); return a;}
+  function countByFilter(id){ if(id==='all')return DATA.length; if(id==='fav'){var c=0; for(var i=0;i<DATA.length;i++) if(isFav(DATA[i])) c++; return c;} var n=0; for(var j=0;j<DATA.length;j++) if(DATA[j].section===id) n++; return n; }
+  function getFilterLabel(id){ for(var i=0;i<FILTERS.length;i++) if(FILTERS[i].id===id) return FILTERS[i].label; return '全部'; }
 
-    /* =========================
-       你的「名稱 + 網址」完全保留
-       ========================= */
-    var DATA = [
-      // 147入學考
-      {section:'147', group:'147入學考', title:'📘 ALL-入學考', url:'https://hisausage7.github.io/147/', keywords:'147 入學考 入學 ALL'},
-      {section:'147', group:'147入學考', title:'📘 M6-入學考', url:'https://hisausage7.github.io/147in-M6/', keywords:'147 入學考 入學 M6'},
-      {section:'147', group:'147入學考', title:'📘 M7-入學考', url:'https://hisausage7.github.io/147in-M7/', keywords:'147 入學考 入學 M7'},
-      {section:'147', group:'147入學考', title:'📘 M10-入學考', url:'https://hisausage7.github.io/147in/', keywords:'147 入學考 入學 M10'},
-
-      // 147校內考
-      {section:'int', group:'147校內考', title:'⚙️ M1-校內考', url:'https://hisausage7.github.io/147M1/', keywords:'M1 校內考 147M1'},
-      {section:'int', group:'147校內考', title:'⚙️ M3-校內考', url:'https://hisausage7.github.io/M3-147/', keywords:'M3 校內考 147M3'},
-      {section:'int', group:'147校內考', title:'⚙️ M6-校內考', url:'https://hisausage7.github.io/147M6/', keywords:'M6 校內考 147M6'},
-      {section:'int', group:'147校內考', title:'⚙️ M9-校內考', url:'https://hisausage7.github.io/147M9/', keywords:'M9 校內考 147M9'},
-      {section:'int', group:'147校內考', title:'⚙️ M10-校內考', url:'https://hisausage7.github.io/147M10/', keywords:'M10 校內考 147M10'},
-      {section:'int', group:'147校內考', title:'⚙️ M15-校內考', url:'https://hisausage7.github.io/147M15/', keywords:'M15 校內考 147M15'},
-
-      // 147期中/末考
-      {section:'test', group:'147期中/末考', title:'⚙️ M2-期末考', url:'https://hisausage7.github.io/M2-mid/', keywords:'M2 期中考 147M2mid'},
-      {section:'test', group:'147期中/末考', title:'⚙️ M6-期末考', url:'https://hisausage7.github.io/147-M6mid/', keywords:'M6 期中考 147M6mid'},
-      {section:'test', group:'147期中/末考', title:'⚙️ M15-期末考', url:'https://hisausage7.github.io/M15-mid/', keywords:'M15 期末考 M15-mid'},
-
-      // 147CAA
-      {section:'caa', group:'147CAA', title:'🛩️ M1-CAA', url:'https://hisausage7.github.io/147CAA-M1/', keywords:'CAA 民航 147CAA M1'},
-      {section:'caa', group:'147CAA', title:'🛩️ M9-CAA', url:'https://hisausage7.github.io/147CAA-M9/', keywords:'CAA 民航 147CAA M9'},
-      {section:'caa', group:'147CAA', title:'🛩️ M6-CAA', url:'https://hisausage7.github.io/147CAA-M6/', keywords:'CAA 民航 147CAA M6'},
-      {section:'caa', group:'147CAA', title:'🛩️ M10-CAA', url:'https://hisausage7.github.io/147CAA-M10/', keywords:'CAA 民航 147CAA M10'},
-
-      // 技藝競賽
-      {section:'skill', group:'技藝競賽', title:'🛠️ M1 技藝競賽', url:'https://hisausage7.github.io/skill-M1/', keywords:'技能 檢定 skill M1 1'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M2 技藝競賽', url:'https://hisausage7.github.io/skill-M2/', keywords:'技能 檢定 skill M2 2'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M3 技藝競賽', url:'https://hisausage7.github.io/skill-M3/', keywords:'技能 檢定 skill M3 3'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M4 技藝競賽', url:'https://hisausage7.github.io/skill-M4/', keywords:'技能 檢定 skill M4 4'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M5 技藝競賽', url:'https://hisausage7.github.io/skill-M5/', keywords:'技能 檢定 skill M5 5'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M6 技藝競賽', url:'https://hisausage7.github.io/skill-M6/', keywords:'技能 檢定 skill M6 6'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M7 技藝競賽', url:'https://hisausage7.github.io/skill-M7/', keywords:'技能 檢定 skill M7 7'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M8 技藝競賽', url:'https://hisausage7.github.io/skill-M8/', keywords:'技能 檢定 skill M8 8'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M9 技藝競賽', url:'https://hisausage7.github.io/skill-M9/', keywords:'技能 檢定 skill M9 9'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M10 技藝競賽', url:'https://hisausage7.github.io/skill-M10/', keywords:'技能 檢定 skill M10 10'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M11A 技藝競賽', url:'https://hisausage7.github.io/skill-M11A/', keywords:'技能 檢定 skill M11A 11A'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M11B 技藝競賽', url:'https://hisausage7.github.io/skill-M11B/', keywords:'技能 檢定 skill M11B 11B'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M12 技藝競賽', url:'https://hisausage7.github.io/skill-M12/', keywords:'技能 檢定 skill M12 12'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M13 技藝競賽', url:'https://hisausage7.github.io/skill-M13/', keywords:'技能 檢定 skill M13 13'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M14 技藝競賽', url:'https://hisausage7.github.io/skill-M14/', keywords:'技能 檢定 skill M14 14'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M15 技藝競賽', url:'https://hisausage7.github.io/skill-M15/', keywords:'技能 檢定 skill M15 15'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M16 技藝競賽', url:'https://hisausage7.github.io/skill-M16/', keywords:'技能 檢定 skill M16 16'},
-      {section:'skill', group:'技藝競賽', title:'🛠️ M17 技藝競賽', url:'https://hisausage7.github.io/skill-M17/', keywords:'技能 檢定 skill M17 17'}
-    ];
-
-    var FILTERS = [
-      {id:'all', label:'全部'},
-      {id:'147', label:'147入學考'},
-      {id:'int', label:'147校內考'},
-      {id:'test', label:'147期中/末考'},
-      {id:'caa', label:'147CAA'},
-      {id:'skill', label:'技藝競賽'},
-      {id:'fav', label:'收藏'}
-    ];
-
-    var LS_FAV = 'portal_favs_v1';
-    var LS_UI  = 'portal_ui_v1';
-
-    function loadJSON(key, fallback){
-      try{
-        var raw = localStorage.getItem(key);
-        if(!raw) return fallback;
-        var obj = JSON.parse(raw);
-        return obj || fallback;
-      }catch(e){ return fallback; }
+  function buildNav(){
+    $nav.innerHTML='';
+    for(var i=0;i<FILTERS.length;i++){
+      (function(f){
+        var b=el('button','navBtn ripple'); b.type='button'; if(f.id===state.activeFilter) b.classList.add('active');
+        var top=el('div','navTop');
+        var nm=el('div','navName'); nm.textContent=f.label;
+        var bd=el('div','navBadge'); bd.textContent=String(countByFilter(f.id));
+        top.appendChild(nm); top.appendChild(bd);
+        var sub=el('div','navMini'); sub.textContent = f.id==='fav' ? '固定常用入口' : '點擊查看分類內容';
+        b.appendChild(top); b.appendChild(sub);
+        b.addEventListener('click', function(){ state.activeFilter=f.id; buildNav(); render(); });
+        $nav.appendChild(b);
+      })(FILTERS[i]);
     }
-    function saveJSON(key, obj){
-      try{ localStorage.setItem(key, JSON.stringify(obj)); }catch(e){}
+  }
+
+  function renderStats(){
+    var favCount=0; for(var k in favs){ if(favs.hasOwnProperty(k) && favs[k]) favCount++; }
+    var shown=0; for(var i=0;i<DATA.length;i++) if(matchItem(DATA[i])) shown++;
+    $('statTotal').textContent = DATA.length;
+    $('statShown').textContent = shown;
+    $('statFav').textContent = favCount;
+  }
+
+  function toast(msg){var t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._tm); t._tm=setTimeout(function(){t.classList.remove('show');}, 1300);}
+
+  function renderCard(item){
+    var card=el('article','card');
+    var top=el('div','cardTop');
+    var pill=el('div','modulePill'); var pillText=el('span'); pillText.textContent=item.group; pill.appendChild(pillText);
+    var fav=el('button','fav ripple'); fav.type='button';
+    function syncFav(){ fav.textContent=isFav(item)?'★':'☆'; if(isFav(item)) fav.classList.add('on'); else fav.classList.remove('on'); }
+    syncFav();
+    fav.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); if(isFav(item)) delete favs[item.url]; else favs[item.url]=true; saveJSON(LS_FAV,favs); syncFav(); renderStats(); buildNav(); toast(isFav(item)?'已加入收藏 ★':'已取消收藏'); if(state.activeFilter==='fav') render(); });
+    top.appendChild(pill); top.appendChild(fav);
+
+    var title=el('div','cardTitle'); title.textContent=item.title;
+    var meta=el('div','cardMeta'); var chip=el('div','metaChip'); chip.textContent=item.section.toUpperCase()+' / '+item.group; meta.appendChild(chip);
+    var kw=el('div','kw'); kw.textContent=item.keywords||'';
+    var acts=el('div','cardActions');
+    var go=el('a','go ripple'); go.href=item.url; go.target='_blank'; go.rel='noopener'; go.textContent='進入模組 ↗';
+    var note=el('div','quickNote'); note.textContent = isFav(item) ? '已設為常用' : '可加入收藏';
+    acts.appendChild(go); acts.appendChild(note);
+
+    card.appendChild(top); card.appendChild(title); card.appendChild(meta); card.appendChild(kw); card.appendChild(acts);
+    return card;
+  }
+
+  function renderSection(title, items, index){
+    var sec=el('section','section');
+    var head=el('div','sectionHead');
+    var left=el('div','left'); var idx=el('div','sectionIndex'); idx.textContent=String(index+1).padStart(2,'0'); var ttl=el('div','sectionTitle'); ttl.textContent=title; left.appendChild(idx); left.appendChild(ttl);
+    var cnt=el('div','sectionCount'); cnt.textContent=items.length+' 項';
+    head.appendChild(left); head.appendChild(cnt);
+    var grid=el('div','cardGrid');
+    for(var i=0;i<items.length;i++) grid.appendChild(renderCard(items[i]));
+    sec.appendChild(head); sec.appendChild(grid); return sec;
+  }
+
+  function applyUI(){
+$btnGroup.textContent = ui.grouped ? '群組：開' : '群組：關';
+$btnGroup.classList.toggle('on', !!ui.grouped);
+$sortSel.value = ui.sort || 'smart';
+}
+
+  function animateIn(){
+    var secs=document.querySelectorAll('.section');
+    for(var i=0;i<secs.length;i++) (function(node,idx){ node.classList.remove('in'); node.style.transitionDelay=(idx*35)+'ms'; setTimeout(function(){node.classList.add('in');},10); })(secs[i],i);
+    var cards=document.querySelectorAll('.card');
+    for(var j=0;j<cards.length;j++) (function(node,idx){ node.classList.remove('in'); node.style.transitionDelay=(Math.min(idx,24)*18)+'ms'; setTimeout(function(){node.classList.add('in');},16); })(cards[j],j);
+  }
+
+  function render(){
+    $content.innerHTML=''; $empty.style.display='none';
+    var label=getFilterLabel(state.activeFilter); $viewTitle.textContent=label;
+    var q=(state.query||'').trim();
+var list=[]; for(var i=0;i<DATA.length;i++) if(matchItem(DATA[i])) list.push(DATA[i]);
+    list=sortItems(list); renderStats();
+    var secIndex=0;
+    if(state.activeFilter==='all' && q===''){
+      var favItems=[]; for(var a=0;a<DATA.length;a++) if(isFav(DATA[a])) favItems.push(DATA[a]); favItems=sortItems(favItems);
+      if(favItems.length) $content.appendChild(renderSection('★ 收藏常用', favItems, secIndex++));
     }
-
-    var favs = loadJSON(LS_FAV, {});
-    var ui = loadJSON(LS_UI, { grouped:true, dense:false, sort:'smart' });
-
-    var state = { activeFilter:'all', query:'' };
-
-    var $app = document.getElementById('app');
-    var $nav = document.getElementById('nav');
-    var $q = document.getElementById('q');
-    var $content = document.getElementById('content');
-    var $empty = document.getElementById('empty');
-
-    var $statTotal = document.getElementById('statTotal');
-    var $statShown = document.getElementById('statShown');
-    var $statFav = document.getElementById('statFav');
-
-    var $viewTitle = document.getElementById('viewTitle');
-    var $viewSub = document.getElementById('viewSub');
-
-    var $sortSel = document.getElementById('sortSel');
-    var $btnGroup = document.getElementById('btnGroup');
-    var $btnDense = document.getElementById('btnDense');
-
-    function el(tag, cls){
-      var n = document.createElement(tag);
-      if(cls) n.className = cls;
-      return n;
+    if(!list.length){ $empty.style.display='block'; return; }
+    if(ui.grouped){
+      var grouped=groupBy(list, function(it){return it.group;});
+      var order=['147入學考','147校內考','147期中/末考','147CAA','技藝競賽'];
+      for(var b=0;b<order.length;b++) if(grouped[order[b]] && grouped[order[b]].length) $content.appendChild(renderSection(order[b], grouped[order[b]], secIndex++));
+      for(var k in grouped){ if(grouped.hasOwnProperty(k) && order.indexOf(k)===-1) $content.appendChild(renderSection(k, grouped[k], secIndex++)); }
+    }else{
+      $content.appendChild(renderSection('全部模組', list, secIndex++));
     }
+    applyUI(); setTimeout(animateIn,0);
+  }
 
-    function isFav(item){ return !!favs[item.url]; }
+  $btnGroup.addEventListener('click', function(){ ui.grouped=!ui.grouped; saveJSON(LS_UI,ui); applyUI(); render(); });
+$sortSel.addEventListener('change', function(){ ui.sort=$sortSel.value||'smart'; saveJSON(LS_UI,ui); render(); });
+  $q.addEventListener('input', function(){ state.query=$q.value||''; render(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='/' && document.activeElement!==$q){ e.preventDefault(); $q.focus(); } if(e.key==='Escape'){ if(($q.value||'')!==''){ $q.value=''; state.query=''; render(); } if(document.activeElement===$q) $q.blur(); }});
 
-    function matchItem(item){
-      if(state.activeFilter === 'fav'){
-        if(!isFav(item)) return false;
-      }else if(state.activeFilter !== 'all'){
-        if(item.section !== state.activeFilter) return false;
+  document.addEventListener('click', function(e){
+    var t=e.target;
+    while(t && t!==document.body){
+      if(t.classList && t.classList.contains('ripple')){
+        var r=t.getBoundingClientRect(), size=Math.max(r.width,r.height), x=e.clientX-r.left-size/2, y=e.clientY-r.top-size/2;
+        var s=document.createElement('span'); s.className='rip'; s.style.width=size+'px'; s.style.height=size+'px'; s.style.left=x+'px'; s.style.top=y+'px'; t.appendChild(s); setTimeout(function(){try{t.removeChild(s);}catch(err){}},580); break;
       }
-      var q = (state.query||'').toLowerCase().trim();
-      if(!q) return true;
-      var hay = (item.title + ' ' + item.keywords + ' ' + item.group).toLowerCase();
-      return hay.indexOf(q) > -1;
+      t=t.parentNode;
     }
-
-    function groupBy(arr, keyFn){
-      var map = {};
-      for(var i=0;i<arr.length;i++){
-        var k = keyFn(arr[i]);
-        if(!map[k]) map[k]=[];
-        map[k].push(arr[i]);
-      }
-      return map;
-    }
-
-    function sortItems(arr){
-      var mode = ui.sort || 'smart';
-      var a = arr.slice(0);
-
-      function cmpText(x,y){
-        x = (x||'').toLowerCase();
-        y = (y||'').toLowerCase();
-        if(x<y) return -1;
-        if(x>y) return 1;
-        return 0;
-      }
-
-      function getMRank(item){
-        var s = ((item.title||'') + ' ' + (item.keywords||'') + ' ' + (item.group||'')).toUpperCase();
-        if(s.indexOf('ALL') > -1) return -100;
-
-        var m = s.match(/M\s*([0-9]{1,2})([A-Z])?/);
-        if(!m) return 999999;
-
-        var num = parseInt(m[1], 10);
-        var suf = m[2] || '';
-        var sw = 0;
-        if(suf === 'A') sw = 1;
-        else if(suf === 'B') sw = 2;
-        else if(suf === 'C') sw = 3;
-
-        return num * 100 + sw;
-      }
-
-      function cmpM(p,q){
-        var rp = getMRank(p);
-        var rq = getMRank(q);
-        if(rp !== rq) return rp - rq;
-        return cmpText(p.title, q.title);
-      }
-
-      a.sort(function(p,q){
-        if(mode === 'title') return cmpText(p.title, q.title);
-        if(mode === 'group'){
-          var g1 = cmpText(p.group, q.group);
-          if(g1!==0) return g1;
-          return cmpM(p, q);
-        }
-        if(mode === 'fav'){
-          var f1 = (isFav(q)?1:0) - (isFav(p)?1:0);
-          if(f1!==0) return f1;
-          return cmpM(p, q);
-        }
-        var sf = (isFav(q)?1:0) - (isFav(p)?1:0);
-        if(sf!==0) return sf;
-        return cmpM(p, q);
-      });
-
-      return a;
-    }
-
-    function countByFilter(id){
-      if(id === 'all') return DATA.length;
-      if(id === 'fav'){
-        var c=0;
-        for(var i=0;i<DATA.length;i++) if(isFav(DATA[i])) c++;
-        return c;
-      }
-      var n=0;
-      for(var j=0;j<DATA.length;j++) if(DATA[j].section === id) n++;
-      return n;
-    }
-
-    function getFilterLabel(id){
-      for(var i=0;i<FILTERS.length;i++){
-        if(FILTERS[i].id === id) return FILTERS[i].label;
-      }
-      return '全部';
-    }
-
-    function buildNav(){
-      $nav.innerHTML = '';
-      for(var i=0;i<FILTERS.length;i++){
-        (function(f){
-          var b = el('button','navBtn');
-          b.type = 'button';
-          if(f.id === state.activeFilter) b.classList.add('active');
-
-          var left = el('div','navLeft');
-          var dot = el('span','dot');
-          var lab = el('span','navLabel');
-          lab.textContent = f.label;
-
-          left.appendChild(dot);
-          left.appendChild(lab);
-
-          var badge = el('span','badge');
-          badge.textContent = String(countByFilter(f.id));
-
-          b.appendChild(left);
-          b.appendChild(badge);
-
-          b.addEventListener('click', function(){
-            state.activeFilter = f.id;
-            buildNav();
-            render();
-          });
-
-          $nav.appendChild(b);
-        })(FILTERS[i]);
-      }
-    }
-
-    function renderStats(){
-      var total = DATA.length;
-      var favCount = 0;
-      for(var k in favs){ if(favs.hasOwnProperty(k) && favs[k]) favCount++; }
-
-      var shown = 0;
-      for(var i=0;i<DATA.length;i++){ if(matchItem(DATA[i])) shown++; }
-
-      $statTotal.innerHTML = '總數 <b>'+ total +'</b><span class="m">項</span>';
-      $statShown.innerHTML = '顯示 <b>'+ shown +'</b><span class="m">項</span>';
-      $statFav.innerHTML = '收藏 <b>'+ favCount +'</b><span class="m">項</span>';
-    }
-
-    function toast(msg){
-      var t = document.getElementById('toast');
-      if(!t) return;
-      t.textContent = msg;
-      t.classList.add('show');
-      clearTimeout(t._tm);
-      t._tm = setTimeout(function(){
-        t.classList.remove('show');
-      }, 1200);
-    }
-
-    function renderRow(item){
-      var tr = el('div','tr');
-
-      var td1 = el('div','tTitle');
-      var nm = el('div','name');
-      nm.textContent = item.title;
-
-      var kw = el('div','kw');
-      kw.textContent = item.keywords || '';
-
-      td1.appendChild(nm);
-      td1.appendChild(kw);
-
-      var td2 = el('div','tGroup');
-      var tag = el('span','tag');
-      tag.textContent = item.group;
-      td2.appendChild(tag);
-
-      var td3 = el('div','tActs');
-
-      var go = el('a','go');
-      go.href = item.url;
-      go.target = '_blank';
-      go.rel = 'noopener';
-      go.textContent = '進入 ↗';
-
-      var fav = el('button','fav');
-      fav.type = 'button';
-
-      function syncFav(){
-        if(isFav(item)){
-          fav.classList.add('on');
-          fav.textContent = '★ 收藏';
-        }else{
-          fav.classList.remove('on');
-          fav.textContent = '☆ 收藏';
-        }
-      }
-      syncFav();
-
-      fav.addEventListener('click', function(e){
-        e.preventDefault();
-        e.stopPropagation();
-
-        if(isFav(item)) delete favs[item.url];
-        else favs[item.url] = true;
-
-        saveJSON(LS_FAV, favs);
-        syncFav();
-        renderStats();
-        buildNav();
-        toast(isFav(item) ? '已加入收藏 ★' : '已取消收藏');
-
-        if(state.activeFilter === 'fav') render();
-      });
-
-      td3.appendChild(go);
-      td3.appendChild(fav);
-
-      tr.appendChild(td1);
-      tr.appendChild(td2);
-      tr.appendChild(td3);
-      return tr;
-    }
-
-    function renderSection(title, items){
-      var sec = el('section','section');
-
-      var head = el('div','sectionHead');
-      var nm = el('div','name'); nm.textContent = title;
-      var ct = el('div','count'); ct.textContent = items.length + ' 項';
-      head.appendChild(nm);
-      head.appendChild(ct);
-
-      var table = el('div','table');
-
-      var thead = el('div','thead');
-      var c1 = el('div'); c1.textContent = '標題';
-      var c2 = el('div'); c2.textContent = '分類';
-      var c3 = el('div'); c3.textContent = '操作';
-      thead.appendChild(c1); thead.appendChild(c2); thead.appendChild(c3);
-
-      table.appendChild(thead);
-
-      for(var i=0;i<items.length;i++){
-        table.appendChild(renderRow(items[i]));
-      }
-
-      sec.appendChild(head);
-      sec.appendChild(table);
-      return sec;
-    }
-
-    function renderFlat(list){
-      $content.appendChild(renderSection('清單', list));
-    }
-
-    function renderGrouped(list){
-      var grouped = groupBy(list, function(it){ return it.group; });
-      var order = ['147入學考','147校內考','147期中/末考','147CAA','技藝競賽'];
-
-      for(var i=0;i<order.length;i++){
-        var g = order[i];
-        if(grouped[g] && grouped[g].length){
-          $content.appendChild(renderSection(g, grouped[g]));
-        }
-      }
-      for(var k in grouped){
-        if(!grouped.hasOwnProperty(k)) continue;
-        var inOrder = false;
-        for(var j=0;j<order.length;j++){ if(order[j]===k){ inOrder=true; break; } }
-        if(inOrder) continue;
-        $content.appendChild(renderSection(k, grouped[k]));
-      }
-    }
-
-    function applyUI(){
-      if(ui.dense) $app.classList.add('dense');
-      else $app.classList.remove('dense');
-
-      $btnGroup.textContent = ui.grouped ? '群組：開' : '群組：關';
-      if(ui.grouped) $btnGroup.classList.add('on'); else $btnGroup.classList.remove('on');
-
-      $btnDense.textContent = ui.dense ? '密度：高' : '密度：一般';
-      if(ui.dense) $btnDense.classList.add('on'); else $btnDense.classList.remove('on');
-
-      $sortSel.value = ui.sort || 'smart';
-    }
-
-    function animateIn(){
-      var prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if(prefersReduce) return;
-
-      var secs = document.querySelectorAll('.section');
-      for(var i=0;i<secs.length;i++){
-        (function(node, idx){
-          node.classList.remove('in');
-          node.style.transitionDelay = (idx*28) + 'ms';
-          setTimeout(function(){ node.classList.add('in'); }, 10);
-        })(secs[i], i);
-      }
-
-      var rows = document.querySelectorAll('.tr');
-      for(var j=0;j<rows.length;j++){
-        (function(node, idx){
-          node.classList.remove('in');
-          node.style.transitionDelay = (Math.min(idx,20)*16) + 'ms';
-          setTimeout(function(){ node.classList.add('in'); }, 10);
-        })(rows[j], j);
-      }
-    }
-
-    function render(){
-      $content.innerHTML = '';
-      $empty.style.display = 'none';
-
-      var label = getFilterLabel(state.activeFilter);
-      $viewTitle.textContent = label;
-
-      var q = (state.query||'').trim();
-      $viewSub.textContent = q ? ('搜尋：「'+ q +'」｜可排序/群組/密度') : 'ALL';
-
-      var list = [];
-      for(var i=0;i<DATA.length;i++){
-        if(matchItem(DATA[i])) list.push(DATA[i]);
-      }
-
-      list = sortItems(list);
-      renderStats();
-
-      if(state.activeFilter === 'all' && q === ''){
-        var favItems = [];
-        for(var a=0;a<DATA.length;a++) if(isFav(DATA[a])) favItems.push(DATA[a]);
-        favItems = sortItems(favItems);
-        if(favItems.length){
-          $content.appendChild(renderSection('★ 收藏', favItems));
-        }
-      }
-
-      if(list.length === 0){
-        $empty.style.display = 'block';
-        return;
-      }
-
-      if(ui.grouped) renderGrouped(list);
-      else renderFlat(list);
-
-      setTimeout(animateIn, 0);
-    }
-
-    /* ===== UI controls ===== */
-    $btnGroup.addEventListener('click', function(){
-      ui.grouped = !ui.grouped;
-      saveJSON(LS_UI, ui);
-      applyUI();
-      render();
-    });
-
-    $btnDense.addEventListener('click', function(){
-      ui.dense = !ui.dense;
-      saveJSON(LS_UI, ui);
-      applyUI();
-      render();
-    });
-
-    $sortSel.addEventListener('change', function(){
-      ui.sort = $sortSel.value || 'smart';
-      saveJSON(LS_UI, ui);
-      render();
-    });
-
-    /* 搜尋 */
-    $q.addEventListener('input', function(){
-      state.query = $q.value || '';
-      render();
-    });
-
-    /* 快捷鍵 */
-    document.addEventListener('keydown', function(e){
-      if(e.key === '/' && document.activeElement !== $q){
-        e.preventDefault();
-        $q.focus();
-        return;
-      }
-      if(e.key === 'Escape'){
-        if(($q.value||'')!==''){
-          $q.value='';
-          state.query='';
-          render();
-        }
-        if(document.activeElement === $q) $q.blur();
-      }
-    });
-
-    /* Ripple：事件委派 */
-    function makeRipple(elm){
-      if(!elm || !elm.classList) return;
-      if(!elm.classList.contains('ripple')) elm.classList.add('ripple');
-    }
-    function fireRipple(elm, clientX, clientY){
-      if(!elm) return;
-      makeRipple(elm);
-
-      var r = elm.getBoundingClientRect();
-      var size = Math.max(r.width, r.height);
-      var x = clientX - r.left - size/2;
-      var y = clientY - r.top - size/2;
-
-      var s = document.createElement('span');
-      s.className = 'rip';
-      s.style.width = size + 'px';
-      s.style.height = size + 'px';
-      s.style.left = x + 'px';
-      s.style.top = y + 'px';
-
-      elm.appendChild(s);
-      setTimeout(function(){
-        try{ elm.removeChild(s); }catch(e){}
-      }, 560);
-    }
-    document.addEventListener('click', function(e){
-      var t = e.target;
-      while(t && t !== document.body){
-        if(t.classList && (t.classList.contains('btn') || t.classList.contains('navBtn') || t.classList.contains('go') || t.classList.contains('fav'))){
-          fireRipple(t, e.clientX, e.clientY);
-          break;
-        }
-        t = t.parentNode;
-      }
-    }, true);
-
-    /* 時鐘 */
-    (function(){
-      var elp = document.getElementById('clockPill');
-      function pad(n){ return (n<10?'0':'')+n; }
-      function tick(){
-        try{
-          var d = new Date();
-          var days = ['日','一','二','三','四','五','六'];
-          var s = d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' (週'+days[d.getDay()]+') '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
-          elp.innerHTML = '🕒 <span class="mut">'+ s +'</span>';
-        }catch(e){}
-      }
-      tick();
-      setInterval(tick, 1000);
-    })();
-
-    /* 天氣（臺中） */
-    (function(){
-      var pill = document.getElementById('weatherPill');
-      try{ pill.classList.add('loading'); }catch(e){}
-
-      function wxMap(code,isNight){
-        var map={
-          0:{e:'☀️',t:'晴朗'},1:{e:'🌤️',t:'多雲時晴'},2:{e:'⛅',t:'陰晴不定'},3:{e:'☁️',t:'多雲'},
-          45:{e:'🌫️',t:'霧'},48:{e:'🌫️',t:'霧'},
-          51:{e:'🌦️',t:'細雨'},53:{e:'🌦️',t:'毛毛雨'},55:{e:'🌧️',t:'小雨'},
-          61:{e:'🌧️',t:'小雨'},63:{e:'🌧️',t:'中雨'},65:{e:'🌧️',t:'大雨'},
-          71:{e:'🌨️',t:'小雪'},73:{e:'🌨️',t:'中雪'},75:{e:'❄️',t:'大雪'},
-          80:{e:'🌦️',t:'陣雨'},81:{e:'🌧️',t:'陣雨'},82:{e:'🌧️',t:'豪雨'},
-          95:{e:'⛈️',t:'雷雨'},96:{e:'⛈️',t:'雷雨冰雹'},99:{e:'⛈️',t:'強雷雹'}
-        };
-        var item = map[code] || {e:(isNight?'🌙':'☀️'), t:'天氣'};
-        if(isNight && (code===0 || code===1)) item.e='🌙';
-        return item;
-      }
-
-      function fetchTaichung(){
-        var lat = 24.067337599276396;
-        var lon = 120.71470802813444;
-        var url = 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day';
-        fetch(url).then(function(res){
-          if(!res.ok) throw new Error('network');
-          return res.json();
-        }).then(function(data){
-          var cur = data.current || {};
-          var code = (cur.weather_code!=null?cur.weather_code:0);
-          var temp = Math.round(cur.temperature_2m!=null?cur.temperature_2m:0);
-          var isNight = (cur.is_day===0);
-          var m = wxMap(code, isNight);
-          pill.innerHTML = m.e + ' <span class="mut">臺中｜'+ m.t +'・'+ temp +'°C</span>';
-          try{ pill.classList.remove('loading'); }catch(e){}
-        }).catch(function(){
-          pill.innerHTML = '⚠️ <span class="mut">天氣取得失敗</span>';
-          try{ pill.classList.remove('loading'); }catch(e){}
-        });
-      }
-      fetchTaichung();
-    })();
-
-    /* init */
-    applyUI();
-    buildNav();
-    render();
-  </script>
+  }, true);
+
+  (function(){ var elp=$('clockPill'); function pad(n){return (n<10?'0':'')+n;} function tick(){ var d=new Date(), days=['日','一','二','三','四','五','六']; elp.innerHTML='🕒 <span><b>'+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())+'</b>　'+d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' 週'+days[d.getDay()]+'</span>'; } tick(); setInterval(tick,1000);}());
+  (function(){ var pill=$('weatherPill'); function wxMap(code,isNight){ var map={0:{e:'☀️',t:'晴朗'},1:{e:'🌤️',t:'多雲時晴'},2:{e:'⛅',t:'陰晴不定'},3:{e:'☁️',t:'多雲'},45:{e:'🌫️',t:'霧'},48:{e:'🌫️',t:'霧'},51:{e:'🌦️',t:'細雨'},53:{e:'🌦️',t:'毛毛雨'},55:{e:'🌧️',t:'小雨'},61:{e:'🌧️',t:'小雨'},63:{e:'🌧️',t:'中雨'},65:{e:'🌧️',t:'大雨'},71:{e:'🌨️',t:'小雪'},73:{e:'🌨️',t:'中雪'},75:{e:'❄️',t:'大雪'},80:{e:'🌦️',t:'陣雨'},81:{e:'🌧️',t:'陣雨'},82:{e:'🌧️',t:'豪雨'},95:{e:'⛈️',t:'雷雨'},96:{e:'⛈️',t:'雷雨冰雹'},99:{e:'⛈️',t:'強雷雹'}}; var item=map[code]||{e:(isNight?'🌙':'☀️'),t:'天氣'}; if(isNight && (code===0 || code===1)) item.e='🌙'; return item; }
+    function fetchTaichung(){ var lat=24.067337599276396, lon=120.71470802813444; var url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day'; fetch(url).then(function(res){ if(!res.ok) throw new Error('network'); return res.json(); }).then(function(data){ var cur=data.current||{}, code=(cur.weather_code!=null?cur.weather_code:0), temp=Math.round(cur.temperature_2m!=null?cur.temperature_2m:0), isNight=(cur.is_day===0), m=wxMap(code,isNight); pill.innerHTML=m.e+' <span><b>臺中</b>　'+m.t+'・'+temp+'°C</span>'; }).catch(function(){ pill.innerHTML='⚠️ <span>天氣取得失敗</span>'; }); }
+    fetchTaichung();
+  }());
+
+  buildNav(); applyUI(); render();
+}());
+</script>
 </body>
 </html>
