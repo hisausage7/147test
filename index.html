@@ -682,6 +682,19 @@
           </div>
           <input type="text" id="quizNameInput" class="quizInput" placeholder="輸入姓名 / Enter your name" />
           <input type="number" id="quizQuestionLimit" class="quizInput" placeholder="輸入題數 / Enter number of questions" />
+          <div id="quizChapterWrap" class="quizHidden">
+            <select id="quizChapterSelect" class="quizInput quizSelect">
+              <option value="">M2 全部章節</option>
+              <option value="M2.1">M2.1 Matter（25題）</option>
+              <option value="M2.2.1">M2.2.1 Statics（25題）</option>
+              <option value="M2.2.2">M2.2.2 Kinematics（25題）</option>
+              <option value="M2.2.3">M2.2.3 Dynamics（50題）</option>
+              <option value="M2.2.4">M2.2.4 Fluid Dynamics（45題）</option>
+              <option value="M2.3">M2.3 Thermodynamics（50題）</option>
+              <option value="M2.4">M2.4 Optics（40題）</option>
+              <option value="M2.5">M2.5 Wave Motion and Sound（25題）</option>
+            </select>
+          </div>
           <input type="text" id="quizRangeInput" class="quizInput" placeholder="區段測驗題號，例如 1-20、25、30-35；留空＝原本隨機出題" />
           <div class="rangeHint">區段測驗：輸入題號或範圍就只考那些題；留空則維持原本隨機抽題。</div>
           <input type="number" id="quizDurationInput" class="quizInput" value="80" min="1" max="999" placeholder="作答時間（分鐘，預設 80，可設定至 999 分鐘）" />
@@ -720,7 +733,7 @@
 
         <section id="quizWrongReview" class="quizHidden"><h2>錯題記憶 / Wrong Memory</h2><div class="quizPanel"><div class="muted" style="margin-bottom:10px">這裡會列出你「仍然答錯過」的題目。你之後做對同一題，會自動從清單移除。</div><div class="bankControls"><input id="wrongNameInput" class="quizInput" type="text" placeholder="姓名（留空=使用首頁姓名或 _guest）"><input id="wrongQuestionLimit" class="quizInput" type="number" placeholder="錯題測驗題數（留空=全部）"><input id="wrongDurationInput" class="quizInput" type="number" value="80" min="1" max="999" placeholder="錯題測驗時間（分鐘）"></div><div style="text-align:center;margin-top:10px"><button id="startWrongQuizBtn" class="quizBtn purple">開始錯題測驗 / Start Wrong Quiz</button><button id="clearWrongMemBtn" class="quizBtn darkbtn">清除錯題記憶 / Clear Wrong</button><button id="backWelcomeFromWrong" class="quizBtn gray">返回首頁 / Home</button><button id="toBankFromWrong" class="quizBtn teal">題庫瀏覽 / Browse Bank</button></div><div id="wrongMemInfoPanel" class="muted" style="text-align:center;margin-top:10px"></div></div><div class="tableResponsive"><table class="quizTable"><thead><tr><th style="width:70px">#</th><th>錯題題目</th><th style="width:28%">上次選的答案</th><th style="width:22%">正確答案</th><th style="width:180px">最後答錯時間</th></tr></thead><tbody id="wrongListBody"></tbody></table></div></section>
 
-        <section id="quizBank" class="quizHidden"><h2>題庫瀏覽 / Question Bank</h2><div class="bankControls"><input id="bankNumberSearch" class="quizInput" type="text" placeholder="題號搜尋"><input id="bankSearch" class="quizInput" type="text" placeholder="關鍵字搜尋"><label>每頁顯示 <select id="perPage" class="quizSelect" style="width:auto;margin:0"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="all">全部</option></select> 題</label><button id="backWelcomeFromBank" class="quizBtn gray">返回測驗頁 / Home</button></div><div class="tableResponsive"><table class="quizTable"><thead><tr><th style="width:70px">#</th><th>題目</th><th style="width:34%">選項</th><th style="width:160px">正確答案</th></tr></thead><tbody id="bankBody"></tbody></table></div><div class="pagination"><button id="prevPage" class="quizBtn">上一頁</button><span id="pageInfo" class="mono"></span><button id="nextPage" class="quizBtn">下一頁</button></div><div style="text-align:center;margin-top:8px"><small class="muted">提示：題號可輸入單題或範圍；關鍵字支援中英文與數字。</small></div></section>
+        <section id="quizBank" class="quizHidden"><h2>題庫瀏覽 / Question Bank</h2><div class="bankControls"><select id="bankChapterSelect" class="quizInput quizSelect quizHidden"><option value="">M2 全部章節</option><option value="M2.1">M2.1 Matter（25題）</option><option value="M2.2.1">M2.2.1 Statics（25題）</option><option value="M2.2.2">M2.2.2 Kinematics（25題）</option><option value="M2.2.3">M2.2.3 Dynamics（50題）</option><option value="M2.2.4">M2.2.4 Fluid Dynamics（45題）</option><option value="M2.3">M2.3 Thermodynamics（50題）</option><option value="M2.4">M2.4 Optics（40題）</option><option value="M2.5">M2.5 Wave Motion and Sound（25題）</option></select><input id="bankNumberSearch" class="quizInput" type="text" placeholder="題號搜尋"><input id="bankSearch" class="quizInput" type="text" placeholder="關鍵字搜尋"><label>每頁顯示 <select id="perPage" class="quizSelect" style="width:auto;margin:0"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="all">全部</option></select> 題</label><button id="backWelcomeFromBank" class="quizBtn gray">返回測驗頁 / Home</button></div><div class="tableResponsive"><table class="quizTable"><thead><tr><th style="width:70px">#</th><th>題目</th><th style="width:34%">選項</th><th style="width:160px">正確答案</th></tr></thead><tbody id="bankBody"></tbody></table></div><div class="pagination"><button id="prevPage" class="quizBtn">上一頁</button><span id="pageInfo" class="mono"></span><button id="nextPage" class="quizBtn">下一頁</button></div><div style="text-align:center;margin-top:8px"><small class="muted">提示：題號可輸入單題或範圍；關鍵字支援中英文與數字。</small></div></section>
       </div>
     </div>
   </div>
@@ -14320,6 +14333,2579 @@ var QUIZ_BANKS = {
 
               ]
   },
+    "quiz_school_m2": {
+  "title": "147測驗M2-校內考",
+  "label": "校內考 M2",
+  "limitPlaceholder": "輸入題數,至多285題 / Enter number of questions",
+  "note": "",
+  "questions": [
+    {
+      "question": "M2.1 Matter｜The mass number of an element is based on:",
+      "options": [
+        "A. The number of neutrons in its nucleus",
+        "B. The number of protons in its nucleus",
+        "C. The total number of protons and neutrons in its nucleus"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.1 Matter｜The atomic number of the atom of an element is based on:",
+      "options": [
+        "A. The number of protons in its nucleus",
+        "B. The total number of protons and neutrons in its nucleus",
+        "C. The number of neutrons in its nucleus"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.1 Matter｜An atom that gains one or more additional electrons is called:",
+      "options": [
+        "A. A positive ion",
+        "B. A negative ion",
+        "C. An isotope"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.1 Matter｜Two or more elements that are chemically bonded together and have an even mass distribution form a:",
+      "options": [
+        "A. Chemical compound",
+        "B. Substance",
+        "C. Mixture"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.1 Matter｜The chemical bonding of two or more elements is called:",
+      "options": [
+        "A. Chemical analysis",
+        "B. Chemical synthesis",
+        "C. Chemical fusion"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.1 Matter｜A substance that passes from the solid to the vapor state without passing through the liquid state is called:",
+      "options": [
+        "A. A solvent",
+        "B. A sublimate",
+        "C. A distillate"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.1 Matter｜If 2H₂ is bonded to 0₂ the result is :",
+      "options": [
+        "A. 2H₂0",
+        "B. 2H0",
+        "C. 2H₂0₂"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.1 Matter｜Non-metals form:",
+      "options": [
+        "A. Ionic bonds",
+        "B. Metallic bonds",
+        "C. Covalent bonds"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.1 Matter｜Ionic bonding involves:",
+      "options": [
+        "A. Electron sharing",
+        "B. Electron transfer",
+        "C. Attraction to a free electron cloud"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.1 Matter｜Brownian Movement describes:",
+      "options": [
+        "A. The motion of molecules",
+        "B. The movement in convection currents",
+        "C. The attraction of electrons"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.1 Matter｜Pure water is at its greatest density at:",
+      "options": [
+        "A. 0° Centigrade",
+        "B. -4° Centigrade",
+        "C. 4° Centigrade"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.1 Matter｜When water freezes, heat energy is:",
+      "options": [
+        "A. Absorbed",
+        "B. Released",
+        "C. Retained"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.1 Matter｜Valency electrons are:",
+      "options": [
+        "A. Outer shell electrons",
+        "B. All electrons",
+        "C. Free electrons"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.1 Matter｜Neutrons carry:",
+      "options": [
+        "A. A positive electrical charge",
+        "B. A negative electrical charge",
+        "C. No electrical charge"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.1 Matter｜The number of electrons in a stable atom equals:",
+      "options": [
+        "A. The number of neutrons in the nucleus",
+        "B. The number of protons and neutrons in the nucleus",
+        "C. The number of protons in the nucleus"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.1 Matter｜Electrons carry a:",
+      "options": [
+        "A. Positive electrical charge",
+        "B. Negative electrical charge",
+        "C. No electrical charge"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.1 Matter｜An isotope of an element has:",
+      "options": [
+        "A. The same atomic number but a different mass number",
+        "B. The same mass number but a different atomic number",
+        "C. A different mass and atomic number"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.1 Matter｜Elements on the extreme right of the periodic table are:",
+      "options": [
+        "A. Metals",
+        "B. Transition metals",
+        "C. Non-metals"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.1 Matter｜Oxygen, atomic No. 8, is:",
+      "options": [
+        "A. Trivalent",
+        "B. Bivalent",
+        "C. Univalent"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.1 Matter｜The atomic weight of all atoms is related to:",
+      "options": [
+        "A. Hydrogen",
+        "B. Helium",
+        "C. Carbon"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.1 Matter｜A ‘Group’ in the periodic table of elements contains elements that:",
+      "options": [
+        "A. Have the same number of outer shell electrons",
+        "B. Have the same number of electrons",
+        "C. Increase in atomic number sequence from top to bottom"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.1 Matter｜A ‘Period’ in the periodic table of elements contains atoms that:",
+      "options": [
+        "A. Have the same number of outer shell electrons",
+        "B. Have the same number of electrons",
+        "C. Increase an atomic number sequence from left to right"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.1 Matter｜A group 5A element is:",
+      "options": [
+        "A. Univalent",
+        "B. Bivalent",
+        "C. Trivalent"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.1 Matter｜Two gases mix by a process known as:",
+      "options": [
+        "A. Infusion",
+        "B. Diffusion",
+        "C. Fusion"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.1 Matter｜The maximum number of electrons that can be held in the outer electron shell of an atom is:",
+      "options": [
+        "A. Six",
+        "B. Four",
+        "C. Eight"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.1 Statics｜Which of the following are NOT vector quantities:",
+      "options": [
+        "A. Force, Velocity and Acceleration",
+        "B. Mass, Volume and Time",
+        "C. Displacement, Weight and Momentum"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.1 Statics｜A physical quantity that is completely described by a real number is a:",
+      "options": [
+        "A. Vector quantity",
+        "B. Scalar quantity",
+        "C. Component"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.1 Statics｜The sum of two vectors is called:",
+      "options": [
+        "A. Vector sum",
+        "B. Equilibrant",
+        "C. Resultant"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.1 Statics｜A man drags a box across a floor with a rope that is at an angle of 60° to the floor. If the tension in the rope is 500N, the horizontal component of the tension is:",
+      "options": [
+        "A. 430N",
+        "B. 250N",
+        "C. 100N"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.1 Statics｜A mass of one metric tonne has a weight of:",
+      "options": [
+        "A. 981N",
+        "B. 9.81kN",
+        "C. 98.1kN"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.1 Statics｜A 6ft uniform beam AB is pivoted at its centre. If a mass of 20lb is hung from end A, a mass of 30lb used to balance the beam must be positioned:",
+      "options": [
+        "A. 1 foot from end B",
+        "B. 2 foot from end B",
+        "C. 18 inches from end B"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.1 Statics｜A uniform beam AB is 6m long and has a mass of 10kg. A mass of 6kg is placed 1m from end A. The centre of gravity of the beam and its suspended mass will be:",
+      "options": [
+        "A. 1.6m from end A",
+        "B. 2m from end A",
+        "C. 2.25m from end A"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.1 Statics｜A driver applies a force of 60N with each hand to turn a steering wheel 0.5m diameter. If his hands are placed diametrically opposite each other, the turning moment will be:",
+      "options": [
+        "A. 60Nm",
+        "B. 30Nm",
+        "C. 15Nm"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.1 Statics｜A sailor pulls on a rope 17m long attached to the top of a vertical mast. If the tension in the rope is 500N and it makes an angle of 45° to the mast, the turning moment exerted on the mast will be:",
+      "options": [
+        "A. 4.25kN",
+        "B. 8.5kN",
+        "C. 3.25kN"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.1 Statics｜Two co-planar forces act on the same point. One force acts horizontally to the West of the point and is 30N. The second force acts due North of the point and is 40N. A third force used to create equilibrium will be:",
+      "options": [
+        "A. 40N acting North of West",
+        "B. 50N acting South of East",
+        "C. 70N acting South of East"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.1 Statics｜An aircraft undergoing weighing has a nose-wheel 2m from the nose and two main-wheels 10m from the nose. The nose reaction is 2kN and the main wheel reactions are 4kN each. If the reference datum is at the nose, the aircraft’s centre of gravity will be:",
+      "options": [
+        "A. 8.4m in front of the main-wheels",
+        "B. 4.4m behind the nose",
+        "C. 8.4m behind the nose"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.1 Statics｜The quadrature component of a vector will be:",
+      "options": [
+        "A. At 180° to the vector",
+        "B. At 90° to the vector",
+        "C. At 45° to the vector"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.1 Statics｜Mechanical stress is:",
+      "options": [
+        "A. Force/Area",
+        "B. Area/Force",
+        "C. Area × Force"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.1 Statics｜Strain is:",
+      "options": [
+        "A. Original Length/Extension",
+        "B. Extension/Original Length",
+        "C. Original Length + Extension"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.1 Statics｜The modulus of Elasticity is:",
+      "options": [
+        "A. Strain/Stress",
+        "B. Stress/Strain",
+        "C. Stress × Strain"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.1 Statics｜A steel bar 2m long has a cross-sectional area of 0.01m² and stretches 2mm for a pull of 10kN. The Modulus of Elasticity for the steel is:",
+      "options": [
+        "A. 1GPa",
+        "B. 1MPa",
+        "C. 1kPa"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.1 Statics｜A fork-ended tie rod exerts a pull of 1kN on its connecting pin. The cross-sectional area of the pin is 500mm². The shear stress will be:",
+      "options": [
+        "A. 1MN/m²",
+        "B. 0.5MN/m²",
+        "C. 2MN/m²"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.1 Statics｜Shear strain is:",
+      "options": [
+        "A. Extension/Original Length",
+        "B. The angle of deformation in radians",
+        "C. The Modulus of Rigidity"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.1 Statics｜Pressure can be transmitted through:",
+      "options": [
+        "A. Solids, Liquids and Gases",
+        "B. Liquids only",
+        "C. Liquids and gases only."
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.1 Statics｜Metallic gases are:",
+      "options": [
+        "A. Molecular",
+        "B. Crystalline",
+        "C. Monatomic"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.1 Statics｜Gauge pressure is:",
+      "options": [
+        "A. Absolute Pressure – Atmospheric Pressure",
+        "B. Absolute Pressure + Atmospheric Pressure",
+        "C. Equivalent to Absolute Pressure"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.1 Statics｜A diver swims at a depth of 6m in fresh water. The gauge pressure at this depth is:",
+      "options": [
+        "A. 160kPa",
+        "B. 110kPa",
+        "C. 60kPa"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.1 Statics｜A tank measuring 5m × 5m × 5m is completely filled with fresh water. The force exerted on one side-wall will be:",
+      "options": [
+        "A. 625kN",
+        "B. 1.25MN",
+        "C. 726kN"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.1 Statics｜The instrument that measures absolute pressure is:",
+      "options": [
+        "A. A manometer",
+        "B. A hydrometer",
+        "C. A barometer."
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.1 Statics｜A ship displaces 100m³ of seawater, relative density 1.03. The mass of the ship is:",
+      "options": [
+        "A. 1030 tonne",
+        "B. 103 tonne",
+        "C. 10.3 tonne"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜A vehicle travels 6km in 10 min. Its average speed is:",
+      "options": [
+        "A. 1 m/s",
+        "B. 10 m/s",
+        "C. 100 m/s"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜A vehicleaccelerates from rest to 84 m/s in 3 s. Its acceleration is:",
+      "options": [
+        "A. 28 m/s2",
+        "B. 12 m/s2",
+        "C. 24 m/s2"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜An aircraft starts from rest at the end of a 3000m runway. It accelerates at a rate of 20 m/s2. If the lift off speed is 200 m/sec, it will:",
+      "options": [
+        "A. Run off the end of the runway",
+        "B. Lift off at the 1000m marker",
+        "C. Lift off at the 2000m marker"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜An object is dropped from an aircraft. It takers 12 sec to reach the ground. Assuming g =10m/sec2,the aircraft will be at an altitude of:",
+      "options": [
+        "A. 720m",
+        "B. 60m",
+        "C. 72m"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜A man falls from a balloon 20m high into water. Assuming g=10m/s2,he will hit the water at:",
+      "options": [
+        "A. 200 m/s",
+        "B. 160 m/s",
+        "C. 20 m/s"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜A velocity of 36km/hr is equivalent to:",
+      "options": [
+        "A. 600 m/s",
+        "B. 0.16 m/s",
+        "C. 10 m/s"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜An object moves in a radius of 5m at an angular velocity of 5 rad/s. Its linear velocity will be:",
+      "options": [
+        "A. 25 m/s",
+        "B. 50 m/s",
+        "C. 5 m/s"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜The centrifugal force acting onr a fan blade depends on:",
+      "options": [
+        "A. The engine RPM only",
+        "B. The engine PRM and the mass of the blade",
+        "C. The engine RPM, the mass of the blade and its radius"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜Centripetal acceleration may be calculated using:",
+      "options": [
+        "A. mvr",
+        "B. v2/r",
+        "C. mr2/v"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜A ball is dropped from a height of 10m. The time taken to reach the ground is:",
+      "options": [
+        "A. 1.414s",
+        "B. 1s",
+        "C. 2s"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜A flywheel is rotating at 60 RPM, the angular velocity is:",
+      "options": [
+        "A. 3 rad/s",
+        "B. 1 rad/s",
+        "C. 6 rad/s"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜The centrifugal force required to keep a 5Kg mass turning in a circular path 2m radius while moving at 10 m/s is:",
+      "options": [
+        "A. 50N",
+        "B. 250N",
+        "C. 25N"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜A pendulum mass 2kg and 2m long swings with a period P.If its length,is extended to 4m, the new period will be:",
+      "options": [
+        "A. 2P",
+        "B. P√2",
+        "C. 4P"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜A pendulum in simple harmonic motion has a frequency of 4HZ. Its period will be:",
+      "options": [
+        "A. ¼ s",
+        "B. ⅛ s",
+        "C. 1s"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜A weight on a spring is pulled down, stretching the spring, until it is 10cm from the floor. When released the weight rises to 24cm above the floor. The amplitude is:",
+      "options": [
+        "A. 14cm",
+        "B. 28cm",
+        "C. 7cm"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜An aircraft of mass 1 tonne is acceleraing at 10 m/s². The engines are giving a total thrust of 70kN. The drag force is:",
+      "options": [
+        "A. 60kN",
+        "B. 80kN",
+        "C. 40kN"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜In periodic motion the periodic time T of a swinging pendulum is the time taken to:",
+      "options": [
+        "A. Travel from the rest position to maximum displacement",
+        "B. Travel between the maximum displacement positions",
+        "C. Travel one complete to and fro movement"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜In periodic motion, the amplitude of the swing of a pendulum is the distance:",
+      "options": [
+        "A. Between the maximum displacement opsitions",
+        "B. Between the maximum displacement and rest opsitions",
+        "C. Of one complete to and fro movement"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜Resonance is said to occur.",
+      "options": [
+        "A. When a body oscillates at its own natural frequency",
+        "B. When a body is forced to vibrate by contact with another",
+        "C. When a body vibrates under elastic or restoring forces"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜In simple harmonic motion:",
+      "options": [
+        "A. Velocity reaches maximum value at maximum displacement",
+        "B. Velocity remains constant",
+        "C. Velocity reches maximum value through the rest position"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜Mechanical Advantage is:",
+      "options": [
+        "A. Effort/Load",
+        "B. Load/Effort",
+        "C. Effort-Load/100"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜Velocity Ratio is:",
+      "options": [
+        "A. Distance moved by load/distance moved by effort",
+        "B. Distance moved by effort/distance moved by load",
+        "C. Distance moved by effort-distance moved by load/100"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜Efficiency is:",
+      "options": [
+        "A. MA/VR✕100",
+        "B. VR/MA✕100",
+        "C. MA-VR/100"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜A winding drum has a crank handle of radius 33cm and a drum of diameter 22cm. The velocity ratio is:",
+      "options": [
+        "A. 0.3",
+        "B. 1.5",
+        "C. 3"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.2 Kinematics｜A winding drum is used to lift a 48kgf load by application of a 20kgf effort. The crank handle is 33cm radius and the drum is 11cm radius. The efficiency of the windlass is:",
+      "options": [
+        "A. 1.25",
+        "B. 0.8",
+        "C. 0.6"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A mass of one metric tonne is equivalent to:",
+      "options": [
+        "A. 500kg",
+        "B. 1000kg",
+        "C. 1200kg"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A mass of one kilogram is equivalent to:",
+      "options": [
+        "A. 98.1N",
+        "B. 981N",
+        "C. 9.81N"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A force of 100N applied to a mass of 50kg will accelerate it at:",
+      "options": [
+        "A. 2m/s²",
+        "B. 0.5m/s²",
+        "C. 5m/s²"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A mass of 2Mg is accelerated at 5m/s². The force required was:",
+      "options": [
+        "A. 10N",
+        "B. 10kN",
+        "C. 400N"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A set of aircraft steps is pushed 20m across level ground with a force of 500N. If it takes 20s to complete the move, the power used was:",
+      "options": [
+        "A. 500W",
+        "B. 200W",
+        "C. 500J"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜An aircraft mass 100 tonne has a touch down velocity of 25m/s. Its kinetic energy at touch down will be:",
+      "options": [
+        "A. 31.25MJ",
+        "B. 25MJ",
+        "C. 2.5MJ"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜An aircraft mass 10Mg is flying at 1000m. Its potential energy at this height will be approximately:",
+      "options": [
+        "A. 100GJ",
+        "B. 10MJ",
+        "C. 100MJ"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A car mass 500kg is travelling at 10m/s. Its momentum is:",
+      "options": [
+        "A. 25,000kg m/s",
+        "B. 5000kg m/s",
+        "C. 50,000kg m/s"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜When two inelastic bodies collide:",
+      "options": [
+        "A. Neither momentum or kinetic energy are conserved",
+        "B. Momentum is conserved but not kinetic energy",
+        "C. Kinetic energy is conserved but not momentum"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A truck mass 1 Mg travelling West at 50m/s collides head on with another truck mass 2Mg which is moving East at 10m/s. If the trucks stick together after collision, they will:",
+      "options": [
+        "A. Move West at 10m/s",
+        "B. Move East at 10m/s",
+        "C. Move West at 23m/s"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A space vehicle total mass M moving with velocity v separates from its landing module. The mass m of the remainder of the space vehicle remains stationary. The landing module will travel on at a velocity v equal to:",
+      "options": [
+        "A. mv/M-m",
+        "B. Mv/M-m",
+        "C. Mv/M+m"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜An electric drill produces 3kW power when driving a drill. If the drill motor absorbs 4kW its efficiency will be:",
+      "options": [
+        "A. 0.25",
+        "B. 0.95",
+        "C. 0.75"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A flywheel mass 100kg has a radius of gyration of 100mm. The torque required to accelerate it at a rate of 0.2rad/s is:",
+      "options": [
+        "A. 0.2Nm",
+        "B. 2Nm",
+        "C. 4Nm"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜Impulse is the product of:",
+      "options": [
+        "A. Mass × Velocity",
+        "B. Force × acceleration",
+        "C. Force × time"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A hammer mass 1kg is swung at 10m/s and hits a nail, coming to rest in 0.1s. The force on the nail will be:",
+      "options": [
+        "A. 100N",
+        "B. 10N",
+        "C. 1000N"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜The Imperial energy equivalent of a British Thermal Unit is:",
+      "options": [
+        "A. 1055 ft lb",
+        "B. 550 ft lb",
+        "C. 778 ft lb"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜Precession in a gyro is:",
+      "options": [
+        "A. Proportional to speed and proportional to torque",
+        "B. Inversely proportional to speed and proportional to torque",
+        "C. Proportional to speed and torque"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜The apparent drift of a free gyro is caused by:",
+      "options": [
+        "A. Friction in the gimbal bearings",
+        "B. Moving the gyro's location",
+        "C. The Earth’s rotation"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A gyro that is continuously corrected is known as a:",
+      "options": [
+        "A. Rate gyro",
+        "B. Tied gyro",
+        "C. Free gyro"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A gyro used to detect aircraft yaw would have its axis:",
+      "options": [
+        "A. Mounted horizontally",
+        "B. Mounted vertically",
+        "C. Mounted either way"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A spinning free gyro that is left in one undisturbed position will appear to change its spin axis position by 90° in:",
+      "options": [
+        "A. 12 hours",
+        "B. 6 hours",
+        "C. 3 hours"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜When viewed looking down at the North Pole, the Earth rotates:",
+      "options": [
+        "A. Clockwise around its NS spin axis at 15°/hr",
+        "B. Anti-clockwise around its NS spin axis at 15°/hr",
+        "C. Anti-clockwise around its EW spin axis at 10°/hr"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜A rate gyro is constructed to be sensitive to:",
+      "options": [
+        "A. Drift",
+        "B. Angular velocity",
+        "C. Precession"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜Rolling resistance can be reduced by:",
+      "options": [
+        "A. Lubrication",
+        "B. Load reduction",
+        "C. Slip"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜The coefficient of dry sliding friction is:",
+      "options": [
+        "A. A lower value than the dry static coefficient",
+        "B. A higher value than the dry static coefficient",
+        "C. The same as the dry static coefficient"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜What is the primary difference between mass and weight?",
+      "options": [
+        "A. Mass is the amount of matter, while weight is the gravitational force acting on that mass.",
+        "B. Mass changes depending on location, while weight remains constant everywhere.",
+        "C. Mass is measured in Newtons, while weight is measured in kilograms."
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜What is the value of gravitational acceleration (g) at the Earth's surface used in the text?",
+      "options": [
+        "A. 1.6 m/s²",
+        "B. 9.8 m/s²",
+        "C. 24.8 m/s²"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜How does an object's weight on the Moon compare to its weight on Earth?",
+      "options": [
+        "A. It is 2.5 times greater on the Moon.",
+        "B. It is the same on both bodies.",
+        "C. It is about one-sixth of its weight on Earth."
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜Which property of a mass causes it to resist any change in its state of motion?",
+      "options": [
+        "A. Inertia",
+        "B. Efficiency",
+        "C. Impulse"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜In the SI system, what is the unit of work?",
+      "options": [
+        "A. Watt (W)",
+        "B. Joule (J)",
+        "C. Newton (N)"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜If a force of 100 N moves an object through a distance of 10 m, how much work is done?",
+      "options": [
+        "A. 10 Joules",
+        "B. 100 Joules",
+        "C. 1000 Joules"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜How is power defined in physics?",
+      "options": [
+        "A. The product of force and acceleration",
+        "B. The rate of doing work per unit of time",
+        "C. The amount of energy stored in a body"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜In the imperial system, 1 horsepower (hp) is equivalent to how many watts?",
+      "options": [
+        "A. 550 watts",
+        "B. 746 watts",
+        "C. 1000 watts"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜Besides Power = Work / time, power can also be expressed as which formula?",
+      "options": [
+        "A. Power = Force × Velocity",
+        "B. Power = Mass × Acceleration",
+        "C. Power = Force × Distance"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜According to the Law of Conservation of Energy, energy can:",
+      "options": [
+        "A. Be created when a force acts on a mass.",
+        "B. Be destroyed through friction losses.",
+        "C. Neither be created nor destroyed, only transformed from one form to another."
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜What type of energy is stored in a body due to its position, condition, or chemical nature?",
+      "options": [
+        "A. Kinetic Energy",
+        "B. Potential Energy",
+        "C. Thermal Energy"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜What is the formula for calculating Kinetic Energy (KE)?",
+      "options": [
+        "A. KE = mgh",
+        "B. KE = 1/2 * m * v²",
+        "C. KE = m * v"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜At what point during a free fall does a falling object have maximum Kinetic Energy?",
+      "options": [
+        "A. At its highest elevation before release",
+        "B. Halfway through its fall",
+        "C. At the instant right before it strikes the floor"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜What is the SI unit for measuring heat energy?",
+      "options": [
+        "A. Joule (J)",
+        "B. Calorie (cal)",
+        "C. Watt (W)"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜How is the efficiency of a machine calculated?",
+      "options": [
+        "A. (Work input / Work output) × 100%",
+        "B. (Work output / Work input) × 100%",
+        "C. (Force × Distance) / Time"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜Which factor primarily determines energy loss and machine efficiency?",
+      "options": [
+        "A. Mass of the components",
+        "B. Friction between moving parts",
+        "C. Gravitational pull"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜Among the three main types of friction, which is the strongest?",
+      "options": [
+        "A. Starting (static) friction",
+        "B. Sliding friction",
+        "C. Rolling friction"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜Why are machine parts in sliding contact typically made of dissimilar metals?",
+      "options": [
+        "A. Dissimilar metals have a higher coefficient of friction.",
+        "B. Dissimilar metals have a lower coefficient of friction than similar metals.",
+        "C. Dissimilar metals completely eliminate rolling resistance."
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜How do airflow spoilers assist aircraft braking right after touchdown?",
+      "options": [
+        "A. By increasing aerodynamic drag only",
+        "B. By dumping wing lift, thereby increasing normal force and wheel friction",
+        "C. By decreasing the weight of the aircraft"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜Which type of motion offers the lowest coefficient of friction?",
+      "options": [
+        "A. Sliding one surface over another",
+        "B. Starting motion from static rest",
+        "C. Rolling one surface over another"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜What is linear momentum defined as?",
+      "options": [
+        "A. The product of mass and acceleration",
+        "B. The product of mass and velocity",
+        "C. The ratio of work done to time"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜Why does a spinning figure skater spin faster when pulling her arms inward?",
+      "options": [
+        "A. Bringing mass closer to the axis decreases moment of inertia, increasing rotational speed to conserve angular momentum.",
+        "B. Bringing mass closer increases her total energy from an external force.",
+        "C. Pulling arms inward eliminates all air resistance."
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜What is an 'impulse' in physics?",
+      "options": [
+        "A. The constant rate of energy conversion",
+        "B. The change in momentum caused by a force applied over a period of time",
+        "C. The natural resistance of a rotating body to stay upright"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜Which flight instrument operates based on the principle of gyroscopic rigidity?",
+      "options": [
+        "A. Altimeter",
+        "B. Artificial Horizon (Attitude Indicator)",
+        "C. Airspeed Indicator"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.3 Dynamics｜When an external force is applied to a spinning gyroscope, in what direction does the plane of rotation deflect?",
+      "options": [
+        "A. 45 degrees opposite to the direction of rotation",
+        "B. 180 degrees back toward the force",
+        "C. 90 degrees in the direction of rotation (precession)"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜The density of a substance is:",
+      "options": [
+        "A. Mass/Volume",
+        "B. Volume/Mass",
+        "C. Weight/Volume"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜The ‘Relative Density’ of a substance with density 13,600kg/m³ is:",
+      "options": [
+        "A. 1.36",
+        "B. 13.6 × 10³",
+        "C. 13.6"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜The density of the atmosphere at standard sea level conditions is:",
+      "options": [
+        "A. 0.147kg/m³",
+        "B. 1.013kg/m³",
+        "C. 1.225kg/m³"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜The density of the atmosphere at sea level is approximately halved at an altitude of:",
+      "options": [
+        "A. 36,000ft",
+        "B. 18,000ft",
+        "C. 10,000ft"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜Viscosity is a measure of:",
+      "options": [
+        "A. Mass flow",
+        "B. Flow resistance",
+        "C. Specific gravity"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜The transition point where flow changes from laminar to turbulent flow in a boundary layer on a surface will:",
+      "options": [
+        "A. Move rearwards as flow velocity increases",
+        "B. Be unaffected by changes in flow velocity",
+        "C. Move forwards as flow velocity increases"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜Stream-lining is mainly concerned with:",
+      "options": [
+        "A. Laminar flow",
+        "B. Shape",
+        "C. Friction"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜The ‘Fineness Ratio’ of an ideal stream-lined body is:",
+      "options": [
+        "A. 1:3",
+        "B. 3:1",
+        "C. 1:1"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜The air resistance felt on a flat plate presented perpendicular to the air flow may be calculated using:",
+      "options": [
+        "A. Mass flow x density x air velocity x area of plate",
+        "B. Dynamic pressure x area of plate",
+        "C. Dynamic pressure + static pressure x area of plate"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜As altitude increases, the air friction force on a body will:",
+      "options": [
+        "A. Increase",
+        "B. Decrease",
+        "C. Remain unaltered"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜As altitude increases ‘Indicated Air Speed’ will:",
+      "options": [
+        "A. Always be the same as True Air Speed",
+        "B. Read higher than True Air Speed",
+        "C. Read lower than True Air Speed"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜The Mach Number is found by:",
+      "options": [
+        "A. Dividing the indicated air speed by the local speed of sound in air",
+        "B. Dividing the local speed of sound in air by the true air speed",
+        "C. Dividing the true air speed by the local speed of sound in air"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜As an aircraft climbs at constant airspeed, the Mach Number will:",
+      "options": [
+        "A. Increase",
+        "B. Decrease",
+        "C. Remain constant"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜Air flow through a divergent duct at sub-sonic velocity will:",
+      "options": [
+        "A. Increase in velocity, decrease in pressure and temperature",
+        "B. Decrease in velocity and increase in pressure and temperature",
+        "C. Decrease in velocity and pressure and increase in temperature"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜Air flowing through a convergent duct at sonic velocity will:",
+      "options": [
+        "A. Increase in velocity and decrease in pressure",
+        "B. Increase in velocity and pressure",
+        "C. Decrease in velocity and increase in pressure"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜In sonic airflow conditions, any increase in velocity through a venturi duct will:",
+      "options": [
+        "A. Decrease air density and cause the air to expand",
+        "B. Increase air density and cause air to contract",
+        "C. Not affect air density"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜As air flows through a venturi duct the energy in the air:",
+      "options": [
+        "A. Increases from entry to exit",
+        "B. Remains constant",
+        "C. Drops on entry and recovers at exit"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜As air flows through a duct of changing cross-sectional area the mass flow of air will:",
+      "options": [
+        "A. Be directly proportional to the cross-sectional area",
+        "B. Be inversely proportional to the cross-sectional area",
+        "C. Remain constant irrespective of cross-sectional area"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜As the dynamic pressure of sub-sonic air-flow increases through a venturi, the static pressure will:",
+      "options": [
+        "A. Reduce",
+        "B. Increase",
+        "C. Remain constant"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜Bernoulli’s theorem deals with the sum of:",
+      "options": [
+        "A. Static pressure and potential energy",
+        "B. Static pressure, dynamic pressure and potential energy",
+        "C. Air velocity, air pressure and density"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜Airspeed is measured by:",
+      "options": [
+        "A. Subtracting static from pitot pressure",
+        "B. Adding pitot to static pressure",
+        "C. Subtracting dynamic pressure from pitot pressure"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜When supersonic airflow changes direction over an aerofoil and increases in velocity as a result, the effect will be:",
+      "options": [
+        "A. An increase in pressure and density causing air to contract",
+        "B. A decrease in pressure and density causing an expansion wave",
+        "C. Constant pressure and density with no effect on flow"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜When air flow velocity reaches Mach one on any curved surface of an aircraft the result will be:",
+      "options": [
+        "A. Normal shock wave forms and air pressure and density rise in its wake",
+        "B. Normal shock wave forms and air pressure and density reduce in its wake",
+        "C. Oblique shock wave forms and air pressure and density reduce"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜Transonic flow is defined as:",
+      "options": [
+        "A. Airflow over a body is sub-sonic",
+        "B. Airflow over a body is sonic",
+        "C. Airflow over a body is both sub-sonic and super-sonic"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜The local speed of sound in air is:",
+      "options": [
+        "A. Inversely proportional to absolute temperature",
+        "B. Proportional to absolute temperature",
+        "C. Not affected by air temperature"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜What happens to the viscosity of a liquid when its temperature increases?",
+      "options": [
+        "A. It increases",
+        "B. It decreases",
+        "C. It remains constant"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜Which physical state of matter has an indefinite shape, indefinite volume, and is compressible?",
+      "options": [
+        "A. Solid",
+        "B. Liquid",
+        "C. Gas"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜What standard temperature is used when measuring the density of solids and liquids?",
+      "options": [
+        "A. 0°C",
+        "B. 4°C",
+        "C. 100°C"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜What standard substance is used as a reference to determine the specific gravity of liquids and solids?",
+      "options": [
+        "A. Air",
+        "B. Mercury",
+        "C. Water at 4°C"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜How does the viscosity of a gas change as its temperature rises?",
+      "options": [
+        "A. It becomes more viscous",
+        "B. It becomes less viscous",
+        "C. It stays unaffected"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜What instrument is used to measure the specific gravity of liquids?",
+      "options": [
+        "A. Barometer",
+        "B. Hydrometer",
+        "C. Altimeter"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜What does a high Viscosity Index (VI) signify for an oil?",
+      "options": [
+        "A. Large change in viscosity with temperature",
+        "B. Relatively little change in viscosity over temperature",
+        "C. High compressibility"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜At what approximate speed threshold do aerodynamic theories begin to account for air compressibility?",
+      "options": [
+        "A. 100 miles per hour",
+        "B. 220 miles per hour",
+        "C. 500 miles per hour"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜According to Bernoulli's principle, what happens to static pressure where fluid velocity increases?",
+      "options": [
+        "A. Static pressure increases",
+        "B. Static pressure decreases",
+        "C. Static pressure remains constant"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜What two pressures are summed to equal total pressure (stagnation pressure)?",
+      "options": [
+        "A. Static pressure and dynamic pressure",
+        "B. Atmospheric pressure and friction pressure",
+        "C. Dynamic pressure and kinetic pressure"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜Which instrument on an aircraft uses static pressure to determine height?",
+      "options": [
+        "A. Airspeed Indicator",
+        "B. Altimeter",
+        "C. Tachometer"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜In a venturi tube, where does the fluid reach its maximum velocity and minimum static pressure?",
+      "options": [
+        "A. At the wide entry section",
+        "B. In the narrow center section (throat)",
+        "C. At the diverging section"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜What is the formula for calculating dynamic pressure (q)?",
+      "options": [
+        "A. q = 1/2 * r * V^2",
+        "B. q = r * V",
+        "C. q = p_t - 2 * p_s"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜To produce less drag for subsonic streamlining, how should the front of an object be shaped?",
+      "options": [
+        "A. Flat and broad",
+        "B. Well rounded",
+        "C. Sharp and pointed"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜What type of fluid flow is assumed to have constant density throughout?",
+      "options": [
+        "A. Compressible fluid",
+        "B. Incompressible fluid",
+        "C. Turbulent fluid"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜What is specific gravity expressed in?",
+      "options": [
+        "A. Pounds per cubic foot",
+        "B. Grams per cubic centimeter",
+        "C. A pure number (no units)"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜When measuring the density of a gas, what two conditions must be specified?",
+      "options": [
+        "A. Mass and volume",
+        "B. Temperature and pressure",
+        "C. Speed and viscosity"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜What phenomenon occurs when a constriction in a pipe limits the maximum total flow rate because pressure cannot drop below 0?",
+      "options": [
+        "A. Viscous drag",
+        "B. Choked flow",
+        "C. Thermal expansion"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜How is static pressure measured in an aircraft relative to the airflow?",
+      "options": [
+        "A. Parallel to the airflow",
+        "B. Perpendicular to the airflow",
+        "C. Opposite to the flight direction"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.2.4 Fluid Dynamics｜What effect describes fluid flow staying attached to a curved surface?",
+      "options": [
+        "A. Coanda effect",
+        "B. Bernoulli effect",
+        "C. Venturi choke"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Heat is defined as the:",
+      "options": [
+        "A. Temperature changes resulting from work done",
+        "B. Energy transfer due to molecular motion",
+        "C. Energy transfer resulting from temperature difference"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜The freezing point of pure water in degrees absolute is:",
+      "options": [
+        "A. 273 K",
+        "B. -273 K",
+        "C. 32°F"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜10°Centigrade converted to °Fahrenheit is:",
+      "options": [
+        "A. 18°F",
+        "B. 50°F",
+        "C. 42°F"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Heat is measured in:",
+      "options": [
+        "A. Degrees on a temperature scale",
+        "B. Joules",
+        "C. Newtons"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Specific heat capacity is defined as:",
+      "options": [
+        "A. Heat required to raise the temperature of a substance by 1°C",
+        "B. The time a substance can maintain a given temperature",
+        "C. The heat required to raise the temperature of a given mass of a substance by 1°C"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜The heat given out when a mass of 0.5kg, specific heat capacity 500 J/kg°C, cools from 40°C to 30°C is:",
+      "options": [
+        "A. 10 kJ",
+        "B. 2 ½ kJ",
+        "C. 25 kJ"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜The transmission of heat through a substance by the movement of free electrons is called:",
+      "options": [
+        "A. Conduction",
+        "B. Radiation",
+        "C. Convection"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Heat energy from the sun transfers to earth by:",
+      "options": [
+        "A. Radiation",
+        "B. Electron flow",
+        "C. Convection"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜A litre of gas at 27°C is heated to 67°C, the pressure remaining constant, the new volume will be:",
+      "options": [
+        "A. 0.88 litre",
+        "B. 1.4 litre",
+        "C. 1.13 litre"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜The coefficient of cubical expansion of a material having a coefficient of linear expansion 10*10⁻⁶/°C is:",
+      "options": [
+        "A. 33×10⁻⁶/°C",
+        "B. 30×10⁻⁶/°C",
+        "C. 1000×10⁻⁶/ °C"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜A block of light alloy, forming a perfect cube (1m sides) is heated to raise its temperature by500°C. Assuming the coefficient of cubical expansion to be 0.0001/℃ the new volume will be:",
+      "options": [
+        "A. 1.02m³",
+        "B. 1.15m³",
+        "C. 1.05m³"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜During the compression stroke of a four-stroke piston engine, the work done on the air is70kj/kg and the heat wasted is 40kJ/kg. The change in internal energy of the air will be:",
+      "options": [
+        "A. 30 kJ/kg",
+        "B. 110 kJ/kg",
+        "C. −30 kJ/kg"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Which of the following statements is true:",
+      "options": [
+        "A. Energy can be converted into 100% work",
+        "B. Work cannot be converted into energy",
+        "C. Work can be converted into 100% energy"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜A process which takes place with no heat entering or leaving the system is called:",
+      "options": [
+        "A. Isobaric",
+        "B. Isothermal",
+        "C. Adiabatic"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Assuming no heat energy is lost, a temperature of 50℃ could be obtained by mixing:",
+      "options": [
+        "A. Equal masses of ice and boiling water",
+        "B. Equal masses of water at 20℃ and \n80 ℃",
+        "C. Equal masses of ice and steam"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜A gas occupies 30 litres volume at 27℃ and 100 kPa pressure. The volume it will occupy at 0℃ and 273 kPa will be:",
+      "options": [
+        "A. 10 litres",
+        "B. 11 litres",
+        "C. 27 litres"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜150 litres of gas at 100 kPa pressure is compressed to occupy a 25-litre volume. Assuming no change in temperature occurs, the final pressure will be:",
+      "options": [
+        "A. 600 kPa",
+        "B. 500 kPa",
+        "C. 700 kPa"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜The heat energy required to turn water at room temperature into steam is:",
+      "options": [
+        "A. The same as that required to raise its temp to1000℃",
+        "B. Less than that required to raise its temp to 100℃",
+        "C. More than that required to raise its temp to 100℃"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜A turbo-fan engine has an inlet diameter of 2 m. A speed sensor on the inlet indicates that the speed of air entering the engine is 200 m/s. If the density of air is 1.2kg/m³ the mass flow rate is:",
+      "options": [
+        "A. 480 kg/s",
+        "B. 720 kg/s",
+        "C. 960 kg/s"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜1 kg of gas is contained in a closed cylinder 0.5m³ If the pressure of the gas at 27 °C is 420 kPa, its specific gas constant will be:",
+      "options": [
+        "A. 1005 J/kg K",
+        "B. 700 J/kg K",
+        "C. 290 J/kg K"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜The specific heat capacity of water is 4 KJ/℃ and the specific latent heat of fusion of ice is 300 KJ/kg he heat energy required to change 10 kg of ice into water at10℃ is:",
+      "options": [
+        "A. 3.4 mJ",
+        "B. 18.24 mJ",
+        "C. 1.8 mJ"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜The specific heat capacity of a fluid being heated at constant pressure will be:",
+      "options": [
+        "A. Lower than if it were heated at constant volume",
+        "B. Higher than if it were heated at constant volume",
+        "C. The same as if it is heated at constant volume"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜One British Thermal Unit (BTU) has an energy value of:",
+      "options": [
+        "A. 1.0554 kJ",
+        "B. 18,300 J",
+        "C. 80 kJ"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜An effective refrigerant will have:",
+      "options": [
+        "A. Low saturated vapour pressure and a high boiling point",
+        "B. Low saturated vapour pressure and a low boiling point",
+        "C. High saturated vapour pressure and a low boiling point"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜The equations for the combustion of a hydrocarbon fuel are:",
+      "options": [
+        "A. C + 0₂ = C0 and 2H₂ + 0₂ = 2H₂0",
+        "B. C + 0₂ = C0 ₂ and 2H₂ + 0₂ = 2H₂0",
+        "C. C+ 0₂ = C and 2H₂ + 0₂ = H₂0"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Heat energy concerning the application, loss, or transfer of heat is termed:",
+      "options": [
+        "A. Thermal energy",
+        "B. Mechanical energy",
+        "C. Electrical energy"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜How is heat transferred from an engine cylinder head to its cooling fins?",
+      "options": [
+        "A. Convection",
+        "B. Conduction",
+        "C. Radiation"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜The process by which heat is transferred by the bulk movement of a fluid is called:",
+      "options": [
+        "A. Radiation",
+        "B. Conduction",
+        "C. Convection"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Heat propagation through electromagnetic waves can travel through:",
+      "options": [
+        "A. A vacuum",
+        "B. Solids only",
+        "C. Fluids only"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜At what approximate wave frequency is electromagnetic energy propagated as infrared heat?",
+      "options": [
+        "A. 10^5 Hz",
+        "B. 10^8 Hz",
+        "C. 10^13 Hz"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜According to the kinetic theory of matter, heat is described as the:",
+      "options": [
+        "A. Kinetic energy of molecular motion",
+        "B. Potential energy of static particles",
+        "C. Chemical energy of atomic bonds"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Why does a bimetallic strip bend when subjected to temperature changes?",
+      "options": [
+        "A. The two metals melt at different temperatures",
+        "B. The two metals expand at different rates",
+        "C. The two metals lose heat at different speeds"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Which unit of heat is defined as the heat required to raise the temperature of 1 g of water by 1°C?",
+      "options": [
+        "A. British thermal unit (Btu)",
+        "B. Joule (J)",
+        "C. Calorie (cal)"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜What is the SI unit for all forms of energy?",
+      "options": [
+        "A. Calorie",
+        "B. Joule",
+        "C. Btu"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Which substance is used as the benchmark for defining specific heat because of its high heat capacity?",
+      "options": [
+        "A. Water",
+        "B. Gasoline",
+        "C. Mercury"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜At what temperature does water boil on the Kelvin scale?",
+      "options": [
+        "A. 273 K",
+        "B. 373 K",
+        "C. 100 K"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜What temperature on the Celsius scale corresponds to absolute zero (0 K)?",
+      "options": [
+        "A. -273.15°C",
+        "B. -459.67°C",
+        "C. -100°C"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜How many increments exist between the freezing point and boiling point of water on the Fahrenheit scale?",
+      "options": [
+        "A. 100",
+        "B. 180",
+        "C. 212"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Heat added to a substance during a phase change that causes no change in temperature is called:",
+      "options": [
+        "A. Sensible heat",
+        "B. Latent heat",
+        "C. Specific heat"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜The amount of heat required to melt a solid into a liquid is called the latent heat of:",
+      "options": [
+        "A. Vaporisation",
+        "B. Fusion",
+        "C. Evaporation"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜How much heat is required to convert 1 gram of water at 100°C to steam at 100°C?",
+      "options": [
+        "A. 80 calories",
+        "B. 100 calories",
+        "C. 540 calories"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜Which gas law states that the volume of a confined gas varies inversely with pressure at constant temperature?",
+      "options": [
+        "A. Boyle's Law",
+        "B. Charles's Law",
+        "C. Gay-Lussac's Law"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜An isothermal process is defined as a thermodynamic process taking place at constant:",
+      "options": [
+        "A. Pressure",
+        "B. Volume",
+        "C. Temperature"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜According to Charles's Law, the volume of a gas varies in direct proportion to its temperature when:",
+      "options": [
+        "A. Pressure remains constant",
+        "B. Volume remains constant",
+        "C. Mass increases"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜A temperature change that occurs without the addition or removal of external heat is called an:",
+      "options": [
+        "A. Isothermal process",
+        "B. Adiabatic process",
+        "C. Isobaric process"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜The First Law of Thermodynamics states that heat energy cannot be created or destroyed, reflecting the law of conservation of:",
+      "options": [
+        "A. Mass",
+        "B. Energy",
+        "C. Momentum"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜According to the Second Law of Thermodynamics, heat will naturally flow only from a:",
+      "options": [
+        "A. Cooler body to a warmer body",
+        "B. Warmer body to a cooler body",
+        "C. Lower pressure to higher pressure"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜If expanding gases create a force of 10,000 N and move a bullet 0.5 m, how much work has been done?",
+      "options": [
+        "A. 2,500 J",
+        "B. 5,000 J",
+        "C. 20,000 J"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜A four-stroke piston engine operates on which constant volume gas cycle?",
+      "options": [
+        "A. Brayton Cycle",
+        "B. Otto Cycle",
+        "C. Rankine Cycle"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.3 Thermodynamics｜A gas turbine engine operates on which constant pressure gas cycle?",
+      "options": [
+        "A. Brayton Cycle",
+        "B. Otto Cycle",
+        "C. Diesel Cycle"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.4 Optics｜The speed of light in a vacuum is:",
+      "options": [
+        "A. 3 x 10⁵ km/s",
+        "B. 3 x 10⁸ km/s",
+        "C. 300 m/s"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.4 Optics｜The distance light will travel in one microsecond is:",
+      "options": [
+        "A. 300,000m",
+        "B. 3000m",
+        "C. 300m"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜Light is transmitted as:",
+      "options": [
+        "A. A longitudinal wave",
+        "B. A compression wave",
+        "C. An electro-magnetic wave"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜As light passes from space into our atmosphere its velocity:",
+      "options": [
+        "A. Increases",
+        "B. Decreases",
+        "C. Is unaltered"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜The intensity of light from a point source is:",
+      "options": [
+        "A. Proportional to the distance from the source",
+        "B. Inversely proportional to the distance from the source",
+        "C. Inversely proportional to the square of the distance from the source"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜When light passes from air into glass, its velocity:",
+      "options": [
+        "A. Increases",
+        "B. Decreases",
+        "C. Is unaltered."
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜The wave length of light:",
+      "options": [
+        "A. Increases from blue to red",
+        "B. Increases from red to blue",
+        "C. Decreases from violet to green"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.4 Optics｜When light reflects off a plane surface:",
+      "options": [
+        "A. The angle of incidence is double the angle of reflection",
+        "B. The angle of reflection is double the angle of incidence",
+        "C. The angle of incidence is equal to the angle of reflection"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜The image seen in a plane mirror is:",
+      "options": [
+        "A. Real and the same size as the object",
+        "B. Virtual and the same size as the object",
+        "C. Virtual and half the size of the object"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜The image seen in a plane mirror is:",
+      "options": [
+        "A. The same distance behind the mirror as the object is in front",
+        "B. At the plane of the mirror",
+        "C. At the focal point of the mirror"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.4 Optics｜A concave mirror has:",
+      "options": [
+        "A. A virtual principal focus behind the mirror",
+        "B. A real principal focus in front of the mirror",
+        "C. A real principal focus behind the mirror."
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜A convex mirror has:",
+      "options": [
+        "A. A virtual principal focus in front of the mirror",
+        "B. A real principal focus behind the mirror",
+        "C. A virtual principal focus behind the mirror."
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜The focal length of a spherical mirror is:",
+      "options": [
+        "A. Equal to its radius of curvature",
+        "B. Double its radius of curvature",
+        "C. Half its radius of curvature"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜When a concave spherical mirror reflects an object that is at infinity, the image will be:",
+      "options": [
+        "A. Real, inverted and smaller than the object",
+        "B. Virtual, upright and larger than the object",
+        "C. Real, upright and the same size as the object"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.4 Optics｜Convex, spherical mirrors give images that are:",
+      "options": [
+        "A. Real, inverted and smaller than the object",
+        "B. Virtual, upright and smaller than the object",
+        "C. Virtual inverted images, the same size as the object"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜When light passes from air into glass it will refract:",
+      "options": [
+        "A. Away from the normal",
+        "B. Towards the normal",
+        "C. Parallel to the normal"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜Refraction of light is primarily caused by:",
+      "options": [
+        "A. Change of light velocity",
+        "B. Change of light intensity",
+        "C. Change of material mass or volume."
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.4 Optics｜The refractive index of light is:",
+      "options": [
+        "A. sin r/sin i",
+        "B. sin i/sin r",
+        "C. sin i-sin r"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜When light passes from air into glass, the refractive index sin I /sin r will be that of :",
+      "options": [
+        "A. The air",
+        "B. The air and glass",
+        "C. The glass"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜When a stick is held in water, it appears to:",
+      "options": [
+        "A. Bend downwards",
+        "B. Bend upwards",
+        "C. Be straight"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜When you look into a swimming pool the water appears:",
+      "options": [
+        "A. Deeper than it is",
+        "B. Shallower than it is",
+        "C. At its correct depth"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜When light passes from glass to air and the angle of incidence is increased to exceed the ‘critical angle’, the light will be:",
+      "options": [
+        "A. Totally refracted in to the glass",
+        "B. Passed totally out of the glass",
+        "C. Totally reflected back into the glass"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜An object is placed 48 cm in front of a concave mirror of focal length 12 cm. The nature and position of the image is:",
+      "options": [
+        "A. Real image 16cm in front of mirror",
+        "B. Virtual image 12cm behind the mirror",
+        "C. Real image 36cm in front of mirror"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.4 Optics｜The magnification of the concave mirror in Q23 is:",
+      "options": [
+        "A. 3×",
+        "B. 0.3×",
+        "C. 0.75×"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜The speed of light through glass of refractive index 1.5 is:",
+      "options": [
+        "A. 400m/microsecond",
+        "B. 300m/microsecond",
+        "C. 200m/microsecond"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜A converging lens focuses light to a point because:",
+      "options": [
+        "A. Light deviates more through its centre than its edges",
+        "B. Its sides are not spherical",
+        "C. Light deviates more through its edges than its centre"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜The image formed by a diverging lens will be:",
+      "options": [
+        "A. Real, inverted and larger than the object",
+        "B. Virtual, erect and smaller than the object",
+        "C. Real, erect and smaller than the object"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜If an object is positioned between a convex lens and its principal focus, the image will be:",
+      "options": [
+        "A. Virtual, erect and larger than the object",
+        "B. Real, inverted and smaller than the object",
+        "C. Virtual, inverted and smaller than the object."
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.4 Optics｜A slide being projected onto a screen through a convex lens will be:",
+      "options": [
+        "A. Fitted upright in the projector behind the lens",
+        "B. Fitted upside down in the projector behind the lens",
+        "C. Fitted upright in the projector in front of the lens"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜Images projected onto the retina of the eye are:",
+      "options": [
+        "A. Inverted and diminished in size",
+        "B. Upright and diminished in size",
+        "C. Inverted and magnified"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.4 Optics｜The ‘critical angle’ for Crown glass is approximately:",
+      "options": [
+        "A. 22℃",
+        "B. 42℃",
+        "C. 72℃"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜Light passes through a fibre optic cable:",
+      "options": [
+        "A. In a straight line",
+        "B. As a sinusoidal wave",
+        "C. By internal reflection"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜The acceptance angle of a fibre optic cable is:",
+      "options": [
+        "A. Equal to the cone angle",
+        "B. Less than the cone half angle",
+        "C. Greater than the cone half angle"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜Attenuation in fibre optic cables is primarily caused by:",
+      "options": [
+        "A. Length of cable",
+        "B. Absorption and back-scattering",
+        "C. Microbends and scattering"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜The refractive index of a fibre optic cable’s cladding is:",
+      "options": [
+        "A. Greater than the core’s index.",
+        "B. Less than the core’s index",
+        "C. The same as the core’s index."
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜A fibre optic cable core that has a refractive index that gradually decreases as its radius increases is called:",
+      "options": [
+        "A. Step index",
+        "B. Multimode index",
+        "C. Graded index"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.4 Optics｜The transmitter in a fibre optic system converts electrical signals to light signals using a:",
+      "options": [
+        "A. Photodiode",
+        "B. Light emitting diode",
+        "C. Positive intrinsic negative diode"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.4 Optics｜A Step index cable consists of:",
+      "options": [
+        "A. A core covered by a cladding of lower optical density",
+        "B. A core covered by a cladding of higher optical density",
+        "C. A core with no cladding"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.4 Optics｜A frequency oscillator, buffer and modulator are fitted in a fibre optic data link system in the:",
+      "options": [
+        "A. Transmitter",
+        "B. Receiver",
+        "C. Sensor"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.4 Optics｜Breaks in a fibre optic core can be detected using:",
+      "options": [
+        "A. An optical detector",
+        "B. An Avalanche photodiode",
+        "C. A time domain reflectometer."
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜Waves that always require a material substance through which to travel are known as:",
+      "options": [
+        "A. Electromagnetic waves",
+        "B. Standing waves",
+        "C. Mechanical waves"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜Sound waves take the form of:",
+      "options": [
+        "A. Transverse waves",
+        "B. Longitudinal waves",
+        "C. Sinusoidal waves"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜If two waves of the same amplitude and frequency travelling at the same speed in opposite directions superpose on each other they will:",
+      "options": [
+        "A. Form a standing wave",
+        "B. Cancel each other",
+        "C. Reduce in amplitude"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜Sound waves travel:",
+      "options": [
+        "A. Slower in water than in air",
+        "B. At the same velocity in water and air",
+        "C. Faster in water than in air"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜The speed of sound in dry air, at sea level, at 0℃ is:",
+      "options": [
+        "A. 3X10³ m/s",
+        "B. 331 m/s",
+        "C. 731 m/s"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜If two identical sound waves are produced, one being exactly half a wavelength behind the other, you would hear:",
+      "options": [
+        "A. Nothing",
+        "B. Beats",
+        "C. Double the amplitude"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜When water waves move across shallower depths:",
+      "options": [
+        "A. They decrease in velocity and reduce in wavelength",
+        "B. They decrease in velocity and increase in wavelength",
+        "C. They increase in velocity and wavelength"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜Which statement is true:",
+      "options": [
+        "A. Radio, light and sound waves will all travel in a vacuum",
+        "B. Radio and light waves will both travel in a vacuum",
+        "C. Sound and radio waves will both travel in a vacuum"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜If a loudspeaker emits sound at a frequency of 200 Hz and the speed of sound in air is normal for sea level 0℃ the wavelength in metres is approximately:",
+      "options": [
+        "A. 3.65m",
+        "B. 1.65m",
+        "C. 0.6m"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜If two sound waves of identical frequency are produced simultaneously, you would hear:",
+      "options": [
+        "A. Beats",
+        "B. Nothing",
+        "C. Two different tones"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜A time period of 10 microseconds is equal to a frequency of",
+      "options": [
+        "A. 10kHz",
+        "B. 1mHz",
+        "C. 100kHz"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜When two radiating wave patterns cross over each other and superpose on each other in the same phase, crest upon crest, they produce:",
+      "options": [
+        "A. Antinodal lines giving increased disturbance",
+        "B. Antinodal lines giving decreased disturbance",
+        "C. Nodal lines giving increased disturbance"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜The nodal points in a stationary wave are positioned:",
+      "options": [
+        "A. Two wavelengths apart",
+        "B. One wavelength apart",
+        "C. Half a wavelength apart"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜When light waves radiating from two point sources are projected onto a single screen, the series of light and dark bands formed are caused by:",
+      "options": [
+        "A. Reflection",
+        "B. Diffusion",
+        "C. Interference"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜A person standing 66m from the foot of a wall claps their hands and hears an echo 0.4 sec later. The speed of the sound wave in these conditions was:",
+      "options": [
+        "A. 165m/s",
+        "B. 330m/s",
+        "C. 82.5m/s"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜If a reverberating sound wave has a wavelength of 0.3m, its frequency at sea level will be approximately:",
+      "options": [
+        "A. 99Hz",
+        "B. 1.1kHz",
+        "C. 2.2kHz"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜If the frequency of sound is increased the:",
+      "options": [
+        "A. Pitch will increase",
+        "B. Pitch will decrease",
+        "C. Pitch will not be affected"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜The intensity of a sound wave is:",
+      "options": [
+        "A. Proportional to the square of its frequency",
+        "B. Inversely proportional to the square of its frequency",
+        "C. Proportional to the square of its amplitude"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜The quality of a musical tone is primarily related to:",
+      "options": [
+        "A. Intensity",
+        "B. Overtones",
+        "C. The fundamental frequency"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜The change in direction of water waves travelling into shallower water is caused by:",
+      "options": [
+        "A. Reflection",
+        "B. Diffraction",
+        "C. Refraction"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜If a violin string is bowed so as to vibrate in two segments it produces:",
+      "options": [
+        "A. Its fundamental frequency",
+        "B. Two notes",
+        "C. The octave of its frequency"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜If a motorcycle passes you, the pitch of its sound will be:",
+      "options": [
+        "A. Lower on approach and higher on departure",
+        "B. Higher on approach and lower on departure",
+        "C. The same on approach and departure"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜The amplitude of a node in a stationary wave is:",
+      "options": [
+        "A. Zero",
+        "B. Halved",
+        "C. Maximum"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜The intensity of sound being emitted from a distant source is:",
+      "options": [
+        "A. Inversely proportional to the distance",
+        "B. Inversely proportional to the square of the distance",
+        "C. Not affected by distance"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M2.5 Wave Motion and Sound｜The velocity of sound in air is affected by:",
+      "options": [
+        "A. Its pitch",
+        "B. Its frequency",
+        "C. Air temperature"
+      ],
+      "answer": "C"
+    }
+  ]
+},
   "quiz_school_m3": {
     title: "147測驗M3-校內考",
     label: "校內考 M3",
@@ -45918,7 +48504,7 @@ answer: "C"
     {section:'147', group:'147入學考', title:'📘 M6-入學考', url:'#quiz:quiz_in_m6', keywords:'147 入學考 入學 M6'},
     {section:'147', group:'147入學考', title:'📘 M7-入學考', url:'#quiz:quiz_in_m7', keywords:'147 入學考 入學 M7'},
     {section:'147', group:'147入學考', title:'📘 M10-入學考', url:'#quiz:quiz_in_m10', keywords:'147 入學考 入學 M10'},
-    {section:'int', group:'147校內考', title:'⚙️ M1-校內考', url:'#quiz:quiz_school_m1', keywords:'M1 校內考 147M1'},
+    {section:'int', group:'147校內考', title:'⚙️ M1-校內考', url:'#quiz:quiz_school_m1', keywords:'M1 校內考 147M1'},    {section:'int', group:'147校內考', title:'⚙️ M2-校內考', url:'#quiz:quiz_school_m2', keywords:'M2 M2.1 M2.2.1 M2.2.2 M2.2.3 M2.2.4 M2.3 M2.4 M2.5 校內考 147M2 Matter Statics Kinematics Dynamics Fluid Dynamics Thermodynamics Optics Wave Motion Sound'},
     {section:'int', group:'147校內考', title:'⚙️ M3-校內考', url:'#quiz:quiz_school_m3', keywords:'M3 校內考 147M3'},
     {section:'int', group:'147校內考', title:'⚙️ M4-校內考', url:'#quiz:quiz_school_m4', keywords:'M4 校內考 147M4 Semiconductors PCB Servo'},
     {section:'int', group:'147校內考', title:'⚙️ M5-校內考', url:'#quiz:quiz_school_m5', keywords:'M5 校內考 147M5'},
@@ -46014,7 +48600,22 @@ answer: "C"
   function renderQuestionImage(q){return q.image ? '<img class="quizImage" src="'+String(q.image).replace(/"/g,'&quot;')+'" alt="題目圖片">' : '';}
   function showQuizView(view){ var ids=['quizWelcome','quizModeSelect','quizView','quizResults','quizWrongReview','quizBank']; for(var i=0;i<ids.length;i++) q$(ids[i]).classList.add('quizHidden'); q$(view).classList.remove('quizHidden'); q$('floatingTools').classList.add('quizHidden'); if(view==='quizView' && quiz.mode==='full') q$('floatingTools').classList.remove('quizHidden'); q$('quizStage').scrollTop=0;}
   function updateWrongInfo(){ var count=Object.keys(loadWrong(quiz.user || q$('quizNameInput').value || '_guest')).length; var msg='目前錯題記憶：'+count+' 題（本測驗、依姓名分開記錄）'; ['quizWrongInfoWelcome','quizWrongInfoResults','wrongMemInfoPanel'].forEach(function(id){ if(q$(id)) q$(id).textContent=msg; });}
-  function openQuiz(key,title){ if(!QUIZ_BANKS[key]){alert('找不到題庫：'+key);return;} quiz.bank=QUIZ_BANKS[key]; quiz.quizId=key; quiz.selected=[]; quiz.answers=[]; quiz.currentIndex=0; quiz.mode='paged'; quiz.showWrongOnly=false; clearInterval(quiz.timer); q$('quizModalTitle').textContent=title||quiz.bank.title; q$('quizTitle').textContent=quiz.bank.title; q$('quizQuestionLimit').placeholder=quiz.bank.limitPlaceholder || ('輸入題數,至多'+quiz.bank.questions.length+'題 / Enter number of questions'); q$('quizQuestionLimit').value=''; if(q$('quizRangeInput')) q$('quizRangeInput').value=''; q$('quizDurationInput').value='80'; if(q$('quizNote')) q$('quizNote').textContent = ''; q$('quizNameInput').value=localStorage.getItem(savedNameKey)||''; q$('quizModal').classList.add('show'); q$('quizModal').setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; updateWrongInfo(); showQuizView('quizWelcome'); }
+  var M2_CHAPTER_LABELS={
+    'M2.1':'M2.1 Matter',
+    'M2.2.1':'M2.2.1 Statics',
+    'M2.2.2':'M2.2.2 Kinematics',
+    'M2.2.3':'M2.2.3 Dynamics',
+    'M2.2.4':'M2.2.4 Fluid Dynamics',
+    'M2.3':'M2.3 Thermodynamics',
+    'M2.4':'M2.4 Optics',
+    'M2.5':'M2.5 Wave Motion and Sound'
+  };
+  function getM2Chapter(q){ var m=String((q&&q.question)||'').match(/^\s*(M2(?:\.\d+){1,2})\b/); return m?m[1]:''; }
+  function getM2ChapterSelection(){ var sel=q$('quizChapterSelect'); if(!sel || quiz.quizId!=='quiz_school_m2' || !sel.value) return null; return {value:sel.value,label:M2_CHAPTER_LABELS[sel.value]||sel.value}; }
+  function updateM2ChapterLimitPlaceholder(){ var sel=q$('quizChapterSelect'); if(!sel || !quiz.bank || !q$('quizQuestionLimit')) return; var base='輸入題數,至多'+(quiz.bank.questions||[]).length+'題 / Enter number of questions'; if(quiz.quizId==='quiz_school_m2' && sel.value){ var count=(quiz.bank.questions||[]).filter(function(q){return getM2Chapter(q)===sel.value;}).length; q$('quizQuestionLimit').placeholder='輸入題數,至多'+count+'題 / '+(M2_CHAPTER_LABELS[sel.value]||sel.value); }else{ q$('quizQuestionLimit').placeholder=quiz.bank.limitPlaceholder || base; } }
+  function setupM2ChapterPicker(){ var wrap=q$('quizChapterWrap'), sel=q$('quizChapterSelect'); if(!wrap || !sel) return; if(quiz.quizId==='quiz_school_m2'){ wrap.classList.remove('quizHidden'); }else{ wrap.classList.add('quizHidden'); sel.value=''; } updateM2ChapterLimitPlaceholder(); }
+  function setupM2BankChapterPicker(){ var sel=q$('bankChapterSelect'); if(!sel) return; if(quiz.quizId==='quiz_school_m2'){ sel.classList.remove('quizHidden'); }else{ sel.classList.add('quizHidden'); sel.value=''; } }
+  function openQuiz(key,title){ if(!QUIZ_BANKS[key]){alert('找不到題庫：'+key);return;} quiz.bank=QUIZ_BANKS[key]; quiz.quizId=key; quiz.selected=[]; quiz.answers=[]; quiz.currentIndex=0; quiz.mode='paged'; quiz.showWrongOnly=false; clearInterval(quiz.timer); q$('quizModalTitle').textContent=title||quiz.bank.title; q$('quizTitle').textContent=quiz.bank.title; q$('quizQuestionLimit').placeholder=quiz.bank.limitPlaceholder || ('輸入題數,至多'+quiz.bank.questions.length+'題 / Enter number of questions'); q$('quizQuestionLimit').value=''; if(q$('quizChapterSelect')) q$('quizChapterSelect').value=''; if(q$('bankChapterSelect')) q$('bankChapterSelect').value=''; setupM2ChapterPicker(); setupM2BankChapterPicker(); if(q$('quizRangeInput')) q$('quizRangeInput').value=''; q$('quizDurationInput').value='80'; if(q$('quizNote')) q$('quizNote').textContent = ''; q$('quizNameInput').value=localStorage.getItem(savedNameKey)||''; q$('quizModal').classList.add('show'); q$('quizModal').setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; updateWrongInfo(); showQuizView('quizWelcome'); }
   function closeQuiz(){ clearInterval(quiz.timer); q$('quizModal').classList.remove('show'); q$('quizModal').setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
   function parseQuestionRangeInput(text,total){
     text=String(text||'').trim();
@@ -46064,16 +48665,18 @@ answer: "C"
     return has ? set : null;
   }
   function startFromWelcome(useWrong){ quiz.user=safeName(q$('quizNameInput').value); if(!quiz.user || quiz.user==='_guest'){alert('請先輸入姓名'); return;} localStorage.setItem(savedNameKey, quiz.user); var duration=parseInt(q$('quizDurationInput').value,10); if(!duration || duration<1) duration=80; if(duration>999) duration=999; var pool=(quiz.bank.questions||[]).map(function(q,idx){ var copy=Object.assign({}, q); copy.__qid=idx+1; return copy; }); if(useWrong){ var wrong=loadWrong(quiz.user), ids=Object.keys(wrong); pool=pool.filter(function(q){return !!wrong[getQuestionId(q)];}); if(!pool.length){alert('目前沒有錯題記憶'); return;} var wLimit=parseInt(q$('wrongQuestionLimit').value,10); if(wLimit && wLimit>0) q$('quizQuestionLimit').value=String(wLimit); q$('quizDurationInput').value=q$('wrongDurationInput').value || duration; }
+    var chapterChoice=getM2ChapterSelection();
+    if(chapterChoice){ pool=pool.filter(function(q){return getM2Chapter(q)===chapterChoice.value;}); if(!pool.length){alert('這個章節目前沒有題目'); return;} }
     var rangeText=q$('quizRangeInput') ? q$('quizRangeInput').value : ''; var range=parseQuestionRangeInput(rangeText, pool.length);
     if(range && range.error){ alert(range.error); return; }
     var limit=parseInt(q$('quizQuestionLimit').value,10); if(!limit || limit<1 || limit>pool.length) limit=pool.length;
     if(range && range.numbers){
       quiz.selected=range.numbers.map(function(n){return pool[n-1];}).filter(Boolean);
       if(limit && limit>0 && limit<quiz.selected.length) quiz.selected=quiz.selected.slice(0,limit);
-      q$('quizModeSummary').textContent='區段測驗 '+quiz.selected.length+' 題（題號：'+range.numbers.join('、')+'），時間 '+duration+' 分鐘';
+      q$('quizModeSummary').textContent=(chapterChoice?chapterChoice.label+'｜':'')+'區段測驗 '+quiz.selected.length+' 題（題號：'+range.numbers.join('、')+'），時間 '+duration+' 分鐘';
     }else{
       quiz.selected=shuffle(pool).slice(0,limit);
-      q$('quizModeSummary').textContent='本次隨機作答 '+quiz.selected.length+' 題，時間 '+duration+' 分鐘';
+      q$('quizModeSummary').textContent=(chapterChoice?chapterChoice.label+'｜':'')+'本次隨機作答 '+quiz.selected.length+' 題，時間 '+duration+' 分鐘';
     }
     quiz.answers=new Array(quiz.selected.length).fill(null); quiz.currentIndex=0; quiz.remaining=duration*60; showQuizView('quizModeSelect'); }
   function beginQuiz(){ clearInterval(quiz.timer); quiz.currentIndex=0; q$('quizStage').scrollTop=0; q$('quizWelcomeName').textContent='作答者：'+quiz.user; q$('quizTotal').textContent=quiz.selected.length; q$('pagedQuizWrap').classList.toggle('quizHidden', quiz.mode!=='paged'); q$('fullQuizWrap').classList.toggle('quizHidden', quiz.mode!=='full'); showQuizView('quizView'); if(quiz.mode==='full') renderFullQuiz(); else renderPagedQuestion(); tickTimer(); quiz.timer=setInterval(function(){ quiz.remaining--; tickTimer(); if(quiz.remaining<=0){clearInterval(quiz.timer); submitQuiz();}},1000); }
@@ -46089,8 +48692,8 @@ answer: "C"
   function answerText(q,letter){ if(!letter)return '未作答'; for(var i=0;i<q.options.length;i++){ if(optionLetter(q.options[i],i)===letter) return q.options[i]; } return letter; }
   function renderResults(wrongOnly){ quiz.showWrongOnly=!!wrongOnly; var body=q$('quizResultsBody'); body.innerHTML=''; var correct=0, shown=0; for(var i=0;i<quiz.selected.length;i++){ var q=quiz.selected[i], ans=quiz.answers[i], ok=isCorrectAnswer(q,ans); if(ok)correct++; if(wrongOnly && ok) continue; shown++; var tr=document.createElement('tr'); var stripe=(shown%2===1)?'resultOdd':'resultEven'; tr.className=stripe+(ok?'':' wrong'); var correctText=getCorrectOption(q); var qNo=q.__qid || (i+1); tr.innerHTML='<td class="resultNo">'+qNo+'</td><td>'+renderQuestionImage(q)+q.question+'</td><td>'+answerText(q,ans)+'</td><td class="ansCell"><span class="ansChip">'+q.answer+'</span><div class="optRow isCorrect" style="margin-top:8px">'+correctText+'</div></td><td style="text-align:center;white-space:nowrap">'+(ok?'O':'X')+'</td>'; body.appendChild(tr); } var score=Math.round((correct/quiz.selected.length)*100); q$('quizScoreSummary').textContent='答對 '+correct+' / '+quiz.selected.length+' 題，分數 '+score+' 分'+(wrongOnly?'（目前只顯示錯題 '+shown+' 題）':''); }
   function renderWrongPanel(){ var name=safeName(q$('wrongNameInput').value || q$('quizNameInput').value || quiz.user); var wrong=loadWrong(name), body=q$('wrongListBody'); body.innerHTML=''; var ids=Object.keys(wrong); if(!ids.length){body.innerHTML='<tr><td colspan="5" style="text-align:center">目前沒有錯題記憶</td></tr>';} else {ids.forEach(function(id,idx){var w=wrong[id], q=null; for(var k=0;k<(quiz.bank.questions||[]).length;k++){var item=quiz.bank.questions[k]; if(getQuestionId(item)===id || item.question===w.question){q=item;break;}} var lastText=(q?answerText(q,w.lastAnswer):(w.lastAnswerText||w.lastAnswer||'未作答')); var correctText=(q?getCorrectOption(q):(w.correctText||w.correct||'')); var tr=document.createElement('tr'); tr.innerHTML='<td>'+(idx+1)+'</td><td>'+w.question+'</td><td>'+lastText+'</td><td class="ansCell"><span class="ansChip">'+(w.correct||'')+'</span><div class="optRow isCorrect" style="margin-top:8px">'+correctText+'</div></td><td>'+w.time+'</td>'; body.appendChild(tr);});} updateWrongInfo(); showQuizView('quizWrongReview'); }
-  function renderBank(){ var qs=quiz.bank.questions||[], query=(q$('bankSearch').value||'').toLowerCase().trim(), numSet=q$('bankNumberSearch')?parseBankNumberSearch(q$('bankNumberSearch').value, qs.length):null, per=q$('perPage').value, filtered=[]; for(var i=0;i<qs.length;i++){ var q=qs[i], qNo=i+1, hay=(q.question+' '+(q.options||[]).join(' ')+' '+q.answer).toLowerCase(); if(numSet && !numSet[qNo]) continue; if(!query || hay.indexOf(query)>-1 || String(qNo)===query || ('#'+qNo)===query) filtered.push({q:q,index:i}); } var perNum=per==='all'?filtered.length:parseInt(per,10); if(!perNum)perNum=10; var pages=Math.max(1,Math.ceil(filtered.length/perNum)); if(quiz.bankPage>pages)quiz.bankPage=pages; var start=(quiz.bankPage-1)*perNum, end=per==='all'?filtered.length:start+perNum; var body=q$('bankBody'); body.innerHTML=''; filtered.slice(start,end).forEach(function(item){var q=item.q, correctLetters=answerLetters(q.answer); var tr=document.createElement('tr'); var optionHtml=(q.options||[]).map(function(op,idx){var letter=optionLetter(op,idx); return '<div class="optRow'+(correctLetters.indexOf(letter)>-1?' isCorrect':'')+'">'+op+'</div>';}).join(''); tr.innerHTML='<td>'+(item.index+1)+'</td><td>'+renderQuestionImage(q)+q.question+'</td><td>'+optionHtml+'</td><td class="ansCell"><span class="ansChip">'+q.answer+'</span><div class="optRow isCorrect" style="margin-top:8px">'+getCorrectOption(q)+'</div></td>'; body.appendChild(tr);}); q$('pageInfo').textContent='第 '+quiz.bankPage+' / '+pages+' 頁（共 '+filtered.length+' 題）'; q$('prevPage').disabled=quiz.bankPage<=1; q$('nextPage').disabled=quiz.bankPage>=pages; showQuizView('quizBank'); }
-  q$('quizClose').onclick=closeQuiz; q$('quizStartBtn').onclick=function(){startFromWelcome(false);}; q$('quizWrongPanelFromWelcome').onclick=renderWrongPanel; q$('quizWrongPanelFromResults').onclick=renderWrongPanel; q$('quizOpenBankBtn').onclick=function(){quiz.bankPage=1;renderBank();}; q$('quizToBankFromResults').onclick=function(){quiz.bankPage=1;renderBank();}; q$('toBankFromWrong').onclick=function(){quiz.bankPage=1;renderBank();}; q$('backWelcomeFromBank').onclick=function(){showQuizView('quizWelcome');}; q$('backWelcomeFromWrong').onclick=function(){showQuizView('quizWelcome');}; q$('quizBackWelcomeFromMode').onclick=function(){showQuizView('quizWelcome');}; q$('quizClearSavedNameBtn').onclick=function(){localStorage.removeItem(savedNameKey); q$('quizNameInput').value='';}; q$('modeCardPaged').onclick=function(){quiz.mode='paged'; q$('modeCardPaged').classList.add('selected'); q$('modeCardFull').classList.remove('selected');}; q$('modeCardFull').onclick=function(){quiz.mode='full'; q$('modeCardFull').classList.add('selected'); q$('modeCardPaged').classList.remove('selected');}; q$('quizConfirmModeBtn').onclick=beginQuiz; q$('quizPrevBtn').onclick=function(){if(quiz.currentIndex>0){quiz.currentIndex--;renderPagedQuestion();}}; q$('quizNextBtn').onclick=function(){if(quiz.currentIndex>=quiz.selected.length-1) submitQuiz(); else {quiz.currentIndex++;renderPagedQuestion();}}; q$('quizFindUnansweredPagedBtn').onclick=findUnanswered; q$('quizFindUnansweredBtn').onclick=findUnanswered; q$('quizSubmitFullBtn').onclick=submitQuiz; q$('quizSubmitFloatBtn').onclick=submitQuiz; q$('quizLeaveBtn').onclick=submitQuiz; q$('quizLeaveBtnFull').onclick=submitQuiz; q$('quizRetryBtn').onclick=function(){quiz.currentIndex=0; clearInterval(quiz.timer); showQuizView('quizWelcome'); q$('quizStage').scrollTop=0;}; q$('quizShowWrongBtn').onclick=function(){renderResults(true);}; q$('quizShowAllBtn').onclick=function(){renderResults(false);}; q$('quizScrollTopBtn').onclick=function(){q$('quizStage').scrollTo({top:0,behavior:'smooth'});}; q$('startWrongQuizBtn').onclick=function(){ q$('quizNameInput').value=safeName(q$('wrongNameInput').value || q$('quizNameInput').value || quiz.user); q$('quizDurationInput').value=q$('wrongDurationInput').value || '80'; q$('quizQuestionLimit').value=q$('wrongQuestionLimit').value || ''; startFromWelcome(true);}; q$('clearWrongMemBtn').onclick=function(){var name=safeName(q$('wrongNameInput').value || q$('quizNameInput').value || quiz.user); if(confirm('確定清除 '+name+' 在本測驗的錯題記憶？')){saveWrong(name,{});renderWrongPanel();}}; q$('bankSearch').oninput=function(){quiz.bankPage=1;renderBank();}; if(q$('bankNumberSearch')) q$('bankNumberSearch').oninput=function(){quiz.bankPage=1;renderBank();}; q$('perPage').onchange=function(){quiz.bankPage=1;renderBank();}; q$('prevPage').onclick=function(){quiz.bankPage--;renderBank();}; q$('nextPage').onclick=function(){quiz.bankPage++;renderBank();}; q$('quizDarkToggle').onclick=function(){var isDark=q$('quizStage').classList.toggle('dark'); q$('quizDarkToggle').setAttribute('aria-pressed', isDark?'true':'false'); q$('quizDarkToggle').textContent=isDark?'白色模式 / Light Mode':'深色模式 / Dark Mode';};
+  function renderBank(){ setupM2BankChapterPicker(); var qs=quiz.bank.questions||[], query=(q$('bankSearch').value||'').toLowerCase().trim(), numSet=q$('bankNumberSearch')?parseBankNumberSearch(q$('bankNumberSearch').value, qs.length):null, bankChapter=(quiz.quizId==='quiz_school_m2' && q$('bankChapterSelect'))?q$('bankChapterSelect').value:'', per=q$('perPage').value, filtered=[]; for(var i=0;i<qs.length;i++){ var q=qs[i], qNo=i+1, hay=(q.question+' '+(q.options||[]).join(' ')+' '+q.answer).toLowerCase(); if(bankChapter && getM2Chapter(q)!==bankChapter) continue; if(numSet && !numSet[qNo]) continue; if(!query || hay.indexOf(query)>-1 || String(qNo)===query || ('#'+qNo)===query) filtered.push({q:q,index:i}); } var perNum=per==='all'?filtered.length:parseInt(per,10); if(!perNum)perNum=10; var pages=Math.max(1,Math.ceil(filtered.length/perNum)); if(quiz.bankPage>pages)quiz.bankPage=pages; var start=(quiz.bankPage-1)*perNum, end=per==='all'?filtered.length:start+perNum; var body=q$('bankBody'); body.innerHTML=''; filtered.slice(start,end).forEach(function(item){var q=item.q, correctLetters=answerLetters(q.answer); var tr=document.createElement('tr'); var optionHtml=(q.options||[]).map(function(op,idx){var letter=optionLetter(op,idx); return '<div class="optRow'+(correctLetters.indexOf(letter)>-1?' isCorrect':'')+'">'+op+'</div>';}).join(''); tr.innerHTML='<td>'+(item.index+1)+'</td><td>'+renderQuestionImage(q)+q.question+'</td><td>'+optionHtml+'</td><td class="ansCell"><span class="ansChip">'+q.answer+'</span><div class="optRow isCorrect" style="margin-top:8px">'+getCorrectOption(q)+'</div></td>'; body.appendChild(tr);}); q$('pageInfo').textContent='第 '+quiz.bankPage+' / '+pages+' 頁（共 '+filtered.length+' 題'+(bankChapter?'｜'+(M2_CHAPTER_LABELS[bankChapter]||bankChapter):'')+'）'; q$('prevPage').disabled=quiz.bankPage<=1; q$('nextPage').disabled=quiz.bankPage>=pages; showQuizView('quizBank'); }
+  q$('quizClose').onclick=closeQuiz; q$('quizStartBtn').onclick=function(){startFromWelcome(false);}; q$('quizWrongPanelFromWelcome').onclick=renderWrongPanel; q$('quizWrongPanelFromResults').onclick=renderWrongPanel; q$('quizOpenBankBtn').onclick=function(){quiz.bankPage=1;renderBank();}; q$('quizToBankFromResults').onclick=function(){quiz.bankPage=1;renderBank();}; q$('toBankFromWrong').onclick=function(){quiz.bankPage=1;renderBank();}; q$('backWelcomeFromBank').onclick=function(){showQuizView('quizWelcome');}; q$('backWelcomeFromWrong').onclick=function(){showQuizView('quizWelcome');}; q$('quizBackWelcomeFromMode').onclick=function(){showQuizView('quizWelcome');}; q$('quizClearSavedNameBtn').onclick=function(){localStorage.removeItem(savedNameKey); q$('quizNameInput').value='';}; q$('modeCardPaged').onclick=function(){quiz.mode='paged'; q$('modeCardPaged').classList.add('selected'); q$('modeCardFull').classList.remove('selected');}; q$('modeCardFull').onclick=function(){quiz.mode='full'; q$('modeCardFull').classList.add('selected'); q$('modeCardPaged').classList.remove('selected');}; q$('quizConfirmModeBtn').onclick=beginQuiz; q$('quizPrevBtn').onclick=function(){if(quiz.currentIndex>0){quiz.currentIndex--;renderPagedQuestion();}}; q$('quizNextBtn').onclick=function(){if(quiz.currentIndex>=quiz.selected.length-1) submitQuiz(); else {quiz.currentIndex++;renderPagedQuestion();}}; q$('quizFindUnansweredPagedBtn').onclick=findUnanswered; q$('quizFindUnansweredBtn').onclick=findUnanswered; q$('quizSubmitFullBtn').onclick=submitQuiz; q$('quizSubmitFloatBtn').onclick=submitQuiz; q$('quizLeaveBtn').onclick=submitQuiz; q$('quizLeaveBtnFull').onclick=submitQuiz; q$('quizRetryBtn').onclick=function(){quiz.currentIndex=0; clearInterval(quiz.timer); showQuizView('quizWelcome'); q$('quizStage').scrollTop=0;}; q$('quizShowWrongBtn').onclick=function(){renderResults(true);}; q$('quizShowAllBtn').onclick=function(){renderResults(false);}; q$('quizScrollTopBtn').onclick=function(){q$('quizStage').scrollTo({top:0,behavior:'smooth'});}; q$('startWrongQuizBtn').onclick=function(){ q$('quizNameInput').value=safeName(q$('wrongNameInput').value || q$('quizNameInput').value || quiz.user); q$('quizDurationInput').value=q$('wrongDurationInput').value || '80'; q$('quizQuestionLimit').value=q$('wrongQuestionLimit').value || ''; startFromWelcome(true);}; q$('clearWrongMemBtn').onclick=function(){var name=safeName(q$('wrongNameInput').value || q$('quizNameInput').value || quiz.user); if(confirm('確定清除 '+name+' 在本測驗的錯題記憶？')){saveWrong(name,{});renderWrongPanel();}}; q$('bankSearch').oninput=function(){quiz.bankPage=1;renderBank();}; if(q$('bankNumberSearch')) q$('bankNumberSearch').oninput=function(){quiz.bankPage=1;renderBank();}; if(q$('quizChapterSelect')) q$('quizChapterSelect').onchange=updateM2ChapterLimitPlaceholder; if(q$('bankChapterSelect')) q$('bankChapterSelect').onchange=function(){quiz.bankPage=1;renderBank();}; q$('perPage').onchange=function(){quiz.bankPage=1;renderBank();}; q$('prevPage').onclick=function(){quiz.bankPage--;renderBank();}; q$('nextPage').onclick=function(){quiz.bankPage++;renderBank();}; q$('quizDarkToggle').onclick=function(){var isDark=q$('quizStage').classList.toggle('dark'); q$('quizDarkToggle').setAttribute('aria-pressed', isDark?'true':'false'); q$('quizDarkToggle').textContent=isDark?'白色模式 / Light Mode':'深色模式 / Dark Mode';};
   document.addEventListener('click', function(e){ var a=e.target; while(a && a!==document.body){ if(a.getAttribute && a.getAttribute('data-quiz-key')){ e.preventDefault(); openQuiz(a.getAttribute('data-quiz-key'), a.getAttribute('data-title') || a.textContent); return; } a=a.parentNode; } }, true);
 
   function applyPortalTheme(mode){
