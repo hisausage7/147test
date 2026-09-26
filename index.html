@@ -576,6 +576,23 @@
       }
       .quizTable{min-width:1100px!important;}
     }
+
+/* 校內考章節複選：原生 details 下拉，避免額外套件造成失效 */
+.chapterMulti{position:relative;width:min(100%,560px);margin:10px 0;text-align:left;font-size:15px}
+.chapterMulti>summary{box-sizing:border-box;width:100%;min-height:46px;padding:12px 42px 12px 14px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#111827;cursor:pointer;list-style:none;position:relative;user-select:none}
+.chapterMulti>summary::-webkit-details-marker{display:none}
+.chapterMulti>summary:after{content:'▾';position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:18px}
+.chapterMulti[open]>summary:after{content:'▴'}
+.chapterMultiMenu{position:absolute;z-index:9999;left:0;right:0;top:calc(100% + 5px);max-height:310px;overflow:auto;padding:8px;background:#fff;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 12px 28px rgba(15,23,42,.18)}
+.chapterCheckRow{display:flex;align-items:flex-start;gap:9px;padding:9px 10px;border-radius:8px;cursor:pointer;line-height:1.35}
+.chapterCheckRow:hover{background:#f1f5f9}
+.chapterCheckRow input{width:18px;height:18px;margin:1px 0 0;flex:0 0 auto;accent-color:#2563eb}
+.chapterCheckAll{font-weight:700;border-bottom:1px solid #e5e7eb;margin-bottom:4px;padding-bottom:10px}
+.bankChapterMulti{width:min(100%,380px);margin:0}
+#quizStage.dark .chapterMulti>summary,#quizStage.dark .chapterMultiMenu{background:#111827;color:#f8fafc;border-color:#475569}
+#quizStage.dark .chapterCheckRow:hover{background:#1e293b}
+#quizStage.dark .chapterCheckAll{border-bottom-color:#334155}
+@media(max-width:700px){.chapterMulti,.bankChapterMulti{width:100%}.chapterMultiMenu{max-height:260px}}
 </style>
 </head>
 <body class="portal-light">
@@ -683,7 +700,10 @@
           <input type="text" id="quizNameInput" class="quizInput" placeholder="輸入姓名 / Enter your name" />
           <input type="number" id="quizQuestionLimit" class="quizInput" placeholder="輸入題數 / Enter number of questions" />
           <div id="quizChapterWrap" class="quizHidden">
-            <select id="quizChapterSelect" class="quizInput quizSelect"></select>
+            <details id="quizChapterMulti" class="chapterMulti">
+              <summary id="quizChapterSummary">全部章節</summary>
+              <div id="quizChapterChecks" class="chapterMultiMenu"></div>
+            </details>
           </div>
           <input type="text" id="quizRangeInput" class="quizInput" placeholder="區段測驗題號，例如 1-20、25、30-35；留空＝原本隨機出題" />
           <div class="rangeHint">區段測驗：輸入題號或範圍就只考那些題；留空則維持原本隨機抽題。</div>
@@ -723,7 +743,7 @@
 
         <section id="quizWrongReview" class="quizHidden"><h2>錯題記憶 / Wrong Memory</h2><div class="quizPanel"><div class="muted" style="margin-bottom:10px">這裡會列出你「仍然答錯過」的題目。你之後做對同一題，會自動從清單移除。</div><div class="bankControls"><input id="wrongNameInput" class="quizInput" type="text" placeholder="姓名（留空=使用首頁姓名或 _guest）"><input id="wrongQuestionLimit" class="quizInput" type="number" placeholder="錯題測驗題數（留空=全部）"><input id="wrongDurationInput" class="quizInput" type="number" value="80" min="1" max="999" placeholder="錯題測驗時間（分鐘）"></div><div style="text-align:center;margin-top:10px"><button id="startWrongQuizBtn" class="quizBtn purple">開始錯題測驗 / Start Wrong Quiz</button><button id="clearWrongMemBtn" class="quizBtn darkbtn">清除錯題記憶 / Clear Wrong</button><button id="backWelcomeFromWrong" class="quizBtn gray">返回首頁 / Home</button><button id="toBankFromWrong" class="quizBtn teal">題庫瀏覽 / Browse Bank</button></div><div id="wrongMemInfoPanel" class="muted" style="text-align:center;margin-top:10px"></div></div><div class="tableResponsive"><table class="quizTable"><thead><tr><th style="width:70px">#</th><th>錯題題目</th><th style="width:28%">上次選的答案</th><th style="width:22%">正確答案</th><th style="width:180px">最後答錯時間</th></tr></thead><tbody id="wrongListBody"></tbody></table></div></section>
 
-        <section id="quizBank" class="quizHidden"><h2>題庫瀏覽 / Question Bank</h2><div class="bankControls"><select id="bankChapterSelect" class="quizInput quizSelect quizHidden"></select><input id="bankNumberSearch" class="quizInput" type="text" placeholder="題號搜尋"><input id="bankSearch" class="quizInput" type="text" placeholder="關鍵字搜尋"><label>每頁顯示 <select id="perPage" class="quizSelect" style="width:auto;margin:0"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="all">全部</option></select> 題</label><button id="backWelcomeFromBank" class="quizBtn gray">返回測驗頁 / Home</button></div><div class="tableResponsive"><table class="quizTable"><thead><tr><th style="width:70px">#</th><th>題目</th><th style="width:34%">選項</th><th style="width:160px">正確答案</th></tr></thead><tbody id="bankBody"></tbody></table></div><div class="pagination"><button id="prevPage" class="quizBtn">上一頁</button><span id="pageInfo" class="mono"></span><button id="nextPage" class="quizBtn">下一頁</button></div><div style="text-align:center;margin-top:8px"><small class="muted">提示：題號可輸入單題或範圍；關鍵字支援中英文與數字。</small></div></section>
+        <section id="quizBank" class="quizHidden"><h2>題庫瀏覽 / Question Bank</h2><div class="bankControls"><details id="bankChapterMulti" class="chapterMulti bankChapterMulti quizHidden"><summary id="bankChapterSummary">全部章節</summary><div id="bankChapterChecks" class="chapterMultiMenu"></div></details><input id="bankNumberSearch" class="quizInput" type="text" placeholder="題號搜尋"><input id="bankSearch" class="quizInput" type="text" placeholder="關鍵字搜尋"><label>每頁顯示 <select id="perPage" class="quizSelect" style="width:auto;margin:0"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="all">全部</option></select> 題</label><button id="backWelcomeFromBank" class="quizBtn gray">返回測驗頁 / Home</button></div><div class="tableResponsive"><table class="quizTable"><thead><tr><th style="width:70px">#</th><th>題目</th><th style="width:34%">選項</th><th style="width:160px">正確答案</th></tr></thead><tbody id="bankBody"></tbody></table></div><div class="pagination"><button id="prevPage" class="quizBtn">上一頁</button><span id="pageInfo" class="mono"></span><button id="nextPage" class="quizBtn">下一頁</button></div><div style="text-align:center;margin-top:8px"><small class="muted">提示：題號可輸入單題或範圍；關鍵字支援中英文與數字。</small></div></section>
       </div>
     </div>
   </div>
@@ -3611,11 +3631,10 @@ var QUIZ_BANKS = {
   "quiz_caa_m2": {
   "title": "147測驗M2-CAA",
   "label": "CAA M2",
-  "limitPlaceholder": "輸入題數,至多65題 / Enter number of questions",
-  "note": "!此章節不含圖片題｜題目已清理：答案不明、選項不完整或重複題目已略過",
+  "limitPlaceholder": "輸入題數,至多68題 / Enter number of questions",
   "questions": [
     {
-      "question": "一個質量1000kg 打樁機，往下敲擊3m物體，物體往下移動10 mm(假設重力= 10m/s)，其打樁機驅動的動能？\nA 1000 kg pile driver falls 3 m and drives an object downward 10 mm. What is the driving kinetic energy?",
+      "question": "一個質量1000kg 打樁機，往下敲擊3m物體，物體往下移動10 mm(假設重力= 10m/s)，其打樁機驅動的動能？",
       "options": [
         "A. 30 kJ",
         "B. 45 kJ",
@@ -3624,7 +3643,7 @@ var QUIZ_BANKS = {
       "answer": "A"
     },
     {
-      "question": "5 kW的電動馬達效率90％，20秒內使用多少能量？\nA 4.5 kW electric motor has 90% efficiency. How much energy is used in 20 seconds?",
+      "question": "4.5 kW的電動馬達效率90％，20秒內使用多少能量？",
       "options": [
         "A. 90 kJ",
         "B. 2.25 kJ",
@@ -3633,36 +3652,46 @@ var QUIZ_BANKS = {
       "answer": "C"
     },
     {
-      "question": "光纖中，電纜類型是依照啥做選擇？\nIn optical fibre, the cable type is selected according to what?",
+      "question": "木頭燃燒是",
       "options": [
-        "A. 電纜直徑與波長做匹配（matching cable diameter with wavelength）",
-        "B. 行程所需的距離（required transmission distance）",
-        "C. 信號所需的強度（required signal strength）"
-      ],
-      "answer": "B"
-    },
-    {
-      "question": "H2O在何種狀態下具有最多能量？\nIn which state does H2O have the most energy?",
-      "options": [
-        "A. 水（water）",
-        "B. 蒸氣（steam）",
-        "C. 冰（ice）",
-        "D. 不一定（not necessarily）"
-      ],
-      "answer": "B"
-    },
-    {
-      "question": "比重計算方法？\nHow is specific gravity calculated?",
-      "options": [
-        "A. kg/m²",
-        "B. kg/m³",
-        "C. 沒有單位（no unit）"
+        "A. 傳導熱",
+        "B. 輻射熱",
+        "C. 燃燒熱"
       ],
       "answer": "C"
     },
     {
-      "question": "當氣體改變溫度/壓力時，使用的是何種國際溫標？ .攝氏\nWhen gas changes temperature or pressure, which international temperature scale is used?",
+      "question": "光纖中，電纜類型是依照啥做選擇？",
       "options": [
+        "A. 電纜直徑與波長做匹配",
+        "B. 行程所需的距離",
+        "C. 信號所需的強度"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "H2O在何種狀態下具有最多能量？",
+      "options": [
+        "A. 水",
+        "B. 蒸氣",
+        "C. 冰",
+        "D. 不一定"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "比重計算方法？",
+      "options": [
+        "A. kg/m²",
+        "B. kg/m³",
+        "C. 沒有單位"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "當氣體改變溫度/壓力時，使用的是何種國際溫標？",
+      "options": [
+        "A. 攝氏",
         "B. 華攝",
         "C. 克氏(開爾文)",
         "D. ??"
@@ -3670,179 +3699,189 @@ var QUIZ_BANKS = {
       "answer": "C"
     },
     {
-      "question": "北極溫度是零下50度C，要用什麼樣的溫度計來衡量呢?\nAt -50°C in the Arctic, what type of thermometer should be used?",
+      "question": "北極溫度是零下50度C，要用什麼樣的溫度計來衡量呢?",
       "options": [
-        "A. 油（oil）",
-        "B. 水（water）",
-        "C. 汞（mercury）",
-        "D. 酒精（alcohol）"
+        "A. 油",
+        "B. 水",
+        "C. 汞",
+        "D. 酒精"
       ],
       "answer": "D"
     },
     {
-      "question": "當原子殼層離原子核越遠，則\nWhen an electron shell is farther from the nucleus, what happens?",
+      "question": "當原子殼層離原子核越遠，則",
       "options": [
-        "A. 原子殼彼此間距越遠（electron shells are farther apart）",
-        "B. 原子殼彼此保持相同的間距（electron shells keep the same spacing）",
-        "C. 原子殼彼此間距越近（electron shells are closer together）",
-        "D. 原子殼彼此沒有保持相同的間距（electron shells do not keep the same spacing）"
+        "A. 原子殼彼此間距越遠",
+        "B. 原子殼彼此保持相同的間距",
+        "C. 原子殼彼此間距越近",
+        "D. 原子殼彼此沒有保持相同的間距"
       ],
       "answer": "A"
     },
     {
-      "question": "在管道中的壓力是\nPressure in a pipe is defined as:",
+      "question": "在管道中的壓力是",
       "options": [
-        "A. 功/單位面積（work per unit area）",
-        "B. 質量/橫切面面積（mass per cross-sectional area）",
-        "C. 重量/單位面積（weight per unit area）",
-        "D. 力/單位面積（force per unit area）"
+        "A. 功/單位面積",
+        "B. 質量/橫切面面積",
+        "C. 重量/單位面積",
+        "D. 力/單位面積"
       ],
       "answer": "D"
     },
     {
-      "question": "功率的國際單位為\nWhat is the SI unit of power?",
+      "question": "功率的國際單位為",
       "options": [
-        "A. 牛頓（newton）",
-        "B. 伏特（volt）",
-        "C. 瓦特（watt）",
-        "D. 帕斯卡（pascal）"
+        "A. 牛頓",
+        "B. 伏特",
+        "C. 瓦特",
+        "D. 帕斯卡"
       ],
       "answer": "C"
     },
     {
-      "question": "一架飛機在兩小時十五分鐘飛了1350海里，請問他的平均速率為何？\nAn aircraft flies 1350 nautical miles in 2 hours 15 minutes. What is its average speed?",
+      "question": "一架飛機在兩小時十五分鐘飛了1350海里，請問他的平均速率為何？",
       "options": [
         "A. 600 mph",
-        "B. 150 knot（150 knots）",
-        "C. 150 mpb（150 mph）",
-        "D. 600 knot（600 knots）"
+        "B. 150 knot",
+        "C. 150 mpb",
+        "D. 600 knot"
       ],
       "answer": "D"
     },
     {
-      "question": "一個物質的比重的計算方法為\nHow is the specific gravity of a substance calculated?",
+      "question": "H2O在何種狀態下具有最多能量？",
       "options": [
-        "A. 物体密度的平方除以水的密度（square of object density divided by water density）",
-        "B. 物体的密度乘以水的密度（object density multiplied by water density）",
-        "C. 物体的密度除以水的密度（object density divided by water density）",
-        "D. 物体密度的平方乘以水的密度（square of object density multiplied by water density）"
+        "A. 水",
+        "B. 不一定",
+        "C. 蒸氣",
+        "D. 冰"
       ],
       "answer": "C"
     },
     {
-      "question": "於光纖中，纜線的種類取決於…\nIn optical fibre, cable type depends on:",
+      "question": "一個物質的比重的計算方法為",
       "options": [
-        "A. 波幅與纜線直徑的合適性（matching amplitude with cable diameter）",
-        "B. 工程預算（project budget）",
-        "C. 傳輸距離（transmission distance）",
-        "D. 所需的訊號強度（required signal strength）"
+        "A. 物体密度的平方除以水的密度",
+        "B. 物体的密度乘以水的密度",
+        "C. 物体的密度除以水的密度",
+        "D. 物体密度的平方乘以水的密度"
       ],
       "answer": "C"
     },
     {
-      "question": "輻射的熱能轉移可藉由\nHeat transfer by radiation occurs by:",
+      "question": "於光纖中，纜線的種類取決於…",
       "options": [
-        "A. 非中介質的加熱（heating without a medium）",
-        "B. 中介質的加熱（heating through a medium）",
-        "C. 放射性同位素的應用（application of radioactive isotopes）",
-        "D. 中介質的降溫（cooling through a medium）"
+        "A. 波幅與纜線直徑的合適性",
+        "B. 工程預算",
+        "C. 傳輸距離",
+        "D. 所需的訊號強度"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "輻射的熱能轉移可藉由",
+      "options": [
+        "A. 非中介質的加熱",
+        "B. 中介質的加熱",
+        "C. 放射性同位素的應用",
+        "D. 中介質的降溫"
       ],
       "answer": "A"
     },
     {
-      "question": "有關陀螺儀在生活的應用何者不是？\nWhich is NOT an application of a gyroscope in daily life?",
+      "question": "有關陀螺儀在生活的應用何者不是？",
       "options": [
-        "A. 回轉羅盤（gyrocompass）",
-        "B. 計時工具（timekeeping tool）",
-        "C. 機器人的平衡（robot balance）",
-        "D. 導航裝置的指向（direction reference for navigation devices）"
+        "A. 回轉羅盤",
+        "B. 計時工具",
+        "C. 機器人的平衡",
+        "D. 導航裝置的指向"
       ],
       "answer": "B"
     },
     {
-      "question": "有關黏滯性的敘述何者錯誤？\nWhich statement about viscosity is incorrect?",
+      "question": "有關黏滯性的敘述何者錯誤？",
       "options": [
-        "A. 流体的黏滯性主因是分子間的碰撞與內聚吸引力之故（fluid viscosity is mainly caused by molecular collisions and cohesive attraction）",
-        "B. 氣体的黏滯性主要來自於分子間的碰撞（gas viscosity mainly comes from molecular collisions）",
-        "C. 黏滯性越低的流体，流動性越佳（lower viscosity means better fluidity）",
-        "D. 水的黏滯性主要受外型變化影響（water viscosity is mainly affected by shape change）"
+        "A. 流体的黏滯性主因是分子間的碰撞與內聚吸引力之故",
+        "B. 氣体的黏滯性主要來自於分子間的碰撞",
+        "C. 黏滯性越低的流体，流動性越佳",
+        "D. 水的黏滯性主要受外型變化影響"
       ],
       "answer": "A"
     },
     {
-      "question": "如果以100N的力移動某人15公尺，則作功若干焦耳？\nIf a 100 N force moves a person 15 m, how much work is done?",
+      "question": "如果以100N的力移動某人15公尺，則作功若干焦耳？",
       "options": [
-        "A. 0.15mJ（0.15 mJ）",
-        "B. 1500kJ（1500 kJ）",
-        "C. 150mJ（150 mJ）",
-        "D. 1.5Kj（1.5 kJ）"
+        "A. 0.15mJ",
+        "B. 1500kJ",
+        "C. 150mJ",
+        "D. 1.5Kj"
       ],
       "answer": "D"
     },
     {
-      "question": "化合物是\nA compound is:",
+      "question": "化合物是",
       "options": [
-        "A. 超過一個以上的元素混合在一起（more than one element mixed together）",
-        "B. 只有一個元素（only one element）",
-        "C. 超過一個以上元素以化學方式結合（more than one element chemically combined）",
-        "D. 元素的溶液(液態或固態)或是將元素混合產生新的材料（a solution of elements or a new material made by mixing elements）"
+        "A. 超過一個以上的元素混合在一起",
+        "B. 只有一個元素",
+        "C. 超過一個以上元素以化學方式結合",
+        "D. 元素的溶液(液態或固態)或是將元素混合產生新的材料"
       ],
       "answer": "C"
     },
     {
-      "question": "有關華氏溫標的敘述何者錯誤\nWhich statement about the Fahrenheit scale is incorrect?",
+      "question": "有關華氏溫標的敘述何者錯誤",
       "options": [
-        "A. 人的体溫約37度（human body temperature is about 37 degrees）",
-        "B. 每一等分為17（each division is 17）",
-        "C. 在水的凝固點32度F與沸點212度F之間對分180等分（180 divisions between water freezing point 32°F and boiling point 212°F）",
-        "D. 攝氏溫度C與華氏溫度F換算的關係為F=9/5度C+ 32（the conversion is F = 9/5 C + 32）"
+        "A. 人的体溫約37度",
+        "B. 每一等分為17",
+        "C. 在水的凝固點32度F與沸點212度F之間對分180等分",
+        "D. 攝氏溫度C與華氏溫度F換算的關係為F=9/5度C+ 32"
       ],
       "answer": "B"
     },
     {
-      "question": "一斜向射出的砲彈升至最高點引爆產生了許多碎片，碎片落地前，質量中心的運動為何？\nA projectile explodes at the highest point of its trajectory. Before the fragments hit the ground, how does the centre of mass move?",
+      "question": "一斜向射出的砲彈升至最高點引爆產生了許多碎片，碎片落地前，質量中心的運動為何？",
       "options": [
-        "A. 等速度運動（constant velocity motion）",
-        "B. 等加速度運動（constant acceleration motion）",
-        "C. 靜止（stationary）",
-        "D. 變加速度運動（variable acceleration motion）"
+        "A. 等速度運動",
+        "B. 等加速度運動",
+        "C. 靜止",
+        "D. 變加速度運動"
       ],
       "answer": "B"
     },
     {
-      "question": "兩液壓式千斤頂除頂舉處之活塞面積大小不同外，其餘形狀尺寸相同。若以相同壓力、相同速率施力，則下列有關頂舉處活塞伸長速率何者敘述正確\nTwo hydraulic jacks differ only in piston area. If the same pressure and same input speed are applied, which statement about the lifting piston speed is correct?",
+      "question": "兩液壓式千斤頂除頂舉處之活塞面積大小不同外，其餘形狀尺寸相同。若以相同壓力、相同速率施力，則下列有關頂舉處活塞伸長速率何者敘述正確",
       "options": [
-        "A. 同樣的速率直到大的千斤頂頂至頂點（same speed until the larger jack reaches its limit）",
-        "B. 同樣的速率（same speed）",
-        "C. 不容的速率（different speeds）",
-        "D. 同樣的速率直到小的千斤頂頂至頂點（same speed until the smaller jack reaches its limit）"
+        "A. 同樣的速率直到大的千斤頂頂至頂點",
+        "B. 同樣的速率",
+        "C. 不容的速率",
+        "D. 同樣的速率直到小的千斤頂頂至頂點"
       ],
       "answer": "C"
     },
     {
-      "question": "當氣體改變溫度/壓力時，使用的是何種國際溫標\nWhen gas temperature or pressure changes, which international temperature scale is used?",
+      "question": "當氣體改變溫度/壓力時，使用的是何種國際溫標",
       "options": [
-        "A. 華氏溫度（Fahrenheit temperature）",
-        "B. 攝氏溫度（Celsius temperature）",
-        "C. 蘭氏溫度（Rankine temperature）",
-        "D. 凱氏溫度（Kelvin temperature）"
+        "A. 華氏溫度",
+        "B. 攝氏溫度",
+        "C. 蘭氏溫度",
+        "D. 凱氏溫度"
       ],
       "answer": "D"
     },
     {
-      "question": "比熱的國際單位為？\nWhat is the SI unit of specific heat?",
+      "question": "比熱的國際單位為？",
       "options": [
         "A. J/C",
-        "B. J/S/C（J/s/°C）",
+        "B. J/S/C",
         "C. J/kg",
-        "D. J/Kg-k（J/(kg·K)）"
+        "D. J/Kg-k"
       ],
       "answer": "D"
     },
     {
-      "question": "陀螺儀的原理是根據\nThe principle of a gyroscope is based on:",
+      "question": "陀螺儀的原理是根據",
       "options": [
-        "A. 作用力等於反作用力（action equals reaction）",
+        "A. 作用力等於反作用力",
         "B. 牛頓的第三運動定律",
         "C. 牛頓的第二運動定律",
         "D. 牛頓的第一運動定律"
@@ -3850,267 +3889,267 @@ var QUIZ_BANKS = {
       "answer": "D"
     },
     {
-      "question": "何者並非光折射的現象？\nWhich is NOT a phenomenon of light refraction?",
+      "question": "何者並非光折射的現象？",
       "options": [
-        "A. 下雨後天空出現彩虹（rainbow after rain）",
-        "B. 從鏡子中看見自己的像（seeing your image in a mirror）",
-        "C. 水中的筷子看似折斷（a chopstick in water appears broken）",
-        "D. 陽光經過三稜鏡產生色散（sunlight dispersed by a prism）"
+        "A. 下雨後天空出現彩虹",
+        "B. 從鏡子中看見自己的像",
+        "C. 水中的筷子看似折斷",
+        "D. 陽光經過三稜鏡產生色散"
       ],
       "answer": "B"
     },
     {
-      "question": "BTU=778英尺磅，其能量可使\nA BTU equals 778 foot-pounds. This energy can:",
+      "question": "BTU=778英尺磅，其能量可使",
       "options": [
-        "A. 一磅的水提高1度C（raise one pound of water by 1°C）",
-        "B. 一公斤的水提高1度C（raise one kilogram of water by 1°C）",
-        "C. 一公斤的水提高1度F（raise one kilogram of water by 1°F）",
-        "D. 一磅的水提高1度F（raise one pound of water by 1°F）"
+        "A. 一磅的水提高1度C",
+        "B. 一公斤的水提高1度C",
+        "C. 一公斤的水提高1度F",
+        "D. 一磅的水提高1度F"
       ],
       "answer": "D"
     },
     {
-      "question": "有關流体阻力的敘述何者錯誤？\nWhich statement about fluid resistance is incorrect?",
+      "question": "有關流体阻力的敘述何者錯誤？",
       "options": [
-        "A. 物体在流体中運動會受到與運動方向相反的阻力（an object moving in a fluid experiences drag opposite its motion）",
-        "B. 物体在流體中運動速率較小時(無亂流)，所受流体阻力約和速度成正比（at low speed without turbulence, drag is approximately proportional to velocity）",
-        "C. 一不對稱形狀物体在流体當中運動除了產生阻力也會產生昇力（an asymmetric body in a fluid can produce both drag and lift）",
-        "D. 物体在流体中運動速率較大時，所受流体阻力約和速度的三次方成正比（at higher speed, drag is approximately proportional to the cube of velocity）"
+        "A. 物体在流体中運動會受到與運動方向相反的阻力",
+        "B. 物体在流體中運動速率較小時(無亂流)，所受流体阻力約和速度成正比",
+        "C. 一不對稱形狀物体在流体當中運動除了產生阻力也會產生昇力",
+        "D. 物体在流体中運動速率較大時，所受流体阻力約和速度的三次方成正比"
       ],
       "answer": "D"
     },
     {
-      "question": "提高聲波的頻率增加其\nIncreasing the frequency of a sound wave increases its:",
+      "question": "提高聲波的頻率增加其",
       "options": [
-        "A. 響度（loudness）",
-        "B. 力矩（moment）",
-        "C. 音調（pitch）",
-        "D. 音色（tone quality）"
+        "A. 響度",
+        "B. 力矩",
+        "C. 音調",
+        "D. 音色"
       ],
       "answer": "C"
     },
     {
-      "question": "華氏溫度是如何計算\nHow is Fahrenheit temperature calculated?",
+      "question": "華氏溫度是如何計算",
       "options": [
-        "A. (9/5)*C+32（(9/5)C + 32）",
-        "B. (5/9+32)*C（(5/9 + 32)C）",
-        "C. (5/9)*C+32（(5/9)C + 32）",
-        "D. (5/9+32)+C（(5/9 + 32) + C）"
+        "A. (9/5)*C+32",
+        "B. (5/9+32)*C",
+        "C. (5/9)*C+32",
+        "D. (5/9+32)+C"
       ],
       "answer": "A"
     },
     {
-      "question": "北極溫度是零下50度C，要用什麼樣的溫度計來衡量呢？\nAt -50°C in the Arctic, what type of thermometer should be used?",
+      "question": "北極溫度是零下50度C，要用什麼樣的溫度計來衡量呢？",
       "options": [
-        "A. 油（oil）",
-        "B. 水（water）",
-        "C. 汞（mercury）",
-        "D. 酒精（alcohol）"
+        "A. 油",
+        "B. 水",
+        "C. 汞",
+        "D. 酒精"
       ],
       "answer": "D"
     },
     {
-      "question": "一公斤的水從攝氏零度加熱至攝氏兩度，它的体積會？\nIf 1 kg of water is heated from 0°C to 2°C, what happens to its volume?",
+      "question": "一公斤的水從攝氏零度加熱至攝氏兩度，它的体積會？",
       "options": [
-        "A. 不變（unchanged）",
-        "B. 下降（decreases）",
-        "C. 不一定（not necessarily）",
-        "D. 上升（increases）"
+        "A. 不變",
+        "B. 下降",
+        "C. 不一定",
+        "D. 上升"
       ],
       "answer": "B"
     },
     {
-      "question": "有關流体的全壓的敘述何者錯誤？\nWhich statement about total pressure in a fluid is incorrect?",
+      "question": "有關流体的全壓的敘述何者錯誤？",
       "options": [
-        "A. 全壓就是大氣壓力（total pressure is atmospheric pressure）",
-        "B. 至一流線上，流體的全壓為一常數（along a streamline, total pressure is constant）",
-        "C. 全壓也是壓力的一種（total pressure is a type of pressure）",
-        "D. 全壓為靜壓和動壓的總和（total pressure is static pressure plus dynamic pressure）"
+        "A. 全壓就是大氣壓力",
+        "B. 至一流線上，流體的全壓為一常數",
+        "C. 全壓也是壓力的一種",
+        "D. 全壓為靜壓和動壓的總和"
       ],
       "answer": "A"
     },
     {
-      "question": "有關力矩的敘述，何者錯誤？\nWhich statement about moment is incorrect?",
+      "question": "有關力矩的敘述，何者錯誤？",
       "options": [
-        "A. 可表達力的旋轉效果（expresses the rotational effect of force）",
-        "B. 具有方向性（has direction）",
-        "C. 可使物体產生線性移動（can cause linear motion）",
-        "D. 力與力臂互相垂直（force and moment arm are perpendicular）"
+        "A. 可表達力的旋轉效果",
+        "B. 具有方向性",
+        "C. 可使物体產生線性移動",
+        "D. 力與力臂互相垂直"
       ],
       "answer": "C"
     },
     {
-      "question": "阻力/作用力 所得之比率為\nThe ratio of load/resistance to effort/force is:",
+      "question": "阻力/作用力 所得之比率為",
       "options": [
-        "A. 機械利益（mechanical advantage）",
-        "B. 機械利率（mechanical ratio）",
-        "C. 加速度利率（acceleration ratio）",
-        "D. 速率（speed/rate）"
+        "A. 機械利益",
+        "B. 機械利率",
+        "C. 加速度利率",
+        "D. 速率"
       ],
       "answer": "A"
     },
     {
-      "question": "聲音的品質取決於\nSound quality depends on:",
+      "question": "聲音的品質取決於",
       "options": [
-        "A. 頻率與諧波（frequency and harmonics）",
-        "B. 接收器的質量（receiver mass）",
-        "C. 不一定（not necessarily）",
-        "D. 聲源所產生的純音波(pure sound waves being produced by the source)（pure sound waves produced by the source）"
+        "A. 頻率與諧波",
+        "B. 接收器的質量",
+        "C. 不一定",
+        "D. 聲源所產生的純音波(pure sound waves being produced by the source)"
       ],
       "answer": "D"
     },
     {
-      "question": "有關動壓的敘述何者錯誤？\nWhich statement about dynamic pressure is incorrect?",
+      "question": "有關動壓的敘述何者錯誤？",
       "options": [
-        "A. 流体有流速才有動壓（dynamic pressure exists only when fluid has velocity）",
-        "B. 流体流動中沒有靜壓（there is no static pressure in flowing fluid）",
-        "C. 動壓與流動的方向垂直（dynamic pressure is perpendicular to the flow direction）",
-        "D. 流体動壓大小與流速大小有關（dynamic pressure depends on flow speed）"
+        "A. 流体有流速才有動壓",
+        "B. 流体流動中沒有靜壓",
+        "C. 動壓與流動的方向垂直",
+        "D. 流体動壓大小與流速大小有關"
       ],
       "answer": "C"
     },
     {
-      "question": "能量的國際單位是\nWhat is the SI unit of energy?",
+      "question": "能量的國際單位是",
       "options": [
-        "A. 瓦特W（watt W）",
-        "B. 焦耳J（joule J）",
-        "C. 帕斯卡Pa（pascal Pa）",
-        "D. 馬力（horsepower）"
+        "A. 瓦特W",
+        "B. 焦耳J",
+        "C. 帕斯卡Pa",
+        "D. 馬力"
       ],
       "answer": "B"
     },
     {
-      "question": "當光在玻璃/空氣邊界入射角小於臨界角交會時會\nWhen light meets a glass/air boundary at an incident angle smaller than the critical angle, what happens?",
+      "question": "當光在玻璃/空氣邊界入射角小於臨界角交會時會",
       "options": [
-        "A. 發生全反射（total internal reflection occurs）",
-        "B. 發生反射和折射（reflection and refraction occur）",
-        "C. 發生反射（reflection occurs）",
-        "D. 沒有光被反射（no light is reflected）"
+        "A. 發生全反射",
+        "B. 發生反射和折射",
+        "C. 發生反射",
+        "D. 沒有光被反射"
       ],
       "answer": "B"
     },
     {
-      "question": "凹面鏡中，光線和鏡軸平行的反射，何者正確\nFor a concave mirror, what happens to a ray parallel to the mirror axis after reflection?",
+      "question": "凹面鏡中，光線和鏡軸平行的反射，何者正確",
       "options": [
-        "A. 與鏡子的軸線平行（parallel to the mirror axis）",
-        "B. 並不通過焦點（does not pass through the focal point）",
-        "C. 回到曲透鏡的中央（returns to the centre of the curved mirror/lens）",
-        "D. 通過焦點（passes through the focal point）"
+        "A. 與鏡子的軸線平行",
+        "B. 並不通過焦點",
+        "C. 回到曲透鏡的中央",
+        "D. 通過焦點"
       ],
       "answer": "D"
     },
     {
-      "question": "相對比重是\nRelative specific gravity is:",
+      "question": "相對比重是",
       "options": [
-        "A. 物体/水（object/water）",
-        "B. 水的密度X物体的密度（water density × object density）",
+        "A. 物体/水",
+        "B. 水的密度X物体的密度",
         "C. 物体的密度/水的密度",
-        "D. 水的密度/物体的密度（water density / object density）"
+        "D. 水的密度/物体的密度"
       ],
       "answer": "C"
     },
     {
-      "question": "在駐波中，何點振幅最大\nIn a standing wave, which point has the maximum amplitude?",
+      "question": "在駐波中，何點振幅最大",
       "options": [
-        "A. 波節NODE（node）",
-        "B. 諧波HARMONIC（harmonic）",
-        "C. 波腹ANTI-NODE（anti-node）",
-        "D. 波峰PEAK（peak）"
+        "A. 波節NODE",
+        "B. 諧波HARMONIC",
+        "C. 波腹ANTI-NODE",
+        "D. 波峰PEAK"
       ],
       "answer": "C"
     },
     {
-      "question": "什麼類型的摩擦需要最大動力來克服\nWhich type of friction requires the greatest force to overcome?",
+      "question": "什麼類型的摩擦需要最大動力來克服",
       "options": [
-        "A. 靜摩擦（static friction）",
-        "B. 最大靜摩擦（maximum static friction）",
-        "C. 滾動磨擦（rolling friction）",
-        "D. 動摩擦（kinetic friction）"
+        "A. 靜摩擦",
+        "B. 最大靜摩擦",
+        "C. 滾動磨擦",
+        "D. 動摩擦"
       ],
       "answer": "B"
     },
     {
-      "question": "兩個物体分別11KG與8KG，放置於飛機的重心後2公尺及1公尺處，距重心前方多遠的距離，必須放置30KG重物才會讓重心保持不變\nTwo masses, 11 kg and 8 kg, are located 2 m and 1 m behind the aircraft CG. How far in front of the CG should a 30 kg mass be placed to keep the CG unchanged?",
+      "question": "兩個物体分別11KG與8KG，放置於飛機的重心後2公尺及1公尺處，距重心前方多遠的距離，必須放置30KG重物才會讓重心保持不變",
       "options": [
-        "A. 1.5M（1.5 m）",
-        "B. 2.5M（2.5 m）",
-        "C. 1M（1 m）",
-        "D. 2M（2 m）"
+        "A. 1.5M",
+        "B. 2.5M",
+        "C. 1M",
+        "D. 2M"
       ],
       "answer": "C"
     },
     {
-      "question": "當施以力矩時，陀螺儀的進動量(Precession)\nWhen torque is applied, gyroscopic precession is:",
+      "question": "當施以力矩時，陀螺儀的進動量(Precession)",
       "options": [
-        "A. 與力矩平方成正比（proportional to the square of torque）",
-        "B. 與力矩平方成反比（inversely proportional to the square of torque）",
-        "C. 與力矩成反比（inversely proportional to torque）",
-        "D. 與力矩成正比（proportional to torque）"
+        "A. 與力矩平方成正比",
+        "B. 與力矩平方成反比",
+        "C. 與力矩成反比",
+        "D. 與力矩成正比"
       ],
       "answer": "D"
     },
     {
-      "question": "假設磨擦力為零的情況下，當一塊積木坡上滑下，則\nWith zero friction, when a block slides down a slope:",
+      "question": "假設磨擦力為零的情況下，當一塊積木坡上滑下，則",
       "options": [
-        "A. 增加的動能與增加的位能是一樣的（increase in kinetic energy equals increase in potential energy）",
-        "B. 增加的動能大於損失位能（increase in kinetic energy is greater than lost potential energy）",
-        "C. 增加的動能與損失的位能是一樣的（increase in kinetic energy equals lost potential energy）",
-        "D. 損失位能大於增加的動能（lost potential energy is greater than increase in kinetic energy）"
+        "A. 增加的動能與增加的位能是一樣的",
+        "B. 增加的動能大於損失位能",
+        "C. 增加的動能與損失的位能是一樣的",
+        "D. 損失位能大於增加的動能"
       ],
       "answer": "C"
     },
     {
-      "question": "一個以定速作圓周運動的物体，當半徑加倍時，其向心力會如何？\nFor an object moving in a circle at constant speed, if the radius doubles, what happens to the centripetal force?",
+      "question": "一個以定速作圓周運動的物体，當半徑加倍時，其向心力會如何？",
       "options": [
-        "A. 減半（halved）",
-        "B. 保持不變（remains unchanged）",
-        "C. 4倍（four times）",
-        "D. 雙倍（doubled）"
+        "A. 減半",
+        "B. 保持不變",
+        "C. 4倍",
+        "D. 雙倍"
       ],
       "answer": "A"
     },
     {
-      "question": "下列何者對聲音在空氣中的速度影響最大\nWhich factor most affects the speed of sound in air?",
+      "question": "下列何者對聲音在空氣中的速度影響最大",
       "options": [
-        "A. 溫度（temperature）",
-        "B. 密度（density）",
-        "C. 聲波（sound wave）",
-        "D. 頻率（frequency）"
+        "A. 溫度",
+        "B. 密度",
+        "C. 聲波",
+        "D. 頻率"
       ],
       "answer": "A"
     },
     {
-      "question": "比較同質量的鐵與羽毛，下列何者錯誤？\nComparing iron and feathers of the same mass, which statement is incorrect?",
+      "question": "比較同質量的鐵與羽毛，下列何者錯誤？",
       "options": [
-        "A. 鐵的体積較大（iron has greater volume）",
-        "B. 鐵可沉入水中（iron can sink in water）",
-        "C. 羽毛的密度較小（feathers have lower density）",
-        "D. 鐵與羽毛的動量相等（iron and feathers have equal momentum）"
+        "A. 鐵的体積較大",
+        "B. 鐵可沉入水中",
+        "C. 羽毛的密度較小",
+        "D. 鐵與羽毛的動量相等"
       ],
       "answer": "A"
     },
     {
-      "question": "25公升的燃料產生10KPa的壓力。若另加入125公升的料，壓力會變為\n25 L of fuel produces 10 kPa pressure. If another 125 L is added, what will the pressure become?",
+      "question": "25公升的燃料產生10KPa的壓力。若另加入125公升的料，壓力會變為",
       "options": [
-        "A. 50kPa（50 kPa）",
-        "B. 30kPa（30 kPa）",
-        "C. 40kPa（40 kPa）",
-        "D. 60kPa（60 kPa）"
+        "A. 50kPa",
+        "B. 30kPa",
+        "C. 40kPa",
+        "D. 60kPa"
       ],
       "answer": "D"
     },
     {
-      "question": "測量氣体密度的標準環境條件為何？\nWhat are the standard conditions for measuring gas density?",
+      "question": "測量氣体密度的標準環境條件為何？",
       "options": [
-        "A. 攝氏0度和1大氣壓（0°C and 1 atm）",
-        "B. 攝氏10度和1大氣壓（10°C and 1 atm）",
-        "C. 攝氏20度和1大氣壓（20°C and 1 atm）",
-        "D. 攝氏-20度和1大氣壓（-20°C and 1 atm）"
+        "A. 攝氏0度和1大氣壓",
+        "B. 攝氏10度和1大氣壓",
+        "C. 攝氏20度和1大氣壓",
+        "D. 攝氏-20度和1大氣壓"
       ],
       "answer": "A"
     },
     {
-      "question": "在L軌道了，有多少電子？\nHow many electrons can the L shell hold?",
+      "question": "在L軌道了，有多少電子？",
       "options": [
         "A. 6",
         "B. 4",
@@ -4120,136 +4159,145 @@ var QUIZ_BANKS = {
       "answer": "C"
     },
     {
-      "question": "V1/T1=V2/T2在恒壓下(P=壓力，V=体積，I=溫度)是\nAt constant pressure, V1/T1 = V2/T2 is:",
+      "question": "V1/T1=V2/T2在恒壓下(P=壓力，V=体積，I=溫度)是",
       "options": [
-        "A. 波以耳定律（Boyle’s law）",
-        "B. 牛頓第一運動定律（Newton’s first law of motion）",
-        "C. 查理定律（Charles’s law）",
-        "D. 理想氣体定律（ideal gas law）"
+        "A. 波以耳定律",
+        "B. 牛頓第一運動定律",
+        "C. 查理定律",
+        "D. 理想氣体定律"
       ],
       "answer": "C"
     },
     {
-      "question": "以500公里/小時穩定速率移動30分鐘，其移動距離為多少？\nAt a steady speed of 500 km/h for 30 minutes, what distance is traveled?",
+      "question": "以500公里/小時穩定速率移動30分鐘，其移動距離為多少？",
       "options": [
-        "A. 1000公里（1000 km）",
-        "B. 500公里（500 km）",
-        "C. 250公里（250 km）",
-        "D. 750公里（750 km）"
+        "A. 1000公里",
+        "B. 500公里",
+        "C. 250公里",
+        "D. 750公里"
       ],
       "answer": "C"
     },
     {
-      "question": "自行車騎士以固定速度在90秒騎完1000公尺，其速率是多少？\nA cyclist rides 1000 m in 90 seconds at constant speed. What is the speed?",
+      "question": "自行車騎士以固定速度在90秒騎完1000公尺，其速率是多少？",
       "options": [
-        "A. 11.1公尺/秒（11.1 m/s）",
-        "B. 12公尺/秒（12 m/s）",
-        "C. 50公尺/秒（50 m/s）",
-        "D. 25公尺/秒（25 m/s）"
+        "A. 11.1公尺/秒",
+        "B. 12公尺/秒",
+        "C. 50公尺/秒",
+        "D. 25公尺/秒"
       ],
       "answer": "A"
     },
     {
-      "question": "起重機纜繩舉重時受張力250N，舉升距離50M，則其對舉起物体所做之功為\nA crane cable has 250 N tension and lifts a load 50 m. How much work is done?",
+      "question": "起重機纜繩舉重時受張力250N，舉升距離50M，則其對舉起物体所做之功為",
       "options": [
-        "A. 12.5千焦耳（12.5 kJ）",
-        "B. 125焦耳（125 J）",
-        "C. 500焦耳（500 J）",
-        "D. 1.25*105焦耳（1.25×10^5 J）"
+        "A. 12.5千焦耳",
+        "B. 125焦耳",
+        "C. 500焦耳",
+        "D. 1.25*105焦耳"
       ],
       "answer": "A"
     },
     {
-      "question": "原子中的質子數等於下列何者之數？\nThe number of protons in an atom equals the number of:",
+      "question": "原子中的質子數等於下列何者之數？",
       "options": [
-        "A. 不一定（not necessarily）",
-        "B. 質量數（mass number）",
-        "C. 電子（electrons）",
-        "D. 中子（neutrons）"
+        "A. 不一定",
+        "B. 質量數",
+        "C. 電子",
+        "D. 中子"
       ],
       "answer": "C"
     },
     {
-      "question": "最常見的冷媒為\nWhich are the most common refrigerants?",
+      "question": "最常見的冷媒為",
       "options": [
-        "A. 氨，氟氯烷，溴化甲烷（ammonia, chlorofluorocarbon, methyl bromide）",
-        "B. 水，氟氯烷，二氧化碳（water, chlorofluorocarbon, carbon dioxide）",
-        "C. 水，氟氯烷（water, chlorofluorocarbon）",
-        "D. 水，氨，氟氯烷（water, ammonia, chlorofluorocarbon）"
+        "A. 氨，氟氯烷，溴化甲烷",
+        "B. 水，氟氯烷，二氧化碳",
+        "C. 水，氟氯烷",
+        "D. 水，氨，氟氯烷"
       ],
       "answer": "D"
     },
     {
-      "question": "一機翼可產生之浮力可藉由那個定律求得\nThe lift generated by an aircraft wing can be calculated by which law?",
+      "question": "一機翼可產生之浮力可藉由那個定律求得",
       "options": [
-        "A. 牛頓第二運動定律（Newton’s second law of motion）",
-        "B. 查理定律（Charles’s law）",
-        "C. 伯努利定律（Bernoulli’s law）",
-        "D. 法拉第電磁感應定律（Faraday’s law of electromagnetic induction）"
+        "A. 牛頓第二運動定律",
+        "B. 查理定律",
+        "C. 伯努利定律",
+        "D. 法拉第電磁感應定律"
       ],
       "answer": "C"
     },
     {
-      "question": "飛機在跑道加速度是牛頓第幾運動定律?\nAircraft acceleration on a runway is related to which of Newton’s laws?",
+      "question": "飛機在跑道加速度是牛頓第幾運動定律?",
       "options": [
-        "A. 3rd Law（third law）",
-        "B. 2nd Law（second law）",
-        "C. 1st Law（first law）"
+        "A. 3rd Law",
+        "B. 2nd Law",
+        "C. 1st Law"
       ],
       "answer": "B"
     },
     {
-      "question": "液體加熱時，其體積膨脹性?\nWhen liquids are heated, their volume expansion is generally:",
+      "question": "液體加熱時，其體積膨脹性?",
       "options": [
-        "A. 大於固體（greater than solids）",
-        "B. 小於固體（less than solids）",
-        "C. 大於氣體（greater than gases）"
+        "A. 大於固體",
+        "B. 小於固體",
+        "C. 大於氣體"
       ],
       "answer": "A"
     },
     {
-      "question": "攝氏100度等於多少絕對溫度\n100°C is equal to what absolute temperature?",
+      "question": "攝氏100度等於多少絕對溫度",
       "options": [
-        "A. 373（373 K）",
-        "B. 273（273 K）",
-        "C. 173（173 K）"
+        "A. 373",
+        "B. 273",
+        "C. 173"
       ],
       "answer": "A"
     },
     {
-      "question": "將一堆牙籤與鐵釘進水中能分開,是因為\nA pile of toothpicks and iron nails can be separated in water because of:",
+      "question": "將一堆牙籤與鐵釘進水中能分開，是因為",
       "options": [
-        "A. 密度（density）",
+        "A. 密度",
         "B. 重量",
         "C. 質量"
       ],
       "answer": "A"
     },
     {
-      "question": "加侖(UK)為多少公升\n220 UK gallons is approximately how many litres?",
+      "question": "220加侖(UK)為多少公升?",
       "options": [
-        "A. 500（500 L）",
-        "B. 814（814 L）",
-        "C. 1000（1000 L）"
+        "A. 500",
+        "B. 814",
+        "C. 1000"
       ],
       "answer": "C"
     },
     {
-      "question": "指示器15PSIG, 絕對壓力為\nIf a gauge reads 15 PSIG, what is the absolute pressure?",
+      "question": "指示器15PSIG，絕對壓力為?",
       "options": [
-        "A. 0.3PSI（0.3 PSI）",
-        "B. 0PSI（0 PSI）",
-        "C. 30PSI（30 PSI）"
+        "A. 0.3PSI",
+        "B. 0PSI",
+        "C. 30PSI"
       ],
       "answer": "C"
     },
     {
-      "question": "低於20HZ為\nSound below 20 Hz is called:",
+      "question": "低於20HZ為?",
       "options": [
-        "A. 次音波(次聲波)（infrasound）",
-        "B. 超音速（supersonic）"
+        "A. 次音波(次聲波)",
+        "B. 超音速"
       ],
       "answer": "A"
+    },
+    {
+      "question": "氧分子的組成?",
+      "options": [
+        "A. 2個氧原子共用質子",
+        "B. 2個氧原子共用中子",
+        "C. 2個氧原子共用電子"
+      ],
+      "answer": "C"
     }
   ]
 },
@@ -16503,6 +16551,932 @@ var QUIZ_BANKS = {
         "A. Its pitch",
         "B. Its frequency",
         "C. Air temperature"
+      ],
+      "answer": "C"
+    }
+  ]
+},
+                  "quiz_school_m9": {
+  "title": "147測驗M9-校內考",
+  "label": "校內考 M9",
+  "limitPlaceholder": "輸入題數,至多102題 / Enter number of questions",
+  "note": "",
+  "questions": [
+    {
+      "question": "M9.2｜The area in the brain that processes information from the eyes is known as the visual:",
+      "options": [
+        "A. centre",
+        "B. nerve",
+        "C. cortex"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.2｜Long sighted people have an eyeball that is:",
+      "options": [
+        "A. shorter than normal",
+        "B. longer than normal",
+        "C. oval"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.2｜Peripheral vision occurs through the action of the:",
+      "options": [
+        "A. cones",
+        "B. rods",
+        "C. cornea"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.2｜When the intensity of light increases, the pupil of the eye will:",
+      "options": [
+        "A. grow smaller",
+        "B. grow larger",
+        "C. not be affected"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.2｜The region of the retina that produces the highest visual acuity is the:",
+      "options": [
+        "A. periphery",
+        "B. fovea",
+        "C. choroid"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.2｜When damage occurs to the eardrum or the ossicles, the type of deafness that may occur is known as:",
+      "options": [
+        "A. presbycusis",
+        "B. noise induced hearing loss",
+        "C. conductive deafness"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.2｜The otoliths in the inner ear detect:",
+      "options": [
+        "A. angular movement",
+        "B. linear acceleration",
+        "C. high tone sound"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.2｜The second action level that requires the use of warning signs occurs at:",
+      "options": [
+        "A. 90db",
+        "B. 85db",
+        "C. 140db"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.2｜The Time Weighted Average Sound Level (TWA) above which permanent deafness can occur is:",
+      "options": [
+        "A. 80db",
+        "B. 90db",
+        "C. 150db"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.2｜Balance is maintained by the action of the:",
+      "options": [
+        "A. ossicles and the cochlea",
+        "B. tympanic and basilar membranes",
+        "C. otoliths and the semi-circular canals"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.2｜Motor Programmes are stored in the:",
+      "options": [
+        "A. long-term memory as behavioural sub-routines",
+        "B. short-term memory as reflex actions",
+        "C. sensory stores as automatic actions"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.2｜The capacity of the short-term memory may be increased by:",
+      "options": [
+        "A. rehearsing information",
+        "B. breaking information into 'chunks'",
+        "C. transferring information into long-term memory"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.2｜The maximum number of unrelated items of information that can be stored in the working memory at any one time is normally limited to between:",
+      "options": [
+        "A. 4 and 5",
+        "B. 5 and 9",
+        "C. 9 and 11"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.2｜Information can be held in the working memory for:",
+      "options": [
+        "A. 5 to 10 minutes",
+        "B. 1 to 2 seconds",
+        "C. 10 to 20 seconds"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.2｜Amnesia tends to affect the:",
+      "options": [
+        "A. episodic memory",
+        "B. echoic memory",
+        "C. semantic memory"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.2｜Overhearing your name mentioned whilst engaged in a separate conversation is known as:",
+      "options": [
+        "A. focused attention",
+        "B. divided attention",
+        "C. cocktail party effect'"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.2｜The most accurate and enduring part of the long-term memory is the:",
+      "options": [
+        "A. semantic memory",
+        "B. episodic memory",
+        "C. iconic memory"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.2｜We need an attention gaining mechanism because the:",
+      "options": [
+        "A. episodic memory is unreliable",
+        "B. capacity of the sensory stores is limited",
+        "C. capacity of the working memory store is limited"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.2｜Claustrophobia is associated with:",
+      "options": [
+        "A. confined spaces",
+        "B. heights",
+        "C. body measurements"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.2｜The distance that a person with normal hearing should be able to hear an average conversational voice in a quiet room is:",
+      "options": [
+        "A. three metres or nine feet",
+        "B. two metres or six feet",
+        "C. four metres or twelve feet"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.3｜The term 'risky shift' is:",
+      "options": [
+        "A. the early morning shift",
+        "B. a shift that has experienced disrupted sleep patterns",
+        "C. the tendency of a group to make a more risky decision than an individual"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.3｜The behaviour of an individual working as an aircraft engineer is ideally:",
+      "options": [
+        "A. goal and person directed",
+        "B. goal directed only",
+        "C. person directed only"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.3｜When a democratic leader has to reach a non-urgent decision he/she would:",
+      "options": [
+        "A. make the decision and then tell the group",
+        "B. invite suggestions from the group and then make the decision",
+        "C. leave the group to make the decision"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.3｜Personality is:",
+      "options": [
+        "A. resistant to change",
+        "B. easily modified by experience",
+        "C. easily changed by discipline"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.3｜A person is more likely to comply with a decision made by someone with:",
+      "options": [
+        "A. more experience",
+        "B. higher status",
+        "C. a stronger personality"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.3｜A decision made by a group, compared to that made by an individual tends to be:",
+      "options": [
+        "A. worse and over-cautious",
+        "B. better but less extreme",
+        "C. better but more extreme"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.3｜The Hawthorne Effect is linked to:",
+      "options": [
+        "A. perceived recognition",
+        "B. poor working conditions",
+        "C. regular working hours"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.3｜If you are a good leader you will ideally make people:",
+      "options": [
+        "A. do what they do not want to do",
+        "B. want to do what you want them to do",
+        "C. want to do what they want to do"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.3｜When an individual feels driven to conform to colleague's views it is normally as result of:",
+      "options": [
+        "A. groupthink",
+        "B. group culture",
+        "C. peer pressure"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.3｜Diffusion of responsibility occurs when:",
+      "options": [
+        "A. each team member assumes someone else is going to do the work",
+        "B. there is no appointed leader",
+        "C. two groups are engaged on one task"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.3｜The desire of a group to reach collective agreement at the expense of rational decision making is called:",
+      "options": [
+        "A. The Hawthorne Effect",
+        "B. Groupthink",
+        "C. Peer pressure"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.3｜An individual who relies on his/her lack of effort going unnoticed within the collective effort of a group is engaging in:",
+      "options": [
+        "A. peer pressure",
+        "B. group polarisation",
+        "C. social loafing"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.3｜A manager who permits staff to make their own decisions within prescribed limits is exercising:",
+      "options": [
+        "A. permissive leadership",
+        "B. democratic leadership",
+        "C. autocratic leadership"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.3｜In the hierarchy of human needs the initial needs are:",
+      "options": [
+        "A. self-esteem",
+        "B. physical",
+        "C. social"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.3｜When a certifying engineer signs a Certificate of Release to Service for work done by non-certifying staff, the responsibility for the actual work done:",
+      "options": [
+        "A. remains with those who carried it out",
+        "B. passes to the supervisor of the work",
+        "C. passes to the person making the certifying signature"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.3｜The correct sequence for managing a task is:",
+      "options": [
+        "A. organise, motivate, plan and control",
+        "B. plan, organise, motivate and control",
+        "C. plan, control, organise and motivate"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.3｜The culture of an organisation is the:",
+      "options": [
+        "A. way they do things",
+        "B. type of work they do",
+        "C. management structure"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.3｜Group polarisation results in:",
+      "options": [
+        "A. more extreme decisions",
+        "B. less extreme decisions",
+        "C. no decisions"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.3｜An organisation acquires a safety culture when:",
+      "options": [
+        "A. it is introduced as company policy",
+        "B. it develops amongst the staff",
+        "C. it is included in the Mission Statement"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.3｜Motivation is:",
+      "options": [
+        "A. making an individual to do something",
+        "B. how quickly an individual does something",
+        "C. the individual's will to do something"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.4｜Circadian rhythms have a time cycle of approximately:",
+      "options": [
+        "A. 7 days",
+        "B. 23 hours",
+        "C. 25 hours"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.4｜The cycle of REM sleep occurs every:",
+      "options": [
+        "A. 60 minutes",
+        "B. 90 minutes",
+        "C. 30 minutes"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.4｜A person is classified as being obese if their body mass index is over:",
+      "options": [
+        "A. 30.0",
+        "B. 25.0",
+        "C. 20.0"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.4｜When a person is short of oxygen and compensates by increasing their rate and depth of breathing, the process is called:",
+      "options": [
+        "A. anoxia",
+        "B. hypoxia",
+        "C. hyperventilation"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.4｜When taking a new prescribed medication for the first time you should:",
+      "options": [
+        "A. give it a 24 hour trial before reporting for duty",
+        "B. not report for duty until you have completed the course",
+        "C. carry on as normal"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.4｜One unit of alcohol is roughly equivalent to:",
+      "options": [
+        "A. one pint of beer or 250ml glass of wine or a double measure of spirit",
+        "B. half a pint of beer or a 125ml glass of wine or a single measure of spirit",
+        "C. one pint of beer or a half standard glass of wine or spirit"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.4｜The effect of 'Jet Lag' is more pronounced when you fly:",
+      "options": [
+        "A. South to North",
+        "B. East to West",
+        "C. West to East"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.4｜Oxygen is used in the human body to:",
+      "options": [
+        "A. cleanse the blood of impurities",
+        "B. oxidise food and produce energy",
+        "C. produce carbon dioxide to regulate breathing"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.4｜The minimum recommended amount of exercise a person should engage in to reduce the risk of heart disease is:",
+      "options": [
+        "A. three twenty minute sessions a week that double the heart rate",
+        "B. one thirty minute session a day at double the heart rate",
+        "C. ten miles walking a week at triple the heart rate"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.4｜A person who drinks alcohol to alleviate the symptoms of stress is engaging in:",
+      "options": [
+        "A. coping strategy",
+        "B. defence strategy",
+        "C. diversion strategy"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.4｜REM sleep is used to:",
+      "options": [
+        "A. restore body tissue",
+        "B. raise body temperature",
+        "C. strengthen and organise the memory"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.4｜In the normal Circadian rhythm, the period of lowest performance occurs around:",
+      "options": [
+        "A. 5am",
+        "B. 3pm",
+        "C. midnight"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.4｜The recommended cycle for a rolling shift pattern would be:",
+      "options": [
+        "A. night shift to late shift to early shift",
+        "B. early shift to late shift to night shift",
+        "C. late shift to early shift to night shift"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.4｜In the sleep credit system one hour of good quality sleep is worth:",
+      "options": [
+        "A. one hour of activity",
+        "B. four hours of activity",
+        "C. two hours of activity"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.4｜The majority of stage 2 to 4 sleep occurs:",
+      "options": [
+        "A. in the later part of the sleep period",
+        "B. in the early part of the sleep period",
+        "C. throughout the sleep period"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.4｜If a person is awakened halfway through the sleep period they will be deprived mainly of:",
+      "options": [
+        "A. REM and stage 2 sleep",
+        "B. non-REM sleep",
+        "C. stage 2 to 4 and non-REM sleep"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.4｜Oxygen is passed into the bloodstream in the:",
+      "options": [
+        "A. trachea in the throat",
+        "B. aorta in the heart",
+        "C. alveoli in the lungs"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.4｜Good stress management involves:",
+      "options": [
+        "A. developing a defence strategy",
+        "B. identifying the stressor and coping",
+        "C. avoiding stress"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.4｜The use of 'pep' pills by an aircraft engineer when working is:",
+      "options": [
+        "A. recommended during night shifts to reduce risk of error",
+        "B. permitted only when prescribed by a doctor",
+        "C. not permitted"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.4｜After a long night shift, the recommended meal would be:",
+      "options": [
+        "A. high in proteins",
+        "B. low in carbohydrates",
+        "C. high in carbohydrates"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.5｜An excessive noise level would increase a person's performance:",
+      "options": [
+        "A. during high arousal periods",
+        "B. during low arousal periods",
+        "C. never"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.5｜A general guide to assist in judging when ear defenders are required when working in a hangar environment is when:",
+      "options": [
+        "A. you are not able to hear clearly a conversational voice at 6 feet or 2m",
+        "B. the noise level causes temporary deafness",
+        "C. when you cannot hear clearly a shouted voice at 6 feet or 2m"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.5｜White finger syndrome is:",
+      "options": [
+        "A. a disorder of the finger caused by continuous use of vibratory tools",
+        "B. an accumulation of white blood cells in the fingers",
+        "C. an allergic reaction to the pigments in white paint"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.5｜The high frequency ultra-sounds that are emitted by jet engines are:",
+      "options": [
+        "A. not injurious to the hearing",
+        "B. always injurious to the hearing",
+        "C. only injurious if they are heard"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.5｜A COSHH assessment defines the hazards, limits and protection requirements for:",
+      "options": [
+        "A. the general use of substances found in the work place",
+        "B. local exhaust ventilation systems",
+        "C. the use of a hazardous substance in a work process in a given work location"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.5｜Poor lighting conditions will:",
+      "options": [
+        "A. not affect colour vision but will reduce the ability to detect fine detail.",
+        "B. affect colour vision and the ability to detect fine detail",
+        "C. affect colour vision but will not affect the ability to detect fine detail"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.5｜Hypothermia is a condition that is associated with:",
+      "options": [
+        "A. low body temperature",
+        "B. high body temperature",
+        "C. heat stroke"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.5｜The low frequency range of vibration that is most injurious to the hands is:",
+      "options": [
+        "A. 20 Hz to 20 kHz",
+        "B. 50 Hz to 150 Hz",
+        "C. 0.5 kHz to 150 kHz"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.5｜The components of a working environment are:",
+      "options": [
+        "A. the physical environment, the social environment and the tasks",
+        "B. noise, illumination, fumes and vibration",
+        "C. the hangar and office accommodation"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.5｜If the working environment on line maintenance reaches an unacceptable level:",
+      "options": [
+        "A. more time should be allotted to tasks",
+        "B. more personnel should be assigned to tasks",
+        "C. work should be suspended until satisfactory conditions are re-established"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.5｜If an engineer suspects the presence of fumes in the work area, he/she should:",
+      "options": [
+        "A. don a suitable respirator before continuing with work",
+        "B. warn colleagues and the supervisor and evacuate the area",
+        "C. not use equipment that could create sparks"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.5｜When someone is working in an enclosed space they:",
+      "options": [
+        "A. should comply with the maintenance manual",
+        "B. should be instructed on the possible hazards",
+        "C. require extra supervision and communication"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.6｜The major risk encountered when carrying out repetitive work is that personnel can become:",
+      "options": [
+        "A. complacent",
+        "B. too specialised",
+        "C. bored"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.6｜Ergonomics is a study of:",
+      "options": [
+        "A. the muscoskeletal system",
+        "B. people in relation to their working environment",
+        "C. timescales in relation to work processes"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.6｜Visual inspection of a structure should be ideally carried out:",
+      "options": [
+        "A. in one uninterrupted period to avoid breaking concentration",
+        "B. in reduced lighting to avoid straining the eyes",
+        "C. in short discrete periods with frequent breaks"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.6｜Errors made during visual inspection are likely to be due to:",
+      "options": [
+        "A. vision being the least sensitive stimuli",
+        "B. lack of concentration",
+        "C. eyestrain"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.6｜The best visual scan pattern is to:",
+      "options": [
+        "A. make random eye movements",
+        "B. keep the head still when moving the eyes",
+        "C. make frequent eye movements"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.6｜A complex system in terms of one person's conception of it is said to be:",
+      "options": [
+        "A. opaque",
+        "B. transparent",
+        "C. easily understood"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.7｜What constitutes a good handover?",
+      "options": [
+        "A. Verbal",
+        "B. Written",
+        "C. Written plus verbal"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.7｜Good communication skills should be possessed by the:",
+      "options": [
+        "A. sender and the recipient",
+        "B. sender only",
+        "C. recipient only"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.7｜Information on an urgent safety-related maintenance action can be disseminated by:",
+      "options": [
+        "A. locally authorised hand-written amendment to the maintenance manual",
+        "B. alert bulletin from a manufacturer",
+        "C. formal revision procedure to the maintenance manual only"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.7｜Records of completed work should be completed:",
+      "options": [
+        "A. at shift handovers",
+        "B. at the end of a maintenance task",
+        "C. progressively as the work is carried out"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.7｜Backup discs or tapes of maintenance records kept on computers should be held:",
+      "options": [
+        "A. at the computer terminal",
+        "B. in a separate location",
+        "C. by the supervisor"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.7｜The effective dissemination of information is an essential part of the:",
+      "options": [
+        "A. safety culture",
+        "B. team culture",
+        "C. Integrated Maintenance Information System"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.8｜An alerting system for a vital aircraft system failure should ideally be:",
+      "options": [
+        "A. a warning light",
+        "B. a dolls eye",
+        "C. an audio warning"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.8｜The behaviour pattern of an individual carrying out a standard maintenance procedure would be:",
+      "options": [
+        "A. rule-based",
+        "B. skill-based",
+        "C. motor-based"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.8｜A motor programme is:",
+      "options": [
+        "A. rule-based behaviour that requires no conscious thought",
+        "B. a learned behaviour that does not require conscious thought",
+        "C. skill-based behaviour that requires conscious thought"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.8｜When carrying out a cockpit drill in response to an engine fire warning you are using:",
+      "options": [
+        "A. rule-based behaviour",
+        "B. skill-based behaviour",
+        "C. knowledge-based behaviour"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.8｜The biggest risk of error associated with using checklists is that:",
+      "options": [
+        "A. they can be misread",
+        "B. they can invoke automatic responses",
+        "C. the user may be distracted"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.8｜Skill-based behaviour is associated with:",
+      "options": [
+        "A. experience",
+        "B. rules",
+        "C. motor programmes"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.8｜An individual who has developed his/her own unauthorised way of regularly performing a task is:",
+      "options": [
+        "A. in routine violation",
+        "B. using initiative",
+        "C. unintentionally in error"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.8｜A wrongly set torque wrench would most likely produce a:",
+      "options": [
+        "A. variable error",
+        "B. constant error",
+        "C. Type 1 error"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.8｜An inspector who fails to detect a fault and passes an item as serviceable when it is not has made a:",
+      "options": [
+        "A. latent error",
+        "B. active error",
+        "C. Type 11 error"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.8｜A Maintenance Error Management System(MEMS) is used to:",
+      "options": [
+        "A. investigate reports on all incidents and accidents",
+        "B. process Mandatory Occurrence Reports (MORs) only",
+        "C. investigate Confidential Human Incident Reports (CHIRP) only"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.8｜When a mechanic inadvertently carries out a procedure that is no longer current he/she has made an error connected to:",
+      "options": [
+        "A. optimised violation",
+        "B. environmental capture",
+        "C. reversionary behaviour"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.8｜Violations are errors that are:",
+      "options": [
+        "A. always unintentional",
+        "B. always intentional",
+        "C. intentional or unintentional"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.9｜The duty of care for the health and safety of people at work rests with:",
+      "options": [
+        "A. employers only",
+        "B. the Health and Safety Executive",
+        "C. employers and employees"
+      ],
+      "answer": "C"
+    },
+    {
+      "question": "M9.9｜The three basic steps in dealing with an emergency are:",
+      "options": [
+        "A. assess, make safe and then summon assistance",
+        "B. make safe, summon assistance and then assess",
+        "C. summon assistance, assess and then make safe"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.9｜When dealing with an emergency, the first priority is to protect:",
+      "options": [
+        "A. buildings and equipment",
+        "B. yourself and others",
+        "C. others only"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.9｜When evacuating casualties you would first move:",
+      "options": [
+        "A. walking wounded",
+        "B. fatalities",
+        "C. the most seriously wounded if incapacitated"
+      ],
+      "answer": "A"
+    },
+    {
+      "question": "M9.9｜When faced with casualties that have been overcome with gas, you should:",
+      "options": [
+        "A. treat the casualties, ventilate the area and then turn off the gas supply",
+        "B. turn off the gas supply, ventilate the area and then treat the casualties",
+        "C. ventilate the area, treat the casualties and then turn off the gas supply"
+      ],
+      "answer": "B"
+    },
+    {
+      "question": "M9.9｜Hazards found in the workplace are the result of unsafe:",
+      "options": [
+        "A. human conditions only",
+        "B. environmental conditions only",
+        "C. human and environmental conditions"
       ],
       "answer": "C"
     }
@@ -46697,6 +47671,7 @@ var QUIZ_BANKS = {
     {section:'147', group:'147入學考', title:'📘 M7-入學考', url:'#quiz:quiz_in_m7', keywords:'147 入學考 入學 M7'},
     {section:'147', group:'147入學考', title:'📘 M10-入學考', url:'#quiz:quiz_in_m10', keywords:'147 入學考 入學 M10'},
     {section:'int', group:'147校內考', title:'⚙️ M2-校內考', url:'#quiz:quiz_school_m2', keywords:'M2 M2.1 M2.2.1 M2.2.2 M2.2.3 M2.2.4 M2.3 M2.4 M2.5 校內考 147M2 Matter Statics Kinematics Dynamics Fluid Dynamics Thermodynamics Optics Wave Motion Sound'},
+    {section:'int', group:'147校內考', title:'⚙️ M9-校內考', url:'#quiz:quiz_school_m9', keywords:'M9 M9.2 M9.3 M9.4 M9.5 M9.6 M9.7 M9.8 M9.9 校內考 147M9 Human Factors'},
     {section:'int', group:'147校內考', title:'⚙️ M11-校內考', url:'#quiz:quiz_school_m11', keywords:'M11 M11.1.1 M11.1.2 M11.2.1 M11.2.2 M11.4 M11.7 M11.8 校內考 147M11'},
     {section:'int', group:'147校內考', title:'⚙️ M15-校內考', url:'#quiz:quiz_school_m15', keywords:'M15 M15.1 M15.2 M15.3 M15.4 M15.5 M15.7 校內考 147M15'},
     {section:'caa', group:'147CAA', title:'🛩️ M1-CAA', url:'#quiz:quiz_caa_m1', keywords:'CAA 民航 147CAA M1'},
@@ -46800,6 +47775,19 @@ var QUIZ_BANKS = {
         'M2.5':'M2.5 Wave Motion and Sound（25題）'
       }
     },
+    'quiz_school_m9':{
+      allLabel:'M9 全部章節',
+      labels:{
+        'M9.2':'M9.2（20題）',
+        'M9.3':'M9.3（20題）',
+        'M9.4':'M9.4（20題）',
+        'M9.5':'M9.5（12題）',
+        'M9.6':'M9.6（6題）',
+        'M9.7':'M9.7（6題）',
+        'M9.8':'M9.8（12題）',
+        'M9.9':'M9.9（6題）'
+      }
+    },
     'quiz_school_m11':{
       allLabel:'M11 全部章節',
       labels:{
@@ -46826,64 +47814,98 @@ var QUIZ_BANKS = {
   };
   function getSchoolChapterConfig(){ return SCHOOL_CHAPTERS[quiz.quizId] || null; }
   function getSchoolChapter(q){
-    var m=String((q&&q.question)||'').match(/^\s*((?:M2|M11|M15)(?:\.\d+){1,2})\b/);
+    var m=String((q&&q.question)||'').match(/^\s*((?:M2|M9|M11|M15)(?:\.\d+){1,2})\b/);
     return m?m[1]:'';
   }
-  function fillChapterSelect(sel){
+  function schoolChapterCodes(cfg){ return cfg ? Object.keys(cfg.labels||{}) : []; }
+  function buildChapterChecks(kind){
     var cfg=getSchoolChapterConfig();
-    if(!sel || !cfg) return;
-    sel.innerHTML='';
-    var all=document.createElement('option');
-    all.value='';
-    all.textContent=cfg.allLabel;
-    sel.appendChild(all);
-    Object.keys(cfg.labels).forEach(function(code){
-      var op=document.createElement('option');
-      op.value=code;
-      op.textContent=cfg.labels[code];
-      sel.appendChild(op);
+    var wrap=q$(kind==='quiz'?'quizChapterWrap':'bankChapterMulti');
+    var details=q$(kind==='quiz'?'quizChapterMulti':'bankChapterMulti');
+    var summary=q$(kind==='quiz'?'quizChapterSummary':'bankChapterSummary');
+    var box=q$(kind==='quiz'?'quizChapterChecks':'bankChapterChecks');
+    if(!details || !summary || !box) return;
+    if(!cfg){
+      if(kind==='quiz' && wrap) wrap.classList.add('quizHidden');
+      details.classList.add('quizHidden');
+      box.innerHTML='';
+      details.removeAttribute('open');
+      return;
+    }
+    if(kind==='quiz' && wrap) wrap.classList.remove('quizHidden');
+    details.classList.remove('quizHidden');
+    details.removeAttribute('open');
+    box.innerHTML='';
+    var codes=schoolChapterCodes(cfg);
+    var allRow=document.createElement('label');
+    allRow.className='chapterCheckRow chapterCheckAll';
+    var all=document.createElement('input');
+    all.type='checkbox'; all.checked=true; all.setAttribute('data-chapter-all',kind);
+    var allText=document.createElement('span'); allText.textContent=cfg.allLabel;
+    allRow.appendChild(all); allRow.appendChild(allText); box.appendChild(allRow);
+    codes.forEach(function(code){
+      var row=document.createElement('label'); row.className='chapterCheckRow';
+      var cb=document.createElement('input'); cb.type='checkbox'; cb.checked=true; cb.value=code; cb.setAttribute('data-chapter-code',code);
+      var text=document.createElement('span'); text.textContent=cfg.labels[code]||code;
+      row.appendChild(cb); row.appendChild(text); box.appendChild(row);
     });
+    function changed(){
+      syncChapterMulti(kind);
+      if(kind==='quiz') updateSchoolChapterLimitPlaceholder();
+      else { quiz.bankPage=1; renderBank(); }
+    }
+    all.onchange=function(){
+      var checked=all.checked;
+      Array.prototype.forEach.call(box.querySelectorAll('input[data-chapter-code]'),function(cb){cb.checked=checked;});
+      changed();
+    };
+    Array.prototype.forEach.call(box.querySelectorAll('input[data-chapter-code]'),function(cb){ cb.onchange=changed; });
+    syncChapterMulti(kind);
   }
-  function getSchoolChapterSelection(){
-    var sel=q$('quizChapterSelect'), cfg=getSchoolChapterConfig();
-    if(!sel || !cfg || !sel.value) return null;
-    return {value:sel.value,label:cfg.labels[sel.value]||sel.value};
+  function getSelectedSchoolChapters(kind){
+    var cfg=getSchoolChapterConfig();
+    if(!cfg) return null;
+    var box=q$(kind==='quiz'?'quizChapterChecks':'bankChapterChecks');
+    if(!box) return schoolChapterCodes(cfg);
+    var picked=[];
+    Array.prototype.forEach.call(box.querySelectorAll('input[data-chapter-code]'),function(cb){if(cb.checked)picked.push(cb.value);});
+    return picked;
+  }
+  function getChapterSelectionLabel(kind){
+    var cfg=getSchoolChapterConfig();
+    if(!cfg) return '';
+    var codes=schoolChapterCodes(cfg), selected=getSelectedSchoolChapters(kind)||[];
+    if(selected.length===codes.length) return cfg.allLabel;
+    if(!selected.length) return '未選擇章節';
+    if(selected.length<=3) return selected.join('、');
+    return '已選 '+selected.length+' 個章節';
+  }
+  function syncChapterMulti(kind){
+    var cfg=getSchoolChapterConfig();
+    if(!cfg) return;
+    var box=q$(kind==='quiz'?'quizChapterChecks':'bankChapterChecks');
+    var summary=q$(kind==='quiz'?'quizChapterSummary':'bankChapterSummary');
+    if(!box || !summary) return;
+    var codes=schoolChapterCodes(cfg), selected=getSelectedSchoolChapters(kind)||[];
+    var all=box.querySelector('input[data-chapter-all]');
+    if(all){ all.checked=selected.length===codes.length; all.indeterminate=selected.length>0 && selected.length<codes.length; }
+    summary.textContent=getChapterSelectionLabel(kind);
   }
   function updateSchoolChapterLimitPlaceholder(){
-    var sel=q$('quizChapterSelect'), cfg=getSchoolChapterConfig();
-    if(!sel || !quiz.bank || !q$('quizQuestionLimit')) return;
+    var cfg=getSchoolChapterConfig();
+    if(!quiz.bank || !q$('quizQuestionLimit')) return;
     var base='輸入題數,至多'+(quiz.bank.questions||[]).length+'題 / Enter number of questions';
-    if(cfg && sel.value){
-      var count=(quiz.bank.questions||[]).filter(function(q){return getSchoolChapter(q)===sel.value;}).length;
-      q$('quizQuestionLimit').placeholder='輸入題數,至多'+count+'題 / '+(cfg.labels[sel.value]||sel.value);
+    if(cfg){
+      var selected=getSelectedSchoolChapters('quiz')||[];
+      var count=(quiz.bank.questions||[]).filter(function(q){return selected.indexOf(getSchoolChapter(q))>-1;}).length;
+      q$('quizQuestionLimit').placeholder='輸入題數,至多'+count+'題 / '+getChapterSelectionLabel('quiz');
     }else{
       q$('quizQuestionLimit').placeholder=quiz.bank.limitPlaceholder || base;
     }
   }
-  function setupSchoolChapterPicker(){
-    var wrap=q$('quizChapterWrap'), sel=q$('quizChapterSelect'), cfg=getSchoolChapterConfig();
-    if(!wrap || !sel) return;
-    if(cfg){
-      fillChapterSelect(sel);
-      wrap.classList.remove('quizHidden');
-    }else{
-      wrap.classList.add('quizHidden');
-      sel.innerHTML='';
-    }
-    updateSchoolChapterLimitPlaceholder();
-  }
-  function setupSchoolBankChapterPicker(){
-    var sel=q$('bankChapterSelect'), cfg=getSchoolChapterConfig();
-    if(!sel) return;
-    if(cfg){
-      fillChapterSelect(sel);
-      sel.classList.remove('quizHidden');
-    }else{
-      sel.classList.add('quizHidden');
-      sel.innerHTML='';
-    }
-  }
-  function openQuiz(key,title){ if(!QUIZ_BANKS[key]){alert('找不到題庫：'+key);return;} quiz.bank=QUIZ_BANKS[key]; quiz.quizId=key; quiz.selected=[]; quiz.answers=[]; quiz.currentIndex=0; quiz.mode='paged'; quiz.showWrongOnly=false; clearInterval(quiz.timer); q$('quizModalTitle').textContent=title||quiz.bank.title; q$('quizTitle').textContent=quiz.bank.title; q$('quizQuestionLimit').placeholder=quiz.bank.limitPlaceholder || ('輸入題數,至多'+quiz.bank.questions.length+'題 / Enter number of questions'); q$('quizQuestionLimit').value=''; if(q$('quizChapterSelect')) q$('quizChapterSelect').value=''; if(q$('bankChapterSelect')) q$('bankChapterSelect').value=''; setupSchoolChapterPicker(); setupSchoolBankChapterPicker(); if(q$('quizRangeInput')) q$('quizRangeInput').value=''; q$('quizDurationInput').value='80'; if(q$('quizNote')) q$('quizNote').textContent = ''; q$('quizNameInput').value=localStorage.getItem(savedNameKey)||''; q$('quizModal').classList.add('show'); q$('quizModal').setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; updateWrongInfo(); showQuizView('quizWelcome'); }
+  function setupSchoolChapterPicker(){ buildChapterChecks('quiz'); updateSchoolChapterLimitPlaceholder(); }
+  function setupSchoolBankChapterPicker(){ buildChapterChecks('bank'); }
+  function openQuiz(key,title){ if(!QUIZ_BANKS[key]){alert('找不到題庫：'+key);return;} quiz.bank=QUIZ_BANKS[key]; quiz.quizId=key; quiz.selected=[]; quiz.answers=[]; quiz.currentIndex=0; quiz.mode='paged'; quiz.showWrongOnly=false; clearInterval(quiz.timer); q$('quizModalTitle').textContent=title||quiz.bank.title; q$('quizTitle').textContent=quiz.bank.title; q$('quizQuestionLimit').placeholder=quiz.bank.limitPlaceholder || ('輸入題數,至多'+quiz.bank.questions.length+'題 / Enter number of questions'); q$('quizQuestionLimit').value=''; setupSchoolChapterPicker(); setupSchoolBankChapterPicker(); if(q$('quizRangeInput')) q$('quizRangeInput').value=''; q$('quizDurationInput').value='80'; if(q$('quizNote')) q$('quizNote').textContent = ''; q$('quizNameInput').value=localStorage.getItem(savedNameKey)||''; q$('quizModal').classList.add('show'); q$('quizModal').setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; updateWrongInfo(); showQuizView('quizWelcome'); }
   function closeQuiz(){ clearInterval(quiz.timer); q$('quizModal').classList.remove('show'); q$('quizModal').setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
   function parseQuestionRangeInput(text,total){
     text=String(text||'').trim();
@@ -46933,21 +47955,26 @@ var QUIZ_BANKS = {
     return has ? set : null;
   }
   function startFromWelcome(useWrong){ quiz.user=safeName(q$('quizNameInput').value); if(!quiz.user || quiz.user==='_guest'){alert('請先輸入姓名'); return;} localStorage.setItem(savedNameKey, quiz.user); var duration=parseInt(q$('quizDurationInput').value,10); if(!duration || duration<1) duration=80; if(duration>999) duration=999; var pool=(quiz.bank.questions||[]).map(function(q,idx){ var copy=Object.assign({}, q); copy.__qid=idx+1; return copy; }); if(useWrong){ var wrong=loadWrong(quiz.user), ids=Object.keys(wrong); pool=pool.filter(function(q){return !!wrong[getQuestionId(q)];}); if(!pool.length){alert('目前沒有錯題記憶'); return;} var wLimit=parseInt(q$('wrongQuestionLimit').value,10); if(wLimit && wLimit>0) q$('quizQuestionLimit').value=String(wLimit); q$('quizDurationInput').value=q$('wrongDurationInput').value || duration; }
-    var chapterChoice=getSchoolChapterSelection();
-    if(chapterChoice){ pool=pool.filter(function(q){return getSchoolChapter(q)===chapterChoice.value;}); if(!pool.length){alert('這個章節目前沒有題目'); return;} }
+    var chapterCfg=getSchoolChapterConfig(), chapterCodes=chapterCfg?getSelectedSchoolChapters('quiz'):null, chapterLabel='';
+    if(chapterCfg){
+      if(!chapterCodes || !chapterCodes.length){alert('請至少勾選一個章節'); return;}
+      pool=pool.filter(function(q){return chapterCodes.indexOf(getSchoolChapter(q))>-1;});
+      if(!pool.length){alert('目前勾選的章節沒有可用題目'); return;}
+      chapterLabel=getChapterSelectionLabel('quiz');
+    }
     var rangeText=q$('quizRangeInput') ? q$('quizRangeInput').value : ''; var range=parseQuestionRangeInput(rangeText, pool.length);
     if(range && range.error){ alert(range.error); return; }
     var limit=parseInt(q$('quizQuestionLimit').value,10); if(!limit || limit<1 || limit>pool.length) limit=pool.length;
     if(range && range.numbers){
       quiz.selected=range.numbers.map(function(n){return pool[n-1];}).filter(Boolean);
       if(limit && limit>0 && limit<quiz.selected.length) quiz.selected=quiz.selected.slice(0,limit);
-      q$('quizModeSummary').textContent=(chapterChoice?chapterChoice.label+'｜':'')+'區段測驗 '+quiz.selected.length+' 題（題號：'+range.numbers.join('、')+'），時間 '+duration+' 分鐘';
+      q$('quizModeSummary').textContent=(chapterLabel?chapterLabel+'｜':'')+'區段測驗 '+quiz.selected.length+' 題（題號：'+range.numbers.join('、')+'），時間 '+duration+' 分鐘';
     }else{
       quiz.selected=shuffle(pool).slice(0,limit);
-      q$('quizModeSummary').textContent=(chapterChoice?chapterChoice.label+'｜':'')+'本次隨機作答 '+quiz.selected.length+' 題，時間 '+duration+' 分鐘';
+      q$('quizModeSummary').textContent=(chapterLabel?chapterLabel+'｜':'')+'本次隨機作答 '+quiz.selected.length+' 題，時間 '+duration+' 分鐘';
     }
     quiz.answers=new Array(quiz.selected.length).fill(null); quiz.currentIndex=0; quiz.remaining=duration*60; showQuizView('quizModeSelect'); }
-  function beginQuiz(){ clearInterval(quiz.timer); quiz.currentIndex=0; q$('quizStage').scrollTop=0; q$('quizWelcomeName').textContent='作答者：'+quiz.user; q$('quizTotal').textContent=quiz.selected.length; q$('pagedQuizWrap').classList.toggle('quizHidden', quiz.mode!=='paged'); q$('fullQuizWrap').classList.toggle('quizHidden', quiz.mode!=='full'); showQuizView('quizView'); if(quiz.mode==='full') renderFullQuiz(); else renderPagedQuestion(); tickTimer(); quiz.timer=setInterval(function(){ quiz.remaining--; tickTimer(); if(quiz.remaining<=0){clearInterval(quiz.timer); submitQuiz();}},1000); }
+  function beginQuiz(){ clearInterval(quiz.timer); if(q$('quizChapterMulti')) q$('quizChapterMulti').removeAttribute('open'); if(q$('bankChapterMulti')) q$('bankChapterMulti').removeAttribute('open'); quiz.currentIndex=0; q$('quizStage').scrollTop=0; q$('quizWelcomeName').textContent='作答者：'+quiz.user; q$('quizTotal').textContent=quiz.selected.length; q$('pagedQuizWrap').classList.toggle('quizHidden', quiz.mode!=='paged'); q$('fullQuizWrap').classList.toggle('quizHidden', quiz.mode!=='full'); showQuizView('quizView'); if(quiz.mode==='full') renderFullQuiz(); else renderPagedQuestion(); tickTimer(); quiz.timer=setInterval(function(){ quiz.remaining--; tickTimer(); if(quiz.remaining<=0){clearInterval(quiz.timer); submitQuiz();}},1000); }
   function tickTimer(){ var s=Math.max(0,quiz.remaining), m=Math.floor(s/60), sec=s%60; q$('quizTimer').textContent=(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec; }
   function answeredCount(){return quiz.answers.filter(function(x){return x!==null && x!==undefined;}).length;}
   function updateProgress(){ q$('quizCurrent').textContent=quiz.mode==='paged'?quiz.currentIndex+1:quiz.selected.length; q$('quizAnsweredCount').textContent=answeredCount(); q$('quizProgressBar').style.width=(quiz.selected.length?answeredCount()/quiz.selected.length*100:0)+'%'; }
@@ -46961,17 +47988,16 @@ var QUIZ_BANKS = {
   function renderResults(wrongOnly){ quiz.showWrongOnly=!!wrongOnly; var body=q$('quizResultsBody'); body.innerHTML=''; var correct=0, shown=0; for(var i=0;i<quiz.selected.length;i++){ var q=quiz.selected[i], ans=quiz.answers[i], ok=isCorrectAnswer(q,ans); if(ok)correct++; if(wrongOnly && ok) continue; shown++; var tr=document.createElement('tr'); var stripe=(shown%2===1)?'resultOdd':'resultEven'; tr.className=stripe+(ok?'':' wrong'); var correctText=getCorrectOption(q); var qNo=q.__qid || (i+1); tr.innerHTML='<td class="resultNo">'+qNo+'</td><td>'+renderQuestionImage(q)+q.question+'</td><td>'+answerText(q,ans)+'</td><td class="ansCell"><span class="ansChip">'+q.answer+'</span><div class="optRow isCorrect" style="margin-top:8px">'+correctText+'</div></td><td style="text-align:center;white-space:nowrap">'+(ok?'O':'X')+'</td>'; body.appendChild(tr); } var score=Math.round((correct/quiz.selected.length)*100); q$('quizScoreSummary').textContent='答對 '+correct+' / '+quiz.selected.length+' 題，分數 '+score+' 分'+(wrongOnly?'（目前只顯示錯題 '+shown+' 題）':''); }
   function renderWrongPanel(){ var name=safeName(q$('wrongNameInput').value || q$('quizNameInput').value || quiz.user); var wrong=loadWrong(name), body=q$('wrongListBody'); body.innerHTML=''; var ids=Object.keys(wrong); if(!ids.length){body.innerHTML='<tr><td colspan="5" style="text-align:center">目前沒有錯題記憶</td></tr>';} else {ids.forEach(function(id,idx){var w=wrong[id], q=null; for(var k=0;k<(quiz.bank.questions||[]).length;k++){var item=quiz.bank.questions[k]; if(getQuestionId(item)===id || item.question===w.question){q=item;break;}} var lastText=(q?answerText(q,w.lastAnswer):(w.lastAnswerText||w.lastAnswer||'未作答')); var correctText=(q?getCorrectOption(q):(w.correctText||w.correct||'')); var tr=document.createElement('tr'); tr.innerHTML='<td>'+(idx+1)+'</td><td>'+w.question+'</td><td>'+lastText+'</td><td class="ansCell"><span class="ansChip">'+(w.correct||'')+'</span><div class="optRow isCorrect" style="margin-top:8px">'+correctText+'</div></td><td>'+w.time+'</td>'; body.appendChild(tr);});} updateWrongInfo(); showQuizView('quizWrongReview'); }
   function renderBank(){
-    setupSchoolBankChapterPicker();
     var qs=quiz.bank.questions||[],
         query=(q$('bankSearch').value||'').toLowerCase().trim(),
         numSet=q$('bankNumberSearch')?parseBankNumberSearch(q$('bankNumberSearch').value, qs.length):null,
         cfg=getSchoolChapterConfig(),
-        bankChapter=(cfg && q$('bankChapterSelect'))?q$('bankChapterSelect').value:'',
+        bankChapters=cfg?(getSelectedSchoolChapters('bank')||[]):null,
         per=q$('perPage').value,
         filtered=[];
     for(var i=0;i<qs.length;i++){
       var q=qs[i], qNo=i+1, hay=(q.question+' '+(q.options||[]).join(' ')+' '+q.answer).toLowerCase();
-      if(bankChapter && getSchoolChapter(q)!==bankChapter) continue;
+      if(cfg && bankChapters.indexOf(getSchoolChapter(q))===-1) continue;
       if(numSet && !numSet[qNo]) continue;
       if(!query || hay.indexOf(query)>-1 || String(qNo)===query || ('#'+qNo)===query) filtered.push({q:q,index:i});
     }
@@ -46979,6 +48005,7 @@ var QUIZ_BANKS = {
     if(!perNum)perNum=10;
     var pages=Math.max(1,Math.ceil(filtered.length/perNum));
     if(quiz.bankPage>pages)quiz.bankPage=pages;
+    if(quiz.bankPage<1)quiz.bankPage=1;
     var start=(quiz.bankPage-1)*perNum, end=per==='all'?filtered.length:start+perNum;
     var body=q$('bankBody'); body.innerHTML='';
     filtered.slice(start,end).forEach(function(item){
@@ -46990,13 +48017,13 @@ var QUIZ_BANKS = {
       tr.innerHTML='<td>'+(item.index+1)+'</td><td>'+renderQuestionImage(q)+q.question+'</td><td>'+optionHtml+'</td><td class="ansCell"><span class="ansChip">'+q.answer+'</span><div class="optRow isCorrect" style="margin-top:8px">'+getCorrectOption(q)+'</div></td>';
       body.appendChild(tr);
     });
-    var chapterLabel=(cfg && bankChapter)?(cfg.labels[bankChapter]||bankChapter):'';
+    var chapterLabel=cfg?getChapterSelectionLabel('bank'):'';
     q$('pageInfo').textContent='第 '+quiz.bankPage+' / '+pages+' 頁（共 '+filtered.length+' 題'+(chapterLabel?'｜'+chapterLabel:'')+'）';
     q$('prevPage').disabled=quiz.bankPage<=1;
     q$('nextPage').disabled=quiz.bankPage>=pages;
     showQuizView('quizBank');
   }
-  q$('quizClose').onclick=closeQuiz; q$('quizStartBtn').onclick=function(){startFromWelcome(false);}; q$('quizWrongPanelFromWelcome').onclick=renderWrongPanel; q$('quizWrongPanelFromResults').onclick=renderWrongPanel; q$('quizOpenBankBtn').onclick=function(){quiz.bankPage=1;renderBank();}; q$('quizToBankFromResults').onclick=function(){quiz.bankPage=1;renderBank();}; q$('toBankFromWrong').onclick=function(){quiz.bankPage=1;renderBank();}; q$('backWelcomeFromBank').onclick=function(){showQuizView('quizWelcome');}; q$('backWelcomeFromWrong').onclick=function(){showQuizView('quizWelcome');}; q$('quizBackWelcomeFromMode').onclick=function(){showQuizView('quizWelcome');}; q$('quizClearSavedNameBtn').onclick=function(){localStorage.removeItem(savedNameKey); q$('quizNameInput').value='';}; q$('modeCardPaged').onclick=function(){quiz.mode='paged'; q$('modeCardPaged').classList.add('selected'); q$('modeCardFull').classList.remove('selected');}; q$('modeCardFull').onclick=function(){quiz.mode='full'; q$('modeCardFull').classList.add('selected'); q$('modeCardPaged').classList.remove('selected');}; q$('quizConfirmModeBtn').onclick=beginQuiz; q$('quizPrevBtn').onclick=function(){if(quiz.currentIndex>0){quiz.currentIndex--;renderPagedQuestion();}}; q$('quizNextBtn').onclick=function(){if(quiz.currentIndex>=quiz.selected.length-1) submitQuiz(); else {quiz.currentIndex++;renderPagedQuestion();}}; q$('quizFindUnansweredPagedBtn').onclick=findUnanswered; q$('quizFindUnansweredBtn').onclick=findUnanswered; q$('quizSubmitFullBtn').onclick=submitQuiz; q$('quizSubmitFloatBtn').onclick=submitQuiz; q$('quizLeaveBtn').onclick=submitQuiz; q$('quizLeaveBtnFull').onclick=submitQuiz; q$('quizRetryBtn').onclick=function(){quiz.currentIndex=0; clearInterval(quiz.timer); showQuizView('quizWelcome'); q$('quizStage').scrollTop=0;}; q$('quizShowWrongBtn').onclick=function(){renderResults(true);}; q$('quizShowAllBtn').onclick=function(){renderResults(false);}; q$('quizScrollTopBtn').onclick=function(){q$('quizStage').scrollTo({top:0,behavior:'smooth'});}; q$('startWrongQuizBtn').onclick=function(){ q$('quizNameInput').value=safeName(q$('wrongNameInput').value || q$('quizNameInput').value || quiz.user); q$('quizDurationInput').value=q$('wrongDurationInput').value || '80'; q$('quizQuestionLimit').value=q$('wrongQuestionLimit').value || ''; startFromWelcome(true);}; q$('clearWrongMemBtn').onclick=function(){var name=safeName(q$('wrongNameInput').value || q$('quizNameInput').value || quiz.user); if(confirm('確定清除 '+name+' 在本測驗的錯題記憶？')){saveWrong(name,{});renderWrongPanel();}}; q$('bankSearch').oninput=function(){quiz.bankPage=1;renderBank();}; if(q$('bankNumberSearch')) q$('bankNumberSearch').oninput=function(){quiz.bankPage=1;renderBank();}; if(q$('quizChapterSelect')) q$('quizChapterSelect').onchange=updateSchoolChapterLimitPlaceholder; if(q$('bankChapterSelect')) q$('bankChapterSelect').onchange=function(){quiz.bankPage=1;renderBank();}; q$('perPage').onchange=function(){quiz.bankPage=1;renderBank();}; q$('prevPage').onclick=function(){quiz.bankPage--;renderBank();}; q$('nextPage').onclick=function(){quiz.bankPage++;renderBank();}; q$('quizDarkToggle').onclick=function(){var isDark=q$('quizStage').classList.toggle('dark'); q$('quizDarkToggle').setAttribute('aria-pressed', isDark?'true':'false'); q$('quizDarkToggle').textContent=isDark?'白色模式 / Light Mode':'深色模式 / Dark Mode';};
+  q$('quizClose').onclick=closeQuiz; q$('quizStartBtn').onclick=function(){startFromWelcome(false);}; q$('quizWrongPanelFromWelcome').onclick=renderWrongPanel; q$('quizWrongPanelFromResults').onclick=renderWrongPanel; q$('quizOpenBankBtn').onclick=function(){quiz.bankPage=1;renderBank();}; q$('quizToBankFromResults').onclick=function(){quiz.bankPage=1;renderBank();}; q$('toBankFromWrong').onclick=function(){quiz.bankPage=1;renderBank();}; q$('backWelcomeFromBank').onclick=function(){showQuizView('quizWelcome');}; q$('backWelcomeFromWrong').onclick=function(){showQuizView('quizWelcome');}; q$('quizBackWelcomeFromMode').onclick=function(){showQuizView('quizWelcome');}; q$('quizClearSavedNameBtn').onclick=function(){localStorage.removeItem(savedNameKey); q$('quizNameInput').value='';}; q$('modeCardPaged').onclick=function(){quiz.mode='paged'; q$('modeCardPaged').classList.add('selected'); q$('modeCardFull').classList.remove('selected');}; q$('modeCardFull').onclick=function(){quiz.mode='full'; q$('modeCardFull').classList.add('selected'); q$('modeCardPaged').classList.remove('selected');}; q$('quizConfirmModeBtn').onclick=beginQuiz; q$('quizPrevBtn').onclick=function(){if(quiz.currentIndex>0){quiz.currentIndex--;renderPagedQuestion();}}; q$('quizNextBtn').onclick=function(){if(quiz.currentIndex>=quiz.selected.length-1) submitQuiz(); else {quiz.currentIndex++;renderPagedQuestion();}}; q$('quizFindUnansweredPagedBtn').onclick=findUnanswered; q$('quizFindUnansweredBtn').onclick=findUnanswered; q$('quizSubmitFullBtn').onclick=submitQuiz; q$('quizSubmitFloatBtn').onclick=submitQuiz; q$('quizLeaveBtn').onclick=submitQuiz; q$('quizLeaveBtnFull').onclick=submitQuiz; q$('quizRetryBtn').onclick=function(){quiz.currentIndex=0; clearInterval(quiz.timer); showQuizView('quizWelcome'); q$('quizStage').scrollTop=0;}; q$('quizShowWrongBtn').onclick=function(){renderResults(true);}; q$('quizShowAllBtn').onclick=function(){renderResults(false);}; q$('quizScrollTopBtn').onclick=function(){q$('quizStage').scrollTo({top:0,behavior:'smooth'});}; q$('startWrongQuizBtn').onclick=function(){ q$('quizNameInput').value=safeName(q$('wrongNameInput').value || q$('quizNameInput').value || quiz.user); q$('quizDurationInput').value=q$('wrongDurationInput').value || '80'; q$('quizQuestionLimit').value=q$('wrongQuestionLimit').value || ''; startFromWelcome(true);}; q$('clearWrongMemBtn').onclick=function(){var name=safeName(q$('wrongNameInput').value || q$('quizNameInput').value || quiz.user); if(confirm('確定清除 '+name+' 在本測驗的錯題記憶？')){saveWrong(name,{});renderWrongPanel();}}; q$('bankSearch').oninput=function(){quiz.bankPage=1;renderBank();}; if(q$('bankNumberSearch')) q$('bankNumberSearch').oninput=function(){quiz.bankPage=1;renderBank();}; q$('perPage').onchange=function(){quiz.bankPage=1;renderBank();}; q$('prevPage').onclick=function(){quiz.bankPage--;renderBank();}; q$('nextPage').onclick=function(){quiz.bankPage++;renderBank();}; q$('quizDarkToggle').onclick=function(){var isDark=q$('quizStage').classList.toggle('dark'); q$('quizDarkToggle').setAttribute('aria-pressed', isDark?'true':'false'); q$('quizDarkToggle').textContent=isDark?'白色模式 / Light Mode':'深色模式 / Dark Mode';};
   document.addEventListener('click', function(e){ var a=e.target; while(a && a!==document.body){ if(a.getAttribute && a.getAttribute('data-quiz-key')){ e.preventDefault(); openQuiz(a.getAttribute('data-quiz-key'), a.getAttribute('data-title') || a.textContent); return; } a=a.parentNode; } }, true);
 
   function applyPortalTheme(mode){
